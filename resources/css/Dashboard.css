@@ -1,0 +1,16 @@
+.dashboard-card {
+    width: 95% !important;
+    justify-self: center;
+    gap: 0px;
+    margin-top: 20px;
+    border-radius: 20px;
+}
+
+.task-table-container {
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+}
+
+.status {
+    font-size: 5px;
+}

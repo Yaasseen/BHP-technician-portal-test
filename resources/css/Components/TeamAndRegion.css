@@ -1,0 +1,9 @@
+.no-padding-cell {
+    padding: 0 !important;
+    height: 41px !important;
+}
+
+.custom-checkbox .ant-checkbox-input {
+    opacity: 1;
+    cursor: pointer;
+}

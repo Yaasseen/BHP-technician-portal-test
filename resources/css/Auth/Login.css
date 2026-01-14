@@ -1,0 +1,47 @@
+
+/* CSS (Login.css) */
+
+.login-container {
+  display: flex !important;
+  justify-content: center !important; 
+  align-items: center;
+  background-color: #f8f9fa;
+  height: 100vh;
+  padding: 16px;
+}
+
+body{
+  margin: 0px;
+  background-color: #F7F9FC;
+}
+.login-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  padding: 24px;
+  text-align: center;
+}
+
+.brand-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.login-header {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+}
+
+.login-header h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.login-header p {
+  color: #6c757d;
+  font-size: 1rem;
+}

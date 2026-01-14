@@ -1,0 +1,11 @@
+
+/vendor
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+.env
+.idea
+.vscode
+.git
+.DS_Store
