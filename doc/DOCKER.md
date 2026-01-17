@@ -81,6 +81,21 @@ In production, we do **not** want to mount local files. We want the container to
    docker compose exec app php artisan view:cache
    ```
 
+### 5. Verifying the Scheduler
+To verify that the scheduler is running and processing tasks:
+
+1. **Check Logs**:
+   See the scheduler output in real-time:
+   ```bash
+   docker compose logs -f scheduler
+   ```
+
+2. **List Scheduled Tasks**:
+   See what tasks are registered and when they run next:
+   ```bash
+   docker compose exec app php artisan schedule:list
+   ```
+
 ---
 
 ## Troubleshooting
