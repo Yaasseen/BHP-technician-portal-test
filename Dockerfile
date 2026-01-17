@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     gnupg \
+    libicu-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -34,7 +35,7 @@ COPY . /var/www
 # Note: execution time can be long, so we increase timeout
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN npm install
-RUN npm run build 
+RUN npm run prod 
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www \

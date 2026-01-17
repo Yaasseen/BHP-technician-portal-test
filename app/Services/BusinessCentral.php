@@ -32,6 +32,7 @@ class BusinessCentral
     protected $soapPassword;
     protected $username;
     protected $password;
+    protected $bcInstanceName;
 
     private function __construct()
     {
@@ -41,6 +42,7 @@ class BusinessCentral
         $this->soapBaseUrl = env("SOAP_BASE_URL");
         $this->soapUsername = env("SOAP_USER_NAME");
         $this->soapPassword = env("SOAP_PASSWORD");
+        $this->bcInstanceName = env("BC_INSTANCE_NAME", "bc270");
        
 
         $this->technicianList = [];
@@ -91,8 +93,8 @@ class BusinessCentral
             if ((time() - $this->technicianListRefreshTime) > 20) {
 
                 $client = $this->createHttpClient();
-                $technicianResponse = $client->get("/MAGENTO190/ODataV4/Company('TBH')/TechnicianApp");
-                // $teamRegResponse = $client->get("/MAGENTO190/ODataV4/Company('TBH')/ServiceTeamRegProdMatrix");
+                $technicianResponse = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/TechnicianApp");
+                // $teamRegResponse = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/ServiceTeamRegProdMatrix");
 
                 $technicianData = $technicianResponse->getBody()->getContents();
                 $technicianData = json_decode($technicianData, true);
@@ -178,7 +180,7 @@ class BusinessCentral
 
     // {
     //     $client = $this->createHttpClient();
-    //     $teamRegResponse = $client->get("/MAGENTO190/ODataV4/Company('TBH')/TeamRegionConfiguration");
+    //     $teamRegResponse = $client->get("/bc270/ODataV4/Company('TBH')/TeamRegionConfiguration");
     //     $teamData = $teamRegResponse->getBody()->getContents();
     //     $teamData = json_decode($teamData, true);
 
@@ -216,7 +218,7 @@ class BusinessCentral
     // public function getTeamList(): array
     // {
     //     $client = $this->createHttpClient();
-    //     $teamRegResponse = $client->get("/MAGENTO190/ODataV4/Company('TBH')/TeamRegionConfiguration");
+    //     $teamRegResponse = $client->get("/bc270/ODataV4/Company('TBH')/TeamRegionConfiguration");
     //     $teamData = $teamRegResponse->getBody()->getContents();
     //     $teamData = json_decode($teamData, true);
 
@@ -238,12 +240,12 @@ class BusinessCentral
             $client = $this->createHttpClient();
             $startTime = microtime(true);
 
-            $serviceLineUrl = "/MAGENTO190/ODataV4/Company('TBH')/ServiceLines?\$filter=Replication_Counter gt $maxReplicationCount";
+            $serviceLineUrl = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/ServiceLines?\$filter=Replication_Counter gt $maxReplicationCount";
             $serviceLineResponse = $client->get($serviceLineUrl);
             $serviceLines = json_decode($serviceLineResponse->getBody()->getContents(), true);
 
             // Fetch Repair Status List
-            $repairStatusUrl = "/MAGENTO190/ODataV4/Company('TBH')/RepairStatusList";
+            $repairStatusUrl = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/RepairStatusList";
             $repairStatusResponse = $client->get($repairStatusUrl);
             $repairStatusList = json_decode($repairStatusResponse->getBody()->getContents(), true);
 
@@ -256,7 +258,7 @@ class BusinessCentral
             $combinedResponse = [];
 
             if ($maxReplicationCount == 0) {
-                $serviceHeaderUrl = "/MAGENTO190/ODataV4/Company('TBH')/ServiceHeaders";
+                $serviceHeaderUrl = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/ServiceHeaders";
                 $serviceHeaderResponse = $client->get($serviceHeaderUrl);
                 $serviceHeaders = json_decode($serviceHeaderResponse->getBody()->getContents(), true);
 
@@ -271,7 +273,7 @@ class BusinessCentral
                     $repairStatusCode = $line['Repair_Status_Code'];
                     $line['Service_Order_Status'] = $repairStatusDict[$repairStatusCode] ?? null;
     
-                    $serviceHeaderUrl = "/MAGENTO190/ODataV4/Company('TBH')/ServiceHeaders?\$filter=No eq '$documentNo'";
+                    $serviceHeaderUrl = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/ServiceHeaders?\$filter=No eq '$documentNo'";
                     $serviceHeaderResponse = $client->get($serviceHeaderUrl);
                     $serviceHeader = json_decode($serviceHeaderResponse->getBody()->getContents(), true);
                     if (!empty($serviceHeader['value'])) {
@@ -334,7 +336,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
 
             $startTime = microtime(true);
 
-            $response = $client->get("/MAGENTO190/ODataV4/Company('TBH')/ServicePriority");
+            $response = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/ServicePriority");
 
             $requestTime = microtime(true) - $startTime;
 
@@ -373,7 +375,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
 
             $client = $this->createHttpClient();
             $startTime = microtime(true);
-            $response = $client->get("/MAGENTO190/ODataV4/Company('TBH')/RepairStatusList");
+            $response = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/RepairStatusList");
             $requestTime = microtime(true) - $startTime;
 
             $serviceRepairResponse = json_decode($response->getBody()->getContents(), true);
@@ -409,7 +411,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
             $client = $this->createHttpClient();
 
             $startTime = microtime(true);
-            $response = $client->get("/MAGENTO190/ODataV4/Company('TBH')/ServiceItems");
+            $response = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/ServiceItems");
 
             $requestTime = microtime(true) - $startTime;
 
@@ -438,7 +440,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
             $startTime = microtime(true);
 
             // Use OData filter for Document_No
-            $response = $client->get("/MAGENTO190/ODataV4/Company('TBH')/ServiceSpareParts?\$filter=Document_No eq '$documentNo'");
+            $response = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/ServiceSpareParts?\$filter=Document_No eq '$documentNo'");
 
             $requestTime = microtime(true) - $startTime;
 
@@ -471,7 +473,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
             $client = $this->createHttpClient();
 
             $startTime = microtime(true);
-            $response = $client->get("/MAGENTO190/ODataV4/Company('TBH')/LocationsList");
+            $response = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/LocationsList");
 
             $requestTime = microtime(true) - $startTime;
 
@@ -494,7 +496,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
 
     public function updateServiceOrderStatus($documentNo, $itemNo, $repairStatusCode, $returnVal)
     {
-        $endpoint = "/MAGENTO190/WS/TBH/Codeunit/ServiceOrderApp";
+        $endpoint = "/{$this->bcInstanceName}/WS/TBH/Codeunit/ServiceOrderApp";
         $payload = <<<XML
             <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
                 <Body>
@@ -549,7 +551,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
 
     public function sendMassageBusinessCentral($mobileNo, $documentNo, $repairStatusCode, $visitDate, $visitTime)
     {
-        $endpoint = "/MAGENTO190/WS/TBH/Codeunit/ServiceOrderApp";
+        $endpoint = "/{$this->bcInstanceName}/WS/TBH/Codeunit/ServiceOrderApp";
 
         $payload = <<<XML
             <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
@@ -599,7 +601,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
     
     public function requestSparePart($documentNo, $sparePartCode, $quantity, $consumerCode, $locationCode, $serviceItemNo)
     {
-        $endpoint = "/MAGENTO190/WS/TBH/Codeunit/ServiceOrderApp";
+        $endpoint = "/{$this->bcInstanceName}/WS/TBH/Codeunit/ServiceOrderApp";
 
         $payload = <<<XML
         <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
@@ -649,7 +651,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
 
     function updatePortalImage($serviceOrderNo, $orderPicture, $sLNo, $imageIsSignature)
     {
-        $endpoint = "/MAGENTO190/WS/TBH/Codeunit/ServiceOrderApp";
+        $endpoint = "/{$this->bcInstanceName}/WS/TBH/Codeunit/ServiceOrderApp";
         $imageIsSignatureValue = $imageIsSignature ? 'true' : 'false'; // Ensure proper boolean value
         $payload = <<<XML
             <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
@@ -697,7 +699,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
 
             $startTime = microtime(true);
 
-            $response = $client->get("/MAGENTO190/ODataV4/Company('TBH')/TeamRegionConfiguration?\$filter=Date ge " . now()->toDateString());
+            $response = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/TeamRegionConfiguration?\$filter=Date ge " . now()->toDateString());
 
             $requestTime = microtime(true) - $startTime;
 
@@ -728,7 +730,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
 
             $startTime = microtime(true);
 
-            $url = "/MAGENTO190/ODataV4/Company('TBH')/TeamRegionConfiguration?" .
+            $url = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/TeamRegionConfiguration?" .
                 "\$filter=Date ge {$startDate->toDateString()} and Date le {$endDate->toDateString()}";
 
             $response = $client->get($url);
@@ -766,7 +768,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
             $client = $this->createHttpClient();
 
             $startTime = microtime(true);
-            $response = $client->get("/MAGENTO190/ODataV4/Company('TBH')/TeamRegion");
+            $response = $client->get("/{$this->bcInstanceName}/ODataV4/Company('TBH')/TeamRegion");
 
             $requestTime = microtime(true) - $startTime;
 

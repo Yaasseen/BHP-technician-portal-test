@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
+import HomePage from "./Pages/HomePage";
+import AboutPage from "./Pages/AboutPage";
 import Login from "./Pages/Auth/Login";
 import axios from "axios";
 import { Spin } from "antd";
