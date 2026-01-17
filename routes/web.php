@@ -27,7 +27,7 @@ Route::middleware('web')->group(function () {
 
 Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/user', [HomeController::class, 'logged_in_user']);
-    Route::get('/logout',[LoginController::class, 'logout']);
+    Route::post('/logout',[LoginController::class, 'logout'])->name('logout');
    
     // Route::get('/service-orders', [ServiceOrderController::class, 'getServiceOrdersByDateRange']);
     // Service Order
@@ -54,7 +54,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/spare-part-list', [TechnicianController::class, 'getsparePartList']);
     Route::get('/location-list', [TechnicianController::class, 'getLocationList']);
     Route::get('/statuses', [TechnicianController::class, 'getStatuses']);
-    Route::get('/repair-status-list', [RepairStatusController::class, 'getRepairStatusiList'])->name('repair-status-list');
+    Route::get('/repair-status-list', [RepairStatusController::class, 'getRepairStatusList'])->name('repair-status-list');
 
 
     // Service ORder Activities

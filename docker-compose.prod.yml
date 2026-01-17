@@ -1,31 +1,40 @@
 version: '3.8'
 
 services:
-  # PHP Application (Laravel)
+  # PHP Application
   app:
     build:
       context: .
       dockerfile: Dockerfile
     image: technician-portal-app
     container_name: technician-portal-app
-    restart: unless-stopped
+    restart: always
     working_dir: /var/www
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
     volumes:
-      - ./:/var/www
+      # Only persist storage, do NOT mount code (use image code)
+      - ./storage:/var/www/storage
+      # Share public assets with web container
+      - static-content:/var/www/public
     networks:
       - technician-network
     depends_on:
       - db
 
-  # Scheduler for Laravel Tasks
+  # Scheduler
   scheduler:
     image: technician-portal-app
     container_name: technician-portal-scheduler
-    restart: unless-stopped
+    restart: always
     working_dir: /var/www
     command: php artisan schedule:work
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
     volumes:
-      - ./:/var/www
+      - ./storage:/var/www/storage
     networks:
       - technician-network
     depends_on:
@@ -36,34 +45,34 @@ services:
   web:
     image: nginx:alpine
     container_name: technician-portal-nginx
-    restart: unless-stopped
+    restart: always
     ports:
       - "8000:80"
     volumes:
-      - ./:/var/www
       - ./nginx/conf.d/:/etc/nginx/conf.d/
+      # Get public assets from the shared volume populated by 'app'
+      - static-content:/var/www/public
     networks:
       - technician-network
     depends_on:
       - app
 
-  # Database (MySQL)
+  # Database
   db:
     image: mysql:8.0
     container_name: technician-portal-db
-    restart: unless-stopped
+    restart: always
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-tbh_portal_prod}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
     volumes:
       - ./mysql-data:/var/lib/mysql
-    ports:
-      - "33061:3306"
     networks:
       - technician-network
 
 networks:
   technician-network:
     driver: bridge
+
+volumes:
+  static-content:

@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Auth;
-
-namespace App\Auth;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Cookie\QueueingFactory as CookieJar;
 use Illuminate\Contracts\Session\Session;

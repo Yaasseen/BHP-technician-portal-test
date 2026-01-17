@@ -35,7 +35,7 @@ COPY . /var/www
 # Note: execution time can be long, so we increase timeout
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN npm install
-RUN npm run prod 
+RUN npm run build
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www \

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use App\Models\ServiceOrderReplicationCount;
 
 class Utility
@@ -93,10 +94,10 @@ class Utility
             'linesExtraCount' => count($serviceLinesExtra)
         ]);
 
-        file_put_contents('ServiceHeaderExtra.json', json_encode($serviceHeaderExtra, JSON_PRETTY_PRINT));
-        file_put_contents('ServicelinesExtra.json', json_encode($serviceLinesExtra, JSON_PRETTY_PRINT));
+        Storage::put('ServiceHeaderExtra.json', json_encode($serviceHeaderExtra, JSON_PRETTY_PRINT));
+        Storage::put('ServicelinesExtra.json', json_encode($serviceLinesExtra, JSON_PRETTY_PRINT));
 
-        Log::info('Extra data written to JSON files.');
+        Log::info('Extra data written to JSON files in storage/app/.');
 
         return $combinedResponse;
     }

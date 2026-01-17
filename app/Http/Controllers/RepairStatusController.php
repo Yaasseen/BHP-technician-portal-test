@@ -13,7 +13,7 @@ class RepairStatusController extends Controller
     {
         $this->businessCentral = BusinessCentral::getInstance();
     }
-    public function getRepairStatusiList()
+    public function getRepairStatusList()
     {
         $repairCodes = $this->businessCentral->repairStatusList();
         return response()->json($repairCodes['value']);

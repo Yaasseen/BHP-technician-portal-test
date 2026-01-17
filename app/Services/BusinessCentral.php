@@ -549,7 +549,7 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
     }
 
 
-    public function sendMassageBusinessCentral($mobileNo, $documentNo, $repairStatusCode, $visitDate, $visitTime)
+    public function sendMessageBusinessCentral($mobileNo, $documentNo, $repairStatusCode, $visitDate, $visitTime)
     {
         $endpoint = "/{$this->bcInstanceName}/WS/TBH/Codeunit/ServiceOrderApp";
 
@@ -586,10 +586,10 @@ public function serviceOrdersToBeDeleted($maxReplicationCount = 100)
             ]);
             $responseBody = $response->getBody()->getContents();
             
-            Log::info("Massage Request Response", [
+            Log::info("Message Request Response", [
                 'response' => $responseBody
             ]);
-            Log::info("Massage Send successfully to Bussiness Central.");
+            Log::info("Message Sent successfully to Business Central.");
             return $responseBody;
 
         } catch (\Exception $e) {

@@ -94,7 +94,7 @@ class AssignServiceOrder extends Controller
         // ]);
 
         try {
-            $this->businessCentral->sendMassageBusinessCentral(
+            $this->businessCentral->sendMessageBusinessCentral(
                 $serviceOrder->mobile_no,
                 $serviceOrder->document_no,
                 $serviceOrder->repair_status_code,
@@ -356,7 +356,7 @@ class AssignServiceOrder extends Controller
                 
                 // Send message to Business Central for each order
                 try {
-                    $this->businessCentral->sendMassageBusinessCentral(
+                    $this->businessCentral->sendMessageBusinessCentral(
                         $serviceOrder->mobile_no,
                         $serviceOrder->document_no,
                         $serviceOrder->repair_status_code,

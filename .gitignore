@@ -39,3 +39,5 @@ yarn-error.log
 /ServiceHeaderExtra.json
 /ServicelinesExtra.json
 docker-compose.override.yml
+# MySQL Data
+/mysql-data
