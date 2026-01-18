@@ -16,6 +16,6 @@ class RepairStatusController extends Controller
     public function getRepairStatusList()
     {
         $repairCodes = $this->businessCentral->repairStatusList();
-        return response()->json($repairCodes['value']);
+        return response()->json($repairCodes);
     }
 }

@@ -31,7 +31,7 @@ const DashboardCard = ({
                     <Progress
                         type="circle"
                         percent={progress}
-                        width={progressWidth}
+                        size={progressWidth}
                         strokeColor={progressColor}
                         trailColor={trailColor}
                         showInfo={false}

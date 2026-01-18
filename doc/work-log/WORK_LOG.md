@@ -40,6 +40,18 @@ The project has been refactored to address security vulnerabilities, code qualit
 ### 5. Documentation (Est: 0.5h)
 - [x] **Created Docker Guide**: Added `doc/DOCKER.md` with instructions for Development and Production deployment.
 
+### 6. Business Central Service Refactoring & Logging (Est: 3.5h)
+- [x] **Fixed cURL Error 3**: Refactored configuration access in `BusinessCentral.php` to use `config()` instead of `env()` to support configuration caching in production.
+- [x] **Service Container Integration**: Registered `BusinessCentral` as a singleton in `AppServiceProvider`.
+- [x] **Professional Refactoring**:
+    - Rewrote `BusinessCentral.php` to use clean, modern PHP standards (Type hinting, DI, Constants).
+    - Centralized OData and SOAP request logic into helper methods (`fetchOData`, `sendSoapRequest`) to remove duplication.
+    - Implemented `Cache::remember()` for robust caching.
+- [x] **Dedicated Logging Channel**: 
+    - Created a `business_central` log channel in `config/logging.php`.
+    - Configured the service to log all API requests and responses to `storage/logs/business-central.log`.
+    - Enhanced logging to capture full request URLs, payloads, and response summaries.
+
 ---
 
-**Total Estimated Effort**: ~6.5 Hours
+**Total Estimated Effort**: ~10 Hours

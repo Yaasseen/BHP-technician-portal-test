@@ -39,7 +39,7 @@ const Header = ({
     const handleLogout = () => {
         setLoading(true);
         axios
-            .get("/logout")
+            .post("/logout")
             .then(() => {
                 userLogout();
             })
@@ -105,25 +105,31 @@ const Header = ({
         );
     }
 
-    const menu = (
-        <Menu>
-            <MenuItem key={1}>
+    const menuItems = [
+        {
+            key: '1',
+            label: (
                 <p className="font-semibold">
                     {user.First_Name} {user.Last_Name}
                 </p>
-            </MenuItem>
-            <Menu.Divider />
-            <MenuItem key={2}>
+            ),
+        },
+        {
+            type: 'divider',
+        },
+        {
+            key: '2',
+            label: (
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 w-full text-left"
                     disabled={loading}
                 >
                     Log Out
                 </button>
-            </MenuItem>
-        </Menu>
-    );
+            ),
+        },
+    ];
 
     return (
         <div className="sticky">
@@ -156,7 +162,7 @@ const Header = ({
                     </div>
 
                     <Dropdown
-                        overlay={menu}
+                        menu={{ items: menuItems }}
                         trigger={["click"]}
                         placement="bottomRight"
                     >

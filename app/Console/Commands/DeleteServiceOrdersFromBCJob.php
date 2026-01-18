@@ -43,7 +43,7 @@ class DeleteServiceOrdersFromBCJob extends Command
             }
 			
 			Log::info("Getting the formatted records");
-			$formattedResponse = $serviceResponse["value"];			
+			$formattedResponse = $serviceResponse;
 			
 			DB::transaction(function() use ($formattedResponse) {
 				$documentNos = collect($formattedResponse)->pluck('No');

@@ -12,13 +12,13 @@ const NotificationBell = ({ count }) => {
         { key: 5, message: "System update completed" },
     ]);
 
-    const menu = <div>{}</div>;
+    const menu = <div>{ }</div>;
 
     return (
         <div className="flex items-center gap-4">
             <div className="cursor-pointer rounded-full border border-gray-400 p-2 relative">
                 <Dropdown
-                    overlay={menu}
+                    dropdownRender={() => menu}
                     trigger={["click"]}
                     placement="bottomRight"
                 >

@@ -69,7 +69,7 @@ class TechnicianController extends Controller
     public function getsparePartList()
     {
         $sparePartList = $this->businessCentral->getSpareParts();
-        return response()->json($sparePartList);
+        return response()->json(['value' => $sparePartList]);
     }
 
     public function getLocationList()
