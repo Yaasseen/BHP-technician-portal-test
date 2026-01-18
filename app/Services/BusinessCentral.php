@@ -36,13 +36,13 @@ class BusinessCentral
 
     private function __construct()
     {
-        $this->oDataBaseUrl = env("ODATA_BASE_URL");
-        $this->oDataUsername = env("ODATA_USER_NAME");
-        $this->oDataPassword = env("ODATA_PASSWORD");
-        $this->soapBaseUrl = env("SOAP_BASE_URL");
-        $this->soapUsername = env("SOAP_USER_NAME");
-        $this->soapPassword = env("SOAP_PASSWORD");
-        $this->bcInstanceName = env("BC_INSTANCE_NAME", "bc270");
+        $this->oDataBaseUrl = config("services.business_central.odata_base_url");
+        $this->oDataUsername = config("services.business_central.odata_username");
+        $this->oDataPassword = config("services.business_central.odata_password");
+        $this->soapBaseUrl = config("services.business_central.soap_base_url");
+        $this->soapUsername = config("services.business_central.soap_username");
+        $this->soapPassword = config("services.business_central.soap_password");
+        $this->bcInstanceName = config("services.business_central.instance_name", "bc270");
        
 
         $this->technicianList = [];

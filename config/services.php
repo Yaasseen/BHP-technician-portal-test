@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'business_central' => [
+        'odata_base_url' => env('ODATA_BASE_URL'),
+        'odata_username' => env('ODATA_USER_NAME'),
+        'odata_password' => env('ODATA_PASSWORD'),
+        'soap_base_url' => env('SOAP_BASE_URL'),
+        'soap_username' => env('SOAP_USER_NAME'),
+        'soap_password' => env('SOAP_PASSWORD'),
+        'instance_name' => env('BC_INSTANCE_NAME', 'bc270'),
+    ],
+
 ];
