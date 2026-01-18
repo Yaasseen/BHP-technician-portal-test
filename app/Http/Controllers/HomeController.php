@@ -13,7 +13,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return Inertia::render('HomePage');
+        return view('app');
     }
 
     public function logged_in_user() {
