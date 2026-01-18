@@ -43,6 +43,9 @@ COPY . .
 # Remove stale cache files copied from host
 RUN rm -f /var/www/bootstrap/cache/packages.php /var/www/bootstrap/cache/services.php
 
+# Generate optimized package manifest
+RUN php artisan package:discover --ansi
+
 # Copy Frontend Assets from Stage 1
 COPY --from=build-stage /app/public/build /var/www/public/build
 
@@ -52,4 +55,4 @@ RUN chown -R www-data:www-data /var/www \
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
-CMD ["sh", "-c", "rm -f /var/www/bootstrap/cache/packages.php /var/www/bootstrap/cache/services.php && php-fpm"]
+CMD ["php-fpm"]
