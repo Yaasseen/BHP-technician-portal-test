@@ -22,6 +22,9 @@ services:
 
   # Scheduler for Laravel Tasks
   scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: technician-portal-app
     container_name: technician-portal-scheduler
     restart: unless-stopped
@@ -40,6 +43,9 @@ services:
 
   # Vite Development Server
   vite:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: technician-portal-app
     container_name: technician-portal-vite
     restart: unless-stopped

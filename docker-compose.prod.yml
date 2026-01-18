@@ -28,6 +28,9 @@ services:
 
   # Scheduler
   scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: technician-portal-app
     container_name: technician-portal-scheduler
     restart: always
