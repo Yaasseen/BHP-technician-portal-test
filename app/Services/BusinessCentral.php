@@ -17,13 +17,13 @@ use Carbon\Carbon;
 
 class BusinessCentral
 {
-    private static $instance = null;
-    public $technicianList;
-    public $regionList;
-    public $teamList;
-    public $sparePartList;
-    protected $technicianListRefreshTime;
-    protected $utility;
+
+    public array $technicianList = [];
+    public array $regionList = [];
+    public array $teamList = [];
+    public array $sparePartList = [];
+    protected int $technicianListRefreshTime = 0;
+    protected Utility $utility;
     protected $oDataBaseUrl;
     protected $oDataUsername;
     protected $oDataPassword;
@@ -34,7 +34,7 @@ class BusinessCentral
     protected $password;
     protected $bcInstanceName;
 
-    private function __construct()
+    public function __construct(Utility $utility)
     {
         $this->oDataBaseUrl = config("services.business_central.odata_base_url");
         $this->oDataUsername = config("services.business_central.odata_username");
@@ -50,13 +50,10 @@ class BusinessCentral
         $this->teamList = [];
         $this->sparePartList = [];
         $this->technicianListRefreshTime = 0;
-        $this->utility = new Utility();
+        $this->utility = $utility;
     }
-    public static function getInstance() {
-        if (self::$instance === null) {
-            self::$instance = new BusinessCentral();
-        }
-        return self::$instance;
+    public static function getInstance(): self {
+        return app(self::class);
     }
 
     private function createHttpClient(): Client
