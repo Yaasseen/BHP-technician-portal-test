@@ -40,6 +40,9 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev --no-script
 # Copy Application Code
 COPY . .
 
+# Remove stale cache files copied from host
+RUN rm -f /var/www/bootstrap/cache/packages.php /var/www/bootstrap/cache/services.php
+
 # Copy Frontend Assets from Stage 1
 COPY --from=build-stage /app/public/build /var/www/public/build
 
