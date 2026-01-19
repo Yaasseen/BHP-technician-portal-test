@@ -38,7 +38,7 @@ class BusinessCentral
         $this->oDataUsername = config('services.business_central.odata_username') ?? '';
         $this->oDataPassword = config('services.business_central.odata_password') ?? '';
         $this->soapBaseUrl = config('services.business_central.soap_base_url') ?? '';
-        $this->soapUsername = config('services.business_central.soap_user_name') ?? '';
+        $this->soapUsername = config('services.business_central.soap_username') ?? '';
         $this->soapPassword = config('services.business_central.soap_password') ?? '';
         $this->bcInstanceName = config('services.business_central.bc_instance_name') ?? 'bc270';
     }
