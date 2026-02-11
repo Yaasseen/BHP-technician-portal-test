@@ -4,7 +4,8 @@ import {
     CalendarOutlined,
     TeamOutlined,
 } from "@ant-design/icons";
-import React, { useState } from "react";
+import React from "react";
+import { motion } from "framer-motion";
 
 function DashboardList({
     user,
@@ -13,81 +14,71 @@ function DashboardList({
     ShowTeamRegion,
     activeView,
 }) {
-    console.log("==>", activeView);
-
     return (
-        <>
-            <div className="bg-white rounded-t-xl">
-                <div>
-                      <header className="pb-5 sm:flex sm:justify-between flex-wrap gap-4 items-center">
-                        {activeView === "list" && (
-                            <div>
-                                <p className="sm:text-3xl text-md font-medium font-sans">
-                                    Welcome back, {user.First_Name}
-                                </p>
-                                <p className="sm:text-xl text-sm font-medium font-sans">
+        <div className="bg-transparent mb-6">
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                {activeView === "list" && (
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="space-y-1.5"
+                    >
+                        <h2 className="text-3xl sm:text-4xl font-[900] text-slate-900 tracking-tight leading-none">
+                            Welcome, <span className="text-emerald-600 font-black">{user.First_Name}</span>
+                        </h2>
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-lg">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                                <span className="text-emerald-700 text-[10px] font-black uppercase tracking-widest">
                                     {user.Role}
-                                </p>
-                                <p className="text-gray-500 sm:text-md text-xs font-light pt-4">
-                                    Your current tasks summary and activity.
-                                </p>
+                                </span>
                             </div>
-                        )}
-
-                          <div
-                            className={`flex gap-2 flex-wrap sm:flex-nowrap mt-2 lg:mt-4 sm:mt-0 ${
-                                activeView !== "list"
-                                    ? "justify-start sm:justify-end  w-full"
-                                    : ""
-                            }`}
-                        >
-                            <div className="sm:m-0 mb-1 flex justify-end">
-                                <Button
-                                    icon={<UnorderedListOutlined />}
-                                    onClick={ShowList}
-                                    className={`${
-                                        activeView === "list"
-                                            ? "bg-indigo-600 text-white border-indigo-600"
-                                            : "bg-white text-black border-indigo-600"
-                                    }`}
-                                >
-                                    List
-                                </Button>
-                            </div>
-                            <div className="sm:m-0 mb-1 flex justify-end">
-                                <Button
-                                    icon={<CalendarOutlined />}
-                                    onClick={HideShowList}
-                                    className={`${
-                                        activeView === "weekly"
-                                            ? "bg-indigo-600 text-white border-indigo-600"
-                                            : "bg-white text-black border-indigo-600"
-                                    }`}
-                                >
-                                    Weekly View
-                                </Button>
-                            </div>
-                            <div className="sm:m-0 mb-1 flex justify-end">
-                                {user.Role !== "Technician" && (
-                                    <Button
-                                        icon={<TeamOutlined />}
-                                        onClick={ShowTeamRegion}
-                                        className={`${
-                                            activeView === "teamandregion"
-                                                ? "bg-indigo-600 text-white border-indigo-600"
-                                                : "bg-white text-black border-indigo-600"
-                                        }`}
-                                    >
-                                        Team and Region
-                                    </Button>
-                                )}
-                            </div>
+                            <span className="text-slate-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-4 h-[1px] bg-slate-200"></span>
+                                Technician Portal
+                            </span>
                         </div>
-                    </header>
+                    </motion.div>
+                )}
+
+                <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-100 self-start md:self-auto">
+                    <button
+                        onClick={ShowList}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeView === "list"
+                            ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100"
+                            : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                            }`}
+                    >
+                        <UnorderedListOutlined />
+                        <span>List</span>
+                    </button>
+                    <button
+                        onClick={HideShowList}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeView === "weekly"
+                            ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100"
+                            : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                            }`}
+                    >
+                        <CalendarOutlined />
+                        <span>Weekly</span>
+                    </button>
+                    {user.Role !== "Technician" && (
+                        <button
+                            onClick={ShowTeamRegion}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeView === "teamandregion"
+                                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100"
+                                : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                                }`}
+                        >
+                            <TeamOutlined />
+                            <span>Config</span>
+                        </button>
+                    )}
                 </div>
-            </div>
-        </>
+            </header>
+        </div>
     );
 }
 
 export default DashboardList;
+

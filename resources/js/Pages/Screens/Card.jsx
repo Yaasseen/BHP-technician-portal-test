@@ -71,24 +71,23 @@ export default function Card({ refreshCard }) {
     ];
 
     return (
-        <div className="py-4">
-            <div className="grid grid-cols-2 items-center md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {data.map((item, index) => (
-                    <DashboardCard
-                        key={index}
-                        title={item.title}
-                        count={item.count}
-                        progress={item.progress}
-                        progressColor={item.progressColor}
-                        trailColor={item.trailColor}
-                        trend={item.trend}
-                        trendColor={item.trendBgColor}
-                        trendDirection={item.trendDirection}
-                        trendText={item.trendText}
-                        trendBgColor={item.trendBgColor}
-                    />
-                ))}
-            </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8 mt-2">
+            {data.map((item, index) => (
+                <DashboardCard
+                    key={index}
+                    title={item.title}
+                    count={item.count}
+                    progress={item.progress}
+                    progressColor={item.progressColor}
+                    trailColor={item.trailColor}
+                    trend={item.trend}
+                    trendColor={item.trendBgColor}
+                    trendDirection={item.trendDirection}
+                    trendText={item.trendText}
+                    trendBgColor={item.trendBgColor}
+                />
+            ))}
         </div>
     );
 }
+

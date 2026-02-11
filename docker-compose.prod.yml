@@ -71,6 +71,8 @@ services:
   # Database
   db:
     image: mysql:8.0
+    ports:
+      - "33060:3306"
     container_name: technician-portal-db
     restart: always
     environment:

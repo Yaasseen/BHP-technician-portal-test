@@ -215,11 +215,11 @@ function SparePartForm({
                     <Button
                         disabled={submitLoading}
                         htmlType="submit"
-                        className="bg-indigo-500 text-white"
+                        className="bg-emerald-600 text-white hover:bg-emerald-700 border-none h-10 font-bold px-6 shadow-md shadow-emerald-100"
                     >
                         {submitLoading ? (
                             <div className=" px-7 py-1">
-                                <Spin indicator={<LoadingOutlined spin />} />
+                                <Spin indicator={<LoadingOutlined spin className="text-white" />} />
                             </div>
                         ) : (
                             "Submit request"

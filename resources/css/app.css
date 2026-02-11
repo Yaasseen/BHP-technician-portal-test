@@ -1,3 +1,115 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary / Brand - Professional Slate/Navy */
+    --primary: 30 41 59;
+    /* Slate 800 */
+    --primary-light: 71 85 105;
+    /* Slate 600 */
+    --primary-dark: 15 23 42;
+    /* Slate 900 */
+    --primary-foreground: 255 255 255;
+
+    /* Accent / Action - Vibrant Emerald */
+    --accent: 16 185 129;
+    /* Emerald 500 */
+    --accent-foreground: 255 255 255;
+
+    /* Neutrals / Backgrounds */
+    --background: 248 250 252;
+    /* Slate 50 */
+    --foreground: 15 23 42;
+    /* Slate 900 */
+
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+
+    --muted: 241 245 249;
+    /* Slate 100 */
+    --muted-foreground: 100 116 139;
+    /* Slate 500 */
+
+    --border: 226 232 240;
+    /* Slate 200 */
+
+    /* Semantic Colors */
+    --success: 16 185 129;
+    /* Emerald 500 */
+    --warning: 245 158 11;
+    /* Amber 500 */
+    --error: 239 68 68;
+    /* Red 500 */
+
+    /* Tokens - Refined for professional structure */
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.25rem;
+
+    --shadow-premium: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+body {
+  @apply bg-gray-50 text-slate-900 antialiased font-sans;
+  background-color: rgb(var(--background));
+  letter-spacing: -0.01em;
+}
+
+/* Premium Component Classes */
+.glass-morphism {
+  @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-sm;
+}
+
+.app-card {
+  @apply bg-white rounded-[1.25rem] shadow-sm border border-slate-200/60 p-6 transition-all duration-300;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-card:hover {
+  @apply shadow-md -translate-y-1 border-emerald-100 ring-4 ring-emerald-500/5;
+}
+
+.app-card:active {
+  @apply scale-[0.98] brightness-95 translate-y-0 shadow-sm transition-all duration-100;
+}
+
+.btn-primary {
+  @apply bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl px-6 py-2.5 shadow-sm transition-all active:scale-95;
+}
+
+.input-modern {
+  @apply bg-white border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none text-sm font-medium;
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Ant Design Overrides to Match Professional Theme */
+.ant-btn-primary {
+  background-color: rgb(var(--accent)) !important;
+  border-radius: 0.75rem !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 4px 0 rgba(var(--accent), 0.1) !important;
+}
+
+.ant-tag-emerald {
+  @apply bg-emerald-50 text-emerald-700 border-emerald-100 font-bold uppercase tracking-wider text-[10px] rounded-md px-2;
+}
+
+/* Custom Checkbox Polish */
+.custom-checkbox .ant-checkbox-inner {
+  @apply rounded-md border-slate-300 w-5 h-5 !important;
+}
+
+.custom-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+  @apply bg-emerald-600 border-emerald-600 shadow-sm !important;
+}
+
+.safe-area-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 2rem);
+}

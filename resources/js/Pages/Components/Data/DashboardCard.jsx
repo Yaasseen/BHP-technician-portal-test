@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Card, Progress, Statistic } from "antd";
+import React from "react";
+import { Progress, Statistic } from "antd";
+import { motion } from "framer-motion";
 
 const DashboardCard = ({
     title,
@@ -7,49 +8,48 @@ const DashboardCard = ({
     progress,
     progressColor,
     trailColor,
+    trend,
+    trendColor = "emerald",
+    trendDirection = "up",
+    trendText,
 }) => {
-    const [progressWidth, setProgressWidth] = useState(50);
-
-    const updateProgressWidth = () => {
-        const width = window.innerWidth;
-        if (width < 480) setProgressWidth(35);
-        else if (width < 640) setProgressWidth(40);
-        else if (width < 1024) setProgressWidth(50);
-        else setProgressWidth(60);
-    };
-
-    useEffect(() => {
-        updateProgressWidth();
-        window.addEventListener("resize", updateProgressWidth);
-        return () => window.removeEventListener("resize", updateProgressWidth);
-    }, []);
-
     return (
-        <div className="w-full">
-            <Card className="p-4 sm:p-5">
-                <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3">
-                    <Progress
-                        type="circle"
-                        percent={progress}
-                        size={progressWidth}
-                        strokeColor={progressColor}
-                        trailColor={trailColor}
-                        showInfo={false}
-                        strokeWidth={20}
-                    />
+        <motion.div
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            whileTap={{ scale: 0.98 }}
+            className="app-card relative p-5 bg-white border-slate-200/60 overflow-hidden"
+        >
+            {/* Very subtle pattern overlay */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-slate-50 to-transparent opacity-50 -mr-8 -mt-8 rounded-full blur-2xl"></div>
 
-                    <div className="mt-3 sm:mt-0">
-                        <p className="text-sm sm:text-md font-medium text-gray-700">
-                            {title}
-                        </p>
-                        <Statistic
-                            value={count}
-                            className="text-base font-semibold"
-                        />
+            <div className="relative z-10 flex flex-col h-full justify-between">
+                <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
+                        {title}
+                    </p>
+                    <div className="flex items-end gap-2">
+                        <h2 className="text-3xl font-[900] text-slate-800 tracking-tight">
+                            {count}
+                        </h2>
                     </div>
                 </div>
-            </Card>
-        </div>
+
+                <div className="mt-4 flex items-center justify-between gap-3">
+                    <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress}%` }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            className="h-full rounded-full"
+                            style={{ backgroundColor: progressColor }}
+                        />
+                    </div>
+                    <div className={`px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-tighter flex items-center gap-0.5 bg-emerald-50 text-emerald-600 border border-emerald-100`}>
+                        {trendDirection === "up" ? "↑" : "↓"} {progress}%
+                    </div>
+                </div>
+            </div>
+        </motion.div>
     );
 };
 

@@ -8,8 +8,9 @@ import {
     Spin,
     message,
     Modal,
+    Tag,
 } from "antd";
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Dropzone from "react-dropzone";
 import Webcam from "react-webcam";
 import {
@@ -27,7 +28,6 @@ import DetailCard from "../Components/common/DetailsCard";
 import ServiceOrderActivities from "../Components/common/ServiceOrderActivities";
 import SparePartForm from "../Components/common/SparePartForm";
 import { LoadingOutlined } from "@ant-design/icons";
-import { label } from "motion/react-client";
 
 function ServiceDetails({ user, document_no, ScreenDashboard }) {
     const [uploadFile, setUploadFile] = useState("");
@@ -510,448 +510,270 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                 <p>Back to Dashboard</p>
             </button> */}
 
-            <div className="">
+            <div className="space-y-6 pb-12">
                 {contextHolder}
-                <div className="bg-white rounded-xl">
-                    <div className="border-b border-gray-200 pt-10 w-full pb-5">
-                        <p className="text-lg pl-10">Service Details</p>
-                    </div>
-                    <div className="grid grid-cols-12 gap-2">
-                        <div className="sm:col-span-4 p-5 col-span-12">
-                            <Descriptions bordered column={1} title="Overview">
-                                {descriptions.map((item, index) => (
-                                    <Descriptions.Item
-                                        key={index}
-                                        label={
-                                            <>
-                                                <span
-                                                    style={{ marginRight: 8 }}
-                                                >
+                <div className="flex flex-col lg:flex-row gap-6">
+                    {/* Left Column: Overview */}
+                    <div className="w-full lg:w-1/3">
+                        <div className="app-card overflow-hidden">
+                            <div className="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4">
+                                <h3 className="text-white font-extrabold flex items-center gap-2">
+                                    <FileOutlined />
+                                    <span>Task Overview</span>
+                                </h3>
+                            </div>
+                            <div className="p-2">
+                                <Descriptions bordered column={1} size="small" className="modern-descriptions">
+                                    {descriptions.map((item, index) => (
+                                        <Descriptions.Item
+                                            key={index}
+                                            label={
+                                                <div className="flex items-center gap-2 text-gray-500 font-bold text-[11px] uppercase tracking-wider">
                                                     {item.icon}
-                                                </span>
-                                                {item.label}
-                                            </>
-                                        }
-                                    >
-                                        {item.value}
-                                    </Descriptions.Item>
-                                ))}
-                            </Descriptions>
-                        </div>
-
-                        <div className="col-span-12 sm:col-span-8  sm:pr-6  pr-3 sm:pl-0 pl-3 pt-4">
-                            <div className="flex justify-between items-center">
-                                <div className="text-md font-semibold mb-4">
-                                    Details
-                                </div>
-                                {user.Role !== "Read Only" && (
-                                    <div>
-                                        <Button
-                                            onClick={() => setModelOpen(true)}
-                                            className="bg-indigo-500 text-white mb-4"
+                                                    {item.label}
+                                                </div>
+                                            }
                                         >
-                                            Request SparePart
-                                        </Button>
-                                    </div>
+                                            <span className="font-semibold text-gray-800">{item.value}</span>
+                                        </Descriptions.Item>
+                                    ))}
+                                </Descriptions>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Details & Forms */}
+                    <div className="w-full lg:w-2/3 space-y-6">
+                        {/* Task Item Details Table */}
+                        <div className="app-card p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-lg font-extrabold text-slate-900 border-l-4 border-emerald-500 pl-4 h-6 flex items-center">
+                                    Device Details
+                                </h3>
+                                {user.Role !== "Read Only" && (
+                                    <Button
+                                        onClick={() => setModelOpen(true)}
+                                        className="bg-emerald-600 text-white rounded-xl font-bold h-10 px-6 hover:bg-emerald-700 shadow-md shadow-emerald-100 border-none"
+                                    >
+                                        Request Spare Part
+                                    </Button>
                                 )}
                             </div>
 
-                            <div className="mb-5 mt-2 w-full overflow-x-auto">
+                            <div className="overflow-x-auto rounded-xl border border-gray-100">
                                 <Table
                                     dataSource={dataSource}
                                     columns={columns}
-                                    bordered
-                                    className="text-sm"
                                     pagination={false}
+                                    size="middle"
+                                    className="modern-table"
                                 />
                             </div>
-                            <div className="flex flex-col">
-                                <div className="text-md font-semibold mb-4">
-                                    Service Spare Part
-                                </div>
-                                 <div className="mb-5 mt-2 w-full overflow-x-auto">
-                                    <Table
-                                        columns={tableColumns}
-                                        dataSource={data}
-                                        bordered
-                                        className="text-sm"
-                                        pagination={false}
-                                        scroll={{ y: 275 }}
-                                        loading={loadingInfo}
-                                    />
-                                </div>
+                        </div>
+
+                        {/* Spare Parts List */}
+                        <div className="app-card p-6">
+                            <h3 className="text-lg font-extrabold text-slate-900 mb-6 border-l-4 border-emerald-500 pl-4 h-6 flex items-center">
+                                Service Spare Parts
+                            </h3>
+                            <div className="overflow-x-auto rounded-xl border border-slate-100">
+                                <Table
+                                    columns={tableColumns}
+                                    dataSource={data}
+                                    pagination={false}
+                                    scroll={{ y: 275 }}
+                                    loading={loadingInfo}
+                                    size="middle"
+                                    className="modern-table"
+                                />
                             </div>
+                        </div>
 
-                            {user.Role !== "Read Only" && (
-                                <div className=" p-0 sm:p-4 lg:p-10 border rounded-xl">
-                                    <Form
-                                        form={form}
-                                        layout="vertical"
-                                        className="p-4"
-                                        onFinish={handleSubmitForm}
-                                        initialValues={{
-                                            repair_status_code:
-                                                serviceData?.taskCode,
-                                            service_order_status:
-                                                serviceData?.status,
-                                        }}
-                                    >
-                                        {/* Repair Status Code Field */}
+                        {/* Activity Form */}
+                        {user.Role !== "Read Only" && (
+                            <div className="app-card p-6 md:p-8">
+                                <h3 className="text-lg font-extrabold text-slate-900 mb-8 border-l-4 border-emerald-500 pl-4 h-6 flex items-center">
+                                    Log Activity
+                                </h3>
+                                <Form
+                                    form={form}
+                                    layout="vertical"
+                                    onFinish={handleSubmitForm}
+                                    className="modern-form"
+                                    initialValues={{
+                                        repair_status_code: serviceData?.taskCode,
+                                        service_order_status: serviceData?.status,
+                                    }}
+                                >
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
                                         <Form.Item
-                                            label="Service Order Business Central Status"
+                                            label={<span className="font-bold text-gray-700">BC Status</span>}
                                             name="repair_status_code"
-                                            initialValue={serviceData?.taskCode}
                                         >
                                             <Select
+                                                className="h-11 rounded-xl"
                                                 loading={loading}
-                                                onChange={(value) => {
-                                                    const selectedTask =
-                                                        taskCode.find(
-                                                            (task) =>
-                                                                task.taskCode ===
-                                                                value
-                                                        );
-                                                  
-                                                }}
-                                                placeholder="Select Status Code"
-                                                options={taskCode.map(
-                                                    (taskCode) => ({
-                                                        label: taskCode.taskDescription,
-                                                        value: taskCode.taskCode,
-                                                    })
-                                                )}
+                                                placeholder="Select BC Status"
+                                                options={taskCode.map((task) => ({
+                                                    label: task.taskDescription,
+                                                    value: task.taskCode,
+                                                }))}
                                             />
                                         </Form.Item>
 
-                                        {/* Service Order Status Field */}
                                         <Form.Item
-                                            label="Service Order Portal Status"
+                                            label={<span className="font-bold text-gray-700">Portal Status</span>}
                                             name="service_order_status"
-                                            initialValue={serviceData?.status}
                                         >
                                             <Select
+                                                className="h-11 rounded-xl"
                                                 loading={loadingInfo}
-                                                options={statusOptions.map(
-                                                    (option) => ({
-                                                        label: `${option.value} - ${option.label}`,
-                                                        value: option.value,
-                                                    })
-                                                )}
-                                                value={serviceData?.status}
-                                                notFoundContent={
-                                                    loadingInfo ? (
-                                                        <div className="flex justify-center ">
-                                                            <Spin size="small" />
-                                                        </div>
-                                                    ) : (
-                                                        "No spare parts available"
-                                                    )
-                                                }
+                                                options={statusOptions.map((opt) => ({
+                                                    label: `${opt.value} - ${opt.label}`,
+                                                    value: opt.value,
+                                                }))}
                                             />
                                         </Form.Item>
+                                    </div>
 
-                                        <Form.Item
-                                            label="Description"
-                                            name="description"
-                                        >
-                                            <Input.TextArea placeholder="Enter description here" />
-                                        </Form.Item>
+                                    <Form.Item
+                                        label={<span className="font-bold text-gray-700">Findings & Remarks</span>}
+                                        name="description"
+                                    >
+                                        <Input.TextArea
+                                            rows={4}
+                                            className="rounded-xl bg-gray-50 border-gray-200"
+                                            placeholder="Enter your service findings and remarks..."
+                                        />
+                                    </Form.Item>
 
-                                        <Form.Item label="Upload Image">
-                                            <div className="border rounded-lg p-5 flex flex-col items-center justify-center">
-                                                <span className="border rounded-lg p-2">
-                                                    <div
-                                                        onClick={handleClick}
-                                                        className="flex cursor-pointer"
-                                                    >
-                                                        {!showWebcam && (
-                                                            <CameraOutlined
-                                                                style={{
-                                                                    fontSize:
-                                                                        "30px",
-                                                                }}
-                                                            />
-                                                        )}
-                                                        {showWebcam &&
-                                                            !cameraImage &&
-                                                            !imageShow && (
-                                                                // <WebcamCapture
-                                                                //     setCameraImage={
-                                                                //         setCameraImage
-                                                                //     }
-                                                                //     showCloseWebCam={
-                                                                //         handleCloseWebCamp
-                                                                //     }
-                                                                // />
-                                                                <div className="p-4">
-                                                                    <Webcam
-                                                                        audio={
-                                                                            false
-                                                                        }
-                                                                        height={
-                                                                            720
-                                                                        }
-                                                                        screenshotFormat="image/jpeg"
-                                                                        width={
-                                                                            1280
-                                                                        }
-                                                                        ref={
-                                                                            webcamRef
-                                                                        }
-                                                                        videoConstraints={
-                                                                            videoConstraints
-                                                                        }
-                                                                        playsInline={
-                                                                            true
-                                                                        }
-                                                                        style={{
-                                                                            maxWidth:
-                                                                                "300px",
-                                                                            maxHeight:
-                                                                                "300px",
-                                                                        }}
-                                                                    />
-                                                                    <div className="pt-2 space-x-2">
-                                                                        <Button
-                                                                            onClick={
-                                                                                captureImage
-                                                                            }
-                                                                        >
-                                                                            Capture
-                                                                            photo
-                                                                        </Button>
-                                                                        <Button
-                                                                            onClick={() =>
-                                                                                setUseFrontCamera(
-                                                                                    (
-                                                                                        prev
-                                                                                    ) =>
-                                                                                        !prev
-                                                                                )
-                                                                            }
-                                                                        >
-                                                                            Switch
-                                                                            Camera
-                                                                        </Button>
-                                                                        {/* <Button
-                                                                        onClick={
-                                                                            handleCloseWebCamp
-                                                                        }
-                                                                    >
-                                                                        Close
-                                                                    </Button> */}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                    </div>
-                                                    <div>
-                                                        {cameraImage && (
-                                                            <div className="mt-4 p-4 items-center">
-                                                                <p className="text-sm pb-2">
-                                                                    Captured
-                                                                    Image:
-                                                                </p>
-                                                                <img
-                                                                    src={
-                                                                        cameraImage
-                                                                    }
-                                                                    alt="Captured"
-                                                                    style={{
-                                                                        maxWidth:
-                                                                            "100px",
-                                                                        maxHeight:
-                                                                            "100px",
-                                                                    }}
-                                                                />
-                                                                <div className="pt-2 flex space-x-4">
-                                                                    <Button
-                                                                        onClick={
-                                                                            handleReset
-                                                                        }
-                                                                        type="default"
-                                                                    >
-                                                                        Retake
-                                                                        Picture
-                                                                    </Button>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </span>
-                                                {!cameraImage && (
-                                                    <div className="flex">
-                                                        <Dropzone
-                                                            onDrop={
-                                                                handleUpload
-                                                            }
-                                                        >
-                                                            {({
-                                                                getRootProps,
-                                                                getInputProps,
-                                                            }) => (
-                                                                <section>
-                                                                    <div
-                                                                        {...getRootProps()}
-                                                                        className="cursor-pointer text-center py-4 "
-                                                                    >
-                                                                        <input
-                                                                            {...getInputProps()}
-                                                                        />
-
-                                                                        <p className="text-sm mt-2 text-gray-600">
-                                                                            <span className="text-sm mt-2 text-indigo-500">
-                                                                                Capture
-                                                                                to
-                                                                                Upload
-                                                                            </span>
-                                                                            , or
-                                                                            click
-                                                                            to
-                                                                            select
-                                                                            files
-                                                                        </p>
-                                                                        <p className="text-sm mt-2 text-gray-600 pl-2">
-                                                                            PNG
-                                                                            or
-                                                                            JPG
-                                                                        </p>
-                                                                    </div>
-                                                                </section>
-                                                            )}
-                                                        </Dropzone>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                                        <Form.Item label={<span className="font-bold text-slate-700 italic">Work Evidence (Image)</span>}>
+                                            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center transition-all hover:bg-emerald-50 hover:border-emerald-300">
+                                                {!showWebcam && !cameraImage && !imageShow && (
+                                                    <div className="text-center group cursor-pointer" onClick={handleClick}>
+                                                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                                                            <CameraOutlined className="text-2xl text-emerald-500" />
+                                                        </div>
+                                                        <p className="text-sm font-bold text-slate-600">Take Photo or Upload</p>
+                                                        <p className="text-[10px] text-slate-400 mt-1 uppercase">JPG, PNG up to 10MB</p>
                                                     </div>
                                                 )}
 
-                                                <div>
-                                                    {uploadFile.length > 0 &&
-                                                        !cameraImage && (
-                                                            <div>
-                                                                <p className="mt-4 text-sm">
-                                                                    Uploaded
-                                                                    File:
-                                                                </p>
-                                                                <ul className="list-disc list-inside text-sm">
-                                                                    {uploadFile.map(
-                                                                        (
-                                                                            file,
-                                                                            index
-                                                                        ) => (
-                                                                            <li
-                                                                                key={
-                                                                                    index
-                                                                                }
-                                                                            >
-                                                                                {
-                                                                                    file.name
-                                                                                }
-                                                                            </li>
-                                                                        )
-                                                                    )}
-                                                                </ul>
+                                                {showWebcam && !cameraImage && (
+                                                    <div className="w-full flex flex-col items-center">
+                                                        <div className="rounded-2xl overflow-hidden shadow-lg border-4 border-white mb-4">
+                                                            <Webcam
+                                                                audio={false}
+                                                                screenshotFormat="image/jpeg"
+                                                                ref={webcamRef}
+                                                                videoConstraints={videoConstraints}
+                                                                playsInline
+                                                                className="w-full max-w-[320px]"
+                                                            />
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <Button onClick={captureImage} className="bg-emerald-600 text-white rounded-lg h-9 font-bold border-none">Capture</Button>
+                                                            <Button onClick={() => setUseFrontCamera(!useFrontCamera)} className="rounded-lg h-9">Flip</Button>
+                                                            <Button onClick={handleResetCam} className="rounded-lg h-9">Cancel</Button>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {(cameraImage || imageShow) && (
+                                                    <div className="relative group/preview">
+                                                        <img
+                                                            src={cameraImage || uploadImage}
+                                                            className="w-40 h-40 object-cover rounded-2xl shadow-md border-4 border-white"
+                                                            alt="Evidence"
+                                                        />
+                                                        <Button
+                                                            onClick={handleReset}
+                                                            className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500 text-white border-none flex items-center justify-center shadow-lg transform scale-0 group-hover/preview:scale-100 transition-transform"
+                                                        >
+                                                            ✕
+                                                        </Button>
+                                                    </div>
+                                                )}
+
+                                                {!showWebcam && !cameraImage && !imageShow && (
+                                                    <Dropzone onDrop={handleUpload}>
+                                                        {({ getRootProps, getInputProps }) => (
+                                                            <div {...getRootProps()} className="mt-4 w-full">
+                                                                <input {...getInputProps()} />
+                                                                <Button ghost className="w-full border-emerald-200 text-emerald-500 rounded-lg font-bold">Choose File</Button>
                                                             </div>
                                                         )}
-                                                    {uploadImage &&
-                                                        !cameraImage && (
-                                                            <div className="pt-2">
-                                                                <img
-                                                                    src={
-                                                                        uploadImage
-                                                                    }
-                                                                    alt="Preview"
-                                                                    style={{
-                                                                        maxWidth:
-                                                                            "300px",
-                                                                        maxHeight:
-                                                                            "300px",
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        )}
-                                                </div>
+                                                    </Dropzone>
+                                                )}
                                             </div>
                                         </Form.Item>
 
-                                        <Form.Item label="Signature">
-                                            <div className="bg-white  lg:w-[550px] w-11/12 ">
-                                                <div className="border rounded-lg m-2">
+                                        <Form.Item label={<span className="font-bold text-gray-700 italic">Customer Signature</span>}>
+                                            <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-4 transition-all hover:bg-gray-100 animate-in">
+                                                <div className="bg-white rounded-xl shadow-inner mb-3 overflow-hidden border border-gray-100 h-[150px]">
                                                     <ReactSignatureCanvas
                                                         ref={signRef}
                                                         penColor="black"
                                                         onEnd={handleSignature}
                                                         canvasProps={{
-                                                            className:
-                                                                "signature-canvas w-full sm:w-[400px] sm:h-[200px] h-[200px]",
+                                                            className: "w-full h-full cursor-crosshair",
                                                         }}
                                                     />
                                                 </div>
-
-                                                <div className="flex justify-end space-x-2">
-                                                    <Button
-                                                        onClick={ClearSignature}
-                                                    >
-                                                        Clear
-                                                    </Button>
+                                                <div className="flex justify-between items-center px-1">
+                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Sign inside the box</span>
+                                                    <Button size="small" type="link" onClick={ClearSignature} className="text-red-500 font-bold p-0">Clear</Button>
                                                 </div>
                                             </div>
                                         </Form.Item>
+                                    </div>
 
-                                        <div className="flex justify-end">
-                                            <Button
-                                                type="primary"
-                                                htmlType="submit"
-                                                className="bg-indigo-500"
-                                            >
-                                                {submitLoading ? (
-                                                    <div className="px-6 py-2">
-                                                        <Spin
-                                                            indicator={
-                                                                <LoadingOutlined
-                                                                    spin
-                                                                    className="text-white"
-                                                                />
-                                                            }
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    "Update"
-                                                )}
-                                            </Button>
-                                        </div>
-                                    </Form>
-                                </div>
-                            )}
-                            <div className="mt-5 mb-10">
-                                <ServiceOrderActivities
+                                    <div className="flex justify-end pt-8">
+                                        <Button
+                                            type="primary"
+                                            htmlType="submit"
+                                            block
+                                            className="h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold text-md shadow-xl shadow-emerald-200 transition-transform active:scale-95 border-none"
+                                            loading={submitLoading}
+                                        >
+                                            {submitLoading ? "Updating Portal..." : "Submit Completed Activity"}
+                                        </Button>
+                                    </div>
+                                </Form>
+                            </div>
+                        )}
+                        <div className="mt-5 mb-10">
+                            <ServiceOrderActivities
+                                document_no={document_no}
+                                uploadTrigger={uploadTrigger}
+                                reloadList={modelOpen}
+                            />
+                        </div>
+                        <div>
+                            <Modal
+                                open={modelOpen}
+                                onCancel={handleModelClose}
+                                footer={null}
+                                centered
+                            >
+                                <SparePartForm
+                                    serviceItemNo={
+                                        dataSource[0]?.serviceItemNo
+                                    }
+                                    locationOptions={locationOptions}
                                     document_no={document_no}
-                                    uploadTrigger={uploadTrigger}
-                                    reloadList={modelOpen}
+                                    sparePartsData={spareParts}
+                                    loadingState={loadingData}
+                                    formResponse={() => handleModelClose()}
+                                    reloadList={() => triggerReload()}
+                                    handleSparePart={handleSparePart}
                                 />
-                            </div>
-                            <div>
-                                <Modal
-                                    open={modelOpen}
-                                    onCancel={handleModelClose}
-                                    footer={null}
-                                    centered
-                                >
-                                    <SparePartForm
-                                        serviceItemNo={
-                                            dataSource[0]?.serviceItemNo
-                                        }
-                                        locationOptions={locationOptions}
-                                        document_no={document_no}
-                                        sparePartsData={spareParts}
-                                        loadingState={loadingData}
-                                        formResponse={() => handleModelClose()}
-                                        reloadList={() => triggerReload()}
-                                        handleSparePart={handleSparePart}
-                                    />
-                                </Modal>
-                            </div>
+                            </Modal>
                         </div>
                     </div>
-
                 </div>
+
             </div>
         </>
     );

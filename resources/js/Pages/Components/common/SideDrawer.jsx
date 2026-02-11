@@ -75,7 +75,7 @@ export default function SiderDrawer({
                                 </Button>
 
                                 <Button
-                                    className="w-1/2 bg-indigo-500 text-white"
+                                    className="w-1/2 bg-emerald-600 text-white border-none hover:bg-emerald-700 h-10 font-bold"
                                     onClick={onSaveButtonClick}
                                 >
                                     {saveButton}

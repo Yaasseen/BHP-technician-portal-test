@@ -207,7 +207,7 @@ const ServiceOrderSelection = ({
                             value={searchText}
                             onChange={(e) => handleSearch(e.target.value)}
                             className="w-1/2"
-                            //disabled={loading}
+                        //disabled={loading}
                         />
                         <span className="text-gray-600">
                             Selected: {count} / 12
@@ -235,7 +235,7 @@ const ServiceOrderSelection = ({
                             Cancel
                         </Button>
                         <Button
-                            className="bg-indigo-500 text-white"
+                            className="bg-emerald-600 text-white hover:bg-emerald-700 border-none h-10 font-bold px-6 shadow-md shadow-emerald-100"
                             onClick={handleConfirm}
                             disabled={selectedOrders.length === 0}
                         >

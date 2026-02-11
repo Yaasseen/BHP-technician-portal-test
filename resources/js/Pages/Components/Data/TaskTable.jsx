@@ -13,6 +13,8 @@ import {
     DatePicker,
     Select,
     FloatButton,
+    Spin,
+    Tag,
 } from "antd";
 import {
     SearchOutlined,
@@ -21,6 +23,7 @@ import {
     CalendarTwoTone,
     CalendarFilled,
     FilterOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
 
 import AssignTeam from "../common/AssignTeam";
@@ -29,6 +32,8 @@ import AssignRegion from "../common/AssignRegion";
 import { title } from "motion/react-client";
 import { set } from "date-fns";
 import SiderDrawer from "../common/SideDrawer";
+
+import TaskListItem from "../common/TaskListItem";
 
 const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
     const [data, setData] = useState();
@@ -378,10 +383,11 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             title: "Document No",
             dataIndex: "document_no",
             key: "document_no",
-            responsive: ["sm"],
+            fixed: 'left',
+            width: 140,
             render: (text, record) => (
                 <span
-                    className=" text-indigo-500 hover:underline"
+                    className="font-bold text-emerald-600 hover:text-emerald-800 cursor-pointer transition-colors"
                     onClick={() => handleShowService(record.document_no)}
                 >
                     {text}
@@ -392,84 +398,118 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             title: "Order Date",
             dataIndex: "order_date",
             key: "order_date",
+            width: 120,
+            render: (text) => <span className="text-gray-600 font-medium">{text}</span>
         },
         {
             title: "Customer Name",
             dataIndex: "name",
             key: "name",
+            width: 200,
+            render: (text) => <span className="font-semibold text-gray-800">{text}</span>
         },
         {
             title: "Service Type",
             dataIndex: "service_order_type",
             key: "service_order_type",
+            width: 130,
+            render: (type) => (
+                <Tag className="rounded-full px-3 border-none bg-gray-100 text-gray-700 font-bold text-[10px] uppercase">
+                    {type}
+                </Tag>
+            )
         },
         {
-            title: "Service repair status",
+            title: "Status",
             dataIndex: "repair_status_code",
             key: "repair_status_code",
+            width: 150,
+            render: (status) => {
+                let color = 'default';
+                if (status?.includes('RECD')) color = 'blue';
+                if (status?.includes('ASGND')) color = 'cyan';
+                if (status?.includes('COMP')) color = 'emerald';
+
+                return (
+                    <Tag color={color} className="rounded-full px-3 font-extrabold text-[10px] uppercase">
+                        {status}
+                    </Tag>
+                );
+            }
         },
         {
-            title: "Service Order Status",
+            title: "Order Status",
             dataIndex: "status",
             key: "status",
+            width: 130,
+            render: (status) => (
+                <Tag
+                    className={`rounded-full px-3 border-none font-bold text-[10px] uppercase ${status === 'PENDING' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'
+                        }`}
+                >
+                    {status}
+                </Tag>
+            )
         },
         {
-            title: "Brand and device",
+            title: "Device",
             dataIndex: "brand_code",
             key: "brand_code",
+            width: 150,
+            render: (text) => <span className="text-gray-500 italic text-xs">{text}</span>
         },
         {
-            title: "Allocated Team",
+            title: "Team",
             dataIndex: "department",
             key: "department",
-            responsive: ["sm"],
+            width: 150,
+            render: (text) => <span className="font-medium text-gray-600">{text}</span>
         },
-
         {
-            title: "Technician Name",
+            title: "Technician",
             dataIndex: "technician_name",
             key: "technician_id",
+            width: 180,
+            render: (text) => (
+                <span className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center">
+                        <UserOutlined className="text-[10px] text-slate-400" />
+                    </div>
+                    <span className="text-slate-700 font-medium truncate max-w-[140px]">{text || 'Unassigned'}</span>
+                </span>
+            )
         },
         {
             title: "Scheduled",
             key: "schedule",
+            width: 120,
             render: (_, record) => {
-                if (!record.schedule_date) return "";
+                if (!record.schedule_date) return <span className="text-gray-300">-</span>;
 
                 const date = new Date(record.schedule_date);
-                const formattedDate = `${String(date.getDate()).padStart(
-                    2,
-                    "0"
-                )}/${String(date.getMonth() + 1).padStart(
-                    2,
-                    "0"
-                )}/${date.getFullYear()}`;
+                const formattedDate = `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
 
-                return formattedDate;
+                return <span className="text-emerald-600 font-bold text-xs">{formattedDate}</span>;
             },
-            responsive: ["sm"],
         },
-
         {
-            title: "Actions",
+            title: "",
             key: "actions",
+            fixed: 'right',
+            width: 50,
             render: (_, record) => (
-                <div>
-                    <Popover
-                        placement="leftTop"
-                        arrow={false}
-                        trigger="click"
-                        content={content(record)}
-                        open={isPopoverOpen === record.document_no}
-                        onOpenChange={(visible) =>
-                            setIsPopoverOpen(
-                                visible ? record.document_no : null
-                            )
-                        }
-                    >
-                        <MoreOutlined className="text-black text-lg" />
-                    </Popover>
-                </div>
+                <Popover
+                    placement="leftTop"
+                    arrow={false}
+                    trigger="click"
+                    content={content(record)}
+                    open={isPopoverOpen === record.document_no}
+                    onOpenChange={(visible) => setIsPopoverOpen(visible ? record.document_no : null)}
+                >
+                    <button className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 text-gray-400 transition-colors">
+                        <MoreOutlined className="text-lg" />
+                    </button>
+                </Popover>
             ),
         },
     ];
@@ -690,65 +730,110 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
     };
 
     return (
-        <div className="">
-            <div className="  bg-white rounded-b-xl ">
-                <div>
-                    <div className="flex flex-wrap gap-4 mb-5 mt-5 justify-between sm:justify-start">
-                        <div className="flex w-full justify-between items-center">
-                           <div className="w-[60%] sm:w-[25%]">
-                                <Input
-                                    className="w-full px-3 sm:py-2 rounded-md border border-gray-200 focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="Search"
-                                    value={searchText}
-                                    onChange={(e) =>
-                                        handleSearch(e.target.value)
-                                    }
-                                    prefix={<SearchOutlined />}
-                                />
-                            </div>
-                            <Button
-                                className="bg-indigo-500 text-white"
-                                onClick={() => setSiderOpen(true)}
-                            >
-                                <FilterOutlined className="mr-1" />
-                                Filter
-                            </Button>
-                        </div>
+        <div className="space-y-6">
+            <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
+                    <div className="w-full sm:w-1/3 relative group">
+                        <Input
+                            className="w-full pl-10 pr-4 py-2 bg-slate-50 border-slate-100 rounded-xl hover:border-emerald-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                            placeholder="Search tasks, documents, names..."
+                            value={searchText}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            prefix={<SearchOutlined className="text-slate-400 group-hover:text-emerald-500 transition-colors" />}
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <Button
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 h-10 px-6 rounded-xl border-slate-200 hover:border-emerald-400 hover:text-emerald-600 font-bold transition-all"
+                            onClick={() => setSiderOpen(true)}
+                        >
+                            <FilterOutlined />
+                            <span>Filter</span>
+                        </Button>
+
+                        <Button
+                            disabled={selectedOrders?.length === 0}
+                            className={`flex-1 sm:flex-none h-10 px-6 rounded-xl font-bold transition-all border-none ${selectedOrders?.length > 0
+                                ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-200'
+                                : 'bg-slate-100 text-slate-400 border-none'
+                                }`}
+                            onClick={handleBulkOrderAssign}
+                        >
+                            Bulk Assignment
+                        </Button>
                     </div>
                 </div>
 
-                <Divider />
-
-                <div className="flex justify-between items-center">
-                    <p className="font-semibold text-lg pb-4 pt-3">
+                <div className="flex items-center justify-between mb-4 border-l-4 border-emerald-500 pl-4 h-8">
+                    <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
                         List of Tasks
-                    </p>
-                    <Button
-                        disabled={selectedOrders?.length === 0}
-                        className="bg-indigo-500 text-white"
-                        onClick={handleBulkOrderAssign}
-                    >
-                        Bulk Assignment
-                    </Button>
+                    </h2>
+                    {selectedOrders.length > 0 && (
+                        <span className="text-xs font-bold text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full animate-pulse">
+                            {selectedOrders.length} selected
+                        </span>
+                    )}
                 </div>
 
-                <div className="border rounded-md  border-gray-200 h-1/2">
-                    <Table
-                        size="middle"
-                        scroll={{ x: 400 }}
-                      className="bg-white rounded-md whitespace-nowrap lg:whitespace-normal text-sm"
-                        columns={columns}
-                        rowKey={(record) => record.document_no}
-                        dataSource={data}
-                        pagination={tableParams.pagination}
-                        loading={loading}
-                        onChange={handleTableChange}
-                        rowSelection={{
-                            type: "checkbox",
-                            selectedRowKeys: selectedOrders,
-                            onChange: handleSelectionChange,
-                        }}
-                    />
+                <div className="border rounded-2xl border-gray-100 overflow-hidden bg-white shadow-sm transition-all hover:shadow-md">
+                    {/* Desktop View: Table */}
+                    <div className="hidden md:block">
+                        <Table
+                            size="middle"
+                            scroll={{ x: 400 }}
+                            className="bg-white whitespace-nowrap lg:whitespace-normal text-sm"
+                            columns={columns}
+                            rowKey={(record) => record.document_no}
+                            dataSource={data}
+                            pagination={tableParams.pagination}
+                            loading={loading}
+                            onChange={handleTableChange}
+                            rowSelection={{
+                                type: "checkbox",
+                                selectedRowKeys: selectedOrders,
+                                onChange: handleSelectionChange,
+                            }}
+                        />
+                    </div>
+
+                    {/* Mobile View: Cards */}
+                    <div className="md:hidden p-4 space-y-4">
+                        {loading && !data ? (
+                            <div className="flex justify-center p-8">
+                                <Spin />
+                            </div>
+                        ) : (
+                            <>
+                                {data?.map((task) => (
+                                    <TaskListItem
+                                        key={task.document_no}
+                                        task={task}
+                                        isSelected={selectedOrders.includes(task.document_no)}
+                                        onSelect={(checked) => {
+                                            const newSelection = checked
+                                                ? [...selectedOrders, task.document_no]
+                                                : selectedOrders.filter(id => id !== task.document_no);
+                                            handleSelectionChange(newSelection);
+                                        }}
+                                        onViewDetails={() => handleShowService(task.document_no)}
+                                        actions={content(task)}
+                                    />
+                                ))}
+
+                                <div className="flex justify-center pt-8 pb-4">
+                                    <Pagination
+                                        {...tableParams.pagination}
+                                        onChange={(page, pageSize) => {
+                                            handleTableChange({ current: page, pageSize });
+                                        }}
+                                        size="small"
+                                        simple
+                                    />
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
             {/* Modal */}
@@ -1024,7 +1109,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             <div>
                 {!siderOpen && (
                     <FloatButton
-                        //className="bg-indigo-500 text-white"
+                        //className="bg-emerald-600 text-white"
                         style={{ backgroundColor: "#3F51B5", color: "white" }}
                         icon={<FilterOutlined className="hover:text-white" />}
                         onClick={() => setSiderOpen(true)}

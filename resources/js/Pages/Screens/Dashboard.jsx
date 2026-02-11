@@ -6,8 +6,10 @@ import Card from "./Card";
 import TeamSchedulerWeek from "../Screens/TeamScheduler";
 import TeamRegionConfig from "./TeamAndRegion";
 import ServiceDetails from "./ServiceDetails";
+import Profile from "./Profile";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Dashboard = ({
     user,
@@ -15,6 +17,7 @@ const Dashboard = ({
     showHome,
     activeView,
     setActiveView,
+    onLogout, // Added onLogout prop
 }) => {
     const { setWeekOffset, setStartDate } = useSchedule();
     const [documentNo, setDocumentNo] = useState(null);
@@ -23,7 +26,9 @@ const Dashboard = ({
     const [refreshStatistics, setRefreshStatistics] = useState(false);
 
     useEffect(() => {
-        setActiveView("list");
+        if (showHome) {
+            setActiveView("list");
+        }
     }, [showHome]);
 
     useEffect(() => {
@@ -66,36 +71,52 @@ const Dashboard = ({
         setActiveView("teamandregion");
     };
 
+    const pageVariants = {
+        initial: { opacity: 0, x: 20 },
+        animate: { opacity: 1, x: 0 },
+        exit: { opacity: 0, x: -20 }
+    };
+
     return (
-        <div className="w-full"> 
-            <div>
-                {activeView === "viewDetails" ? (
-                    <ServiceDetails
-                        user={user}
-                        document_no={documentNo}
-                        ScreenDashboard={ScreenDashboard}
-                    />
-                ) : activeView === "weekly" ? (
-                    <TeamSchedulerWeek
-                        user={user}
-                        handleScreen={() => setActiveView("list")}
-                        setTicketInfo={setTicketInfo}
-                        screenContent={ScreenContent}
-                    />
-                ) : (
-                    <>
-                        <div className="bg-white rounded-xl p-4 lg:p-10  p-xs-3">
-                            <DashboardList
-                                user={user}
-                                ShowList={ShowList}
-                                HideShowList={HideShowList}
-                                ShowTeamRegion={ShowTeamRegion}
-                                activeView={activeView}
-                            />
-                            <div>
-                                {activeView === "list" ? (
-                                    <>
-                                        <Card refreshCard={refreshStatistics} />
+        <div className="w-full">
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={activeView}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageVariants}
+                    transition={{ duration: 0.2 }}
+                >
+                    {activeView === "viewDetails" ? (
+                        <ServiceDetails
+                            user={user}
+                            document_no={documentNo}
+                            ScreenDashboard={ScreenDashboard}
+                        />
+                    ) : activeView === "weekly" ? (
+                        <TeamSchedulerWeek
+                            user={user}
+                            handleScreen={() => setActiveView("list")}
+                            setTicketInfo={setTicketInfo}
+                            screenContent={ScreenContent}
+                        />
+                    ) : (
+                        <div className="space-y-6">
+                            <div className="hidden sm:block">
+                                <DashboardList
+                                    user={user}
+                                    ShowList={ShowList}
+                                    HideShowList={HideShowList}
+                                    ShowTeamRegion={ShowTeamRegion}
+                                    activeView={activeView}
+                                />
+                            </div>
+
+                            {activeView === "list" ? (
+                                <div className="space-y-6">
+                                    <Card refreshCard={refreshStatistics} />
+                                    <div className="app-card overflow-hidden">
                                         <TaskTable
                                             user={user}
                                             screenContent={ScreenContent}
@@ -105,21 +126,27 @@ const Dashboard = ({
                                                 )
                                             }
                                         />
-                                    </>
-                                ) : activeView === "teamandregion" ? (
+                                    </div>
+                                </div>
+
+                            ) : activeView === "teamandregion" ? (
+                                <div className="app-card">
                                     <TeamRegionConfig
                                         ticketData={ticketInfo}
                                         returnWeekView={NavigateWeeklyView}
                                         locationState={locationState}
                                     />
-                                ) : null}
-                            </div>
+                                </div>
+                            ) : activeView === "profile" ? (
+                                <Profile user={user} onLogout={onLogout} />
+                            ) : null}
                         </div>
-                    </>
-                )}
-            </div>
+                    )}
+                </motion.div>
+            </AnimatePresence>
         </div>
     );
 };
 
 export default Dashboard;
+

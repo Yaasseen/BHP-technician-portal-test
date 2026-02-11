@@ -120,9 +120,9 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
         <div className="pt-5">
             {contextHolder}
             <div className="form-container sm:p-5 bg-white ">
-                <h1 className="font-semibold text-xl pb-5 border-b">
+                <h2 className="font-extrabold text-xl pb-5 border-b border-slate-100 text-slate-900 border-l-4 border-emerald-500 pl-4 h-8 flex items-center">
                     Assign Team
-                </h1>
+                </h2>
                 <Form
                     form={form}
                     layout="vertical"
@@ -150,9 +150,9 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
                                     options={
                                         !loading
                                             ? technicians.map((technician) => ({
-                                                  label: `${technician.id} : ${technician.name}`,
-                                                  value: technician.id,
-                                              }))
+                                                label: `${technician.id} : ${technician.name}`,
+                                                value: technician.id,
+                                            }))
                                             : []
                                     }
                                     notFoundContent={
@@ -174,7 +174,7 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
                                     <Button
                                         type="primary"
                                         htmlType="submit"
-                                        className="bg-indigo-500 "
+                                        className="bg-emerald-600 border-none hover:bg-emerald-700 h-10 font-bold shadow-md shadow-emerald-100 px-6"
                                     >
                                         {submitLoading ? (
                                             <div className="px-4 py-2">
@@ -245,9 +245,9 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
                                     options={
                                         !loading
                                             ? technicians.map((technician) => ({
-                                                  label: `${technician.id} : ${technician.name}`,
-                                                  value: technician.id,
-                                              }))
+                                                label: `${technician.id} : ${technician.name}`,
+                                                value: technician.id,
+                                            }))
                                             : []
                                     }
                                     notFoundContent={
@@ -269,7 +269,7 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
                                     <Button
                                         type="primary"
                                         htmlType="submit"
-                                        className="bg-indigo-500 "
+                                        className="bg-emerald-600 border-none hover:bg-emerald-700 h-10 font-bold shadow-md shadow-emerald-100 px-6"
                                     >
                                         {submitLoading ? (
                                             <div className="px-4 py-2">

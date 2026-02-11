@@ -145,15 +145,15 @@ const AssignRegion = ({ taskId, formResponse }) => {
                             options={
                                 !loading
                                     ? Array.from(
-                                          new Set(
-                                              technicians.map(
-                                                  (tech) => tech.region
-                                              )
-                                          )
-                                      ).map((region) => ({
-                                          label: region,
-                                          value: region,
-                                      }))
+                                        new Set(
+                                            technicians.map(
+                                                (tech) => tech.region
+                                            )
+                                        )
+                                    ).map((region) => ({
+                                        label: region,
+                                        value: region,
+                                    }))
                                     : []
                             }
                             notFoundContent={
@@ -183,10 +183,10 @@ const AssignRegion = ({ taskId, formResponse }) => {
                             options={
                                 !loading
                                     ? department.map((dept, index) => ({
-                                          key: index,
-                                          label: dept[0],
-                                          value: dept[0],
-                                      }))
+                                        key: index,
+                                        label: dept[0],
+                                        value: dept[0],
+                                    }))
                                     : []
                             }
                             notFoundContent={
@@ -209,7 +209,7 @@ const AssignRegion = ({ taskId, formResponse }) => {
                             <Button
                                 type="primary"
                                 htmlType="submit"
-                                className="bg-indigo-500 "
+                                className="bg-emerald-600 border-none hover:bg-emerald-700 h-10 font-bold shadow-md shadow-emerald-100"
                             >
                                 {submitLoading ? (
                                     <div className="px-3 py-2">
