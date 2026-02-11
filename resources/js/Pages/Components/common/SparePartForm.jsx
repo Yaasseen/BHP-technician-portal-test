@@ -215,7 +215,7 @@ function SparePartForm({
                     <Button
                         disabled={submitLoading}
                         htmlType="submit"
-                        className="bg-emerald-600 text-white hover:bg-emerald-700 border-none h-10 font-bold px-6 shadow-md shadow-emerald-100"
+                        className="bg-indigo-600 text-white hover:bg-indigo-700 border-none h-10 font-bold px-6 shadow-md shadow-indigo-100 rounded-none"
                     >
                         {submitLoading ? (
                             <div className=" px-7 py-1">

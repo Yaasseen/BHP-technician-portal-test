@@ -13,7 +13,7 @@ function SignatureComponent() {
         setSignData(SignData);
     };
     return (
-        <div className="bg-white border rounded-xl p-4 lg:w-[550px] w-1/2 ">
+        <div className="bg-white border rounded-none p-4 lg:w-[550px] w-1/2 ">
             <div className="border m-2">
                 <ReactSignatureCanvas
                     ref={signRef}

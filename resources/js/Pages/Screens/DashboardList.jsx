@@ -24,12 +24,12 @@ function DashboardList({
                         className="space-y-1.5"
                     >
                         <h2 className="text-3xl sm:text-4xl font-[900] text-slate-900 tracking-tight leading-none">
-                            Welcome, <span className="text-emerald-600 font-black">{user.First_Name}</span>
+                            Welcome, <span className="text-indigo-600 font-black">{user.First_Name}</span>
                         </h2>
                         <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-lg">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                                <span className="text-emerald-700 text-[10px] font-black uppercase tracking-widest">
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-indigo-50 border border-indigo-100 rounded-none">
+                                <span className="w-1.5 h-1.5 rounded-none bg-indigo-600 animate-pulse"></span>
+                                <span className="text-indigo-700 text-[10px] font-black uppercase tracking-widest">
                                     {user.Role}
                                 </span>
                             </div>
@@ -41,11 +41,11 @@ function DashboardList({
                     </motion.div>
                 )}
 
-                <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-100 self-start md:self-auto">
+                <div className="flex bg-white p-1 rounded-none shadow-sm border border-slate-100 self-start md:self-auto">
                     <button
                         onClick={ShowList}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeView === "list"
-                            ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100"
+                        className={`flex items-center gap-2 px-4 py-2 rounded-none text-sm font-bold transition-all ${activeView === "list"
+                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
                             : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
                             }`}
                     >
@@ -54,8 +54,8 @@ function DashboardList({
                     </button>
                     <button
                         onClick={HideShowList}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeView === "weekly"
-                            ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100"
+                        className={`flex items-center gap-2 px-4 py-2 rounded-none text-sm font-bold transition-all ${activeView === "weekly"
+                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
                             : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
                             }`}
                     >
@@ -65,8 +65,8 @@ function DashboardList({
                     {user.Role !== "Technician" && (
                         <button
                             onClick={ShowTeamRegion}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeView === "teamandregion"
-                                ? "bg-emerald-600 text-white shadow-lg shadow-emerald-100"
+                            className={`flex items-center gap-2 px-4 py-2 rounded-none text-sm font-bold transition-all ${activeView === "teamandregion"
+                                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
                                 : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
                                 }`}
                         >

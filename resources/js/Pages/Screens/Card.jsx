@@ -58,7 +58,7 @@ export default function Card({ refreshCard }) {
             progress: (taskData.active_tasks / taskData.total_tasks) * 100,
             progressColor: "#ff4d4f",
             trailColor: "#FFCCC7",
-            trendBgColor: "green",
+            trendBgColor: "indigo",
         },
         {
             title: "Reschedule Tasks",
@@ -66,7 +66,7 @@ export default function Card({ refreshCard }) {
             progress: (taskData.reschedule_tasks / taskData.total_tasks) * 100,
             progressColor: "#faad14",
             trailColor: "#FFF7E6",
-            trendBgColor: "green",
+            trendBgColor: "indigo",
         },
     ];
 

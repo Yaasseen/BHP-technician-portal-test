@@ -16,9 +16,9 @@ const NotificationBell = ({ count }) => {
 
     return (
         <div className="flex items-center gap-4">
-            <div className="cursor-pointer rounded-full border border-gray-400 p-2 relative">
+            <div className="cursor-pointer rounded-none border border-gray-400 p-2 relative">
                 <Dropdown
-                    dropdownRender={() => menu}
+                    popupRender={() => menu}
                     trigger={["click"]}
                     placement="bottomRight"
                 >

@@ -10,14 +10,14 @@ const NotificationLog = ({
     onClose,
 }) => {
     return (
-        <div className="sm:w-[450px] w-full max-w-sm bg-white rounded-xl shadow-lg pb-2 mb-4">
+        <div className="sm:w-[450px] w-full max-w-sm bg-white rounded-none shadow-lg pb-2 mb-4">
             <div className="flex justify-between items-center p-4 border-b space-x-5">
                 <div className="flex items-center space-x-2">
-                    <span className="border rounded-full p-3 bg-blue-600" />
+                    <span className="border rounded-none p-3 bg-blue-600" />
                     <p className="text-base sm:text-lg font-semibold">
                         Notifications
                     </p>
-                    <p className="text-xs sm:text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                    <p className="text-xs sm:text-sm bg-gray-100 text-gray-600 px-2 py-1 rounded-none">
                         {unreadCount}
                     </p>
                 </div>
@@ -48,7 +48,7 @@ const NotificationLog = ({
                                         {notification.message}
                                     </p>
                                     <button
-                                        className="ml-auto  flex justify-center items-center sm:mt-0 mt-2 sm:group-hover:opacity-100 sm:opacity-0 font-medium border rounded-full text-xs sm:text-sm sm:p-2 p-1 border-blue-600 hover:bg-blue-100 transition-opacity"
+                                        className="ml-auto  flex justify-center items-center sm:mt-0 mt-2 sm:group-hover:opacity-100 sm:opacity-0 font-medium border rounded-none text-xs sm:text-sm sm:p-2 p-1 border-blue-600 hover:bg-blue-100 transition-opacity"
                                         onClick={() =>
                                             onMarkAsRead(notification.id)
                                         }

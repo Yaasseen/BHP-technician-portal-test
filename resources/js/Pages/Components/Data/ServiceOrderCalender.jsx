@@ -62,7 +62,7 @@ function ServiceOrderCalendar({ screenContent }) {
     }, []);
 
     return (
-        <div className="bg-white p-5 px-5 rounded-xl border">
+        <div className="bg-white p-5 px-5 rounded-none border">
             <div style={{ height: "500px", margin: "20px" }}>
                 <Calendar
                     localizer={localizer}

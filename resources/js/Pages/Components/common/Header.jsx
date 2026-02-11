@@ -31,26 +31,13 @@ const Header = ({
 
     const [homeClicked, setHomeClicked] = useState(false);
 
-    console.log("=", activeView);
 
     const ListView = () => {
         handleLitView();
     };
     const handleLogout = () => {
-        setLoading(true);
-        axios
-            .post("/logout")
-            .then(() => {
-                userLogout();
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        userLogout();
     };
-
     const handleViewScreen = () => {
         setActiveView("list");
         setHomeClicked((prev) => !prev);
@@ -135,7 +122,7 @@ const Header = ({
         <div className="sticky">
             <header className="top-0 flex justify-between items-center px-4 sm:px-12 py-3 bg-white shadow-sm border-b border-gray-300">
                 <div className="flex gap-x-10 items-center">
-                    <div className="flex items-center rounded-full border border-gray-400 p-3">
+                    <div className="flex items-center rounded-none border border-gray-400 p-3">
                         <MenuOutlined
                             className="text-xl cursor-pointer"
                             onClick={showSidebar}
@@ -165,10 +152,12 @@ const Header = ({
                         menu={{ items: menuItems }}
                         trigger={["click"]}
                         placement="bottomRight"
+                        overlayClassName="sharp-dropdown"
                     >
                         <Avatar
                             size={46}
-                            className="cursor-pointer"
+                            shape="square"
+                            className="cursor-pointer rounded-none"
                             icon={<UserOutlined />}
                         />
                     </Dropdown>

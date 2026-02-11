@@ -7,6 +7,7 @@ import TeamSchedulerWeek from "../Screens/TeamScheduler";
 import TeamRegionConfig from "./TeamAndRegion";
 import ServiceDetails from "./ServiceDetails";
 import Profile from "./Profile";
+import MobileHeroHeader from "../Components/common/MobileHeroHeader";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -100,6 +101,7 @@ const Dashboard = ({
                             handleScreen={() => setActiveView("list")}
                             setTicketInfo={setTicketInfo}
                             screenContent={ScreenContent}
+                            showWeekView={showWeekView}
                         />
                     ) : (
                         <div className="space-y-6">
@@ -115,8 +117,15 @@ const Dashboard = ({
 
                             {activeView === "list" ? (
                                 <div className="space-y-6">
-                                    <Card refreshCard={refreshStatistics} />
-                                    <div className="app-card overflow-hidden">
+                                    <MobileHeroHeader
+                                        user={user}
+                                        onNotificationClick={() => console.log("Notifications")}
+                                        onProfileClick={() => setActiveView("profile")}
+                                    />
+                                    <div className="hidden sm:block">
+                                        <Card refreshCard={refreshStatistics} />
+                                    </div>
+                                    <div>
                                         <TaskTable
                                             user={user}
                                             screenContent={ScreenContent}
@@ -130,7 +139,7 @@ const Dashboard = ({
                                 </div>
 
                             ) : activeView === "teamandregion" ? (
-                                <div className="app-card">
+                                <div className="bg-slate-50/50 p-8 rounded-none border border-slate-100">
                                     <TeamRegionConfig
                                         ticketData={ticketInfo}
                                         returnWeekView={NavigateWeeklyView}
@@ -149,4 +158,3 @@ const Dashboard = ({
 };
 
 export default Dashboard;
-

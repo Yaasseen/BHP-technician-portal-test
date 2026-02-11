@@ -18,7 +18,7 @@ function ServiceDetailForm() {
                         <TextArea rows={4} placeholder="Description" />
                     </Form.Item>
                     <Form.Item>
-                        <span className="border rounded-lg p-2">
+                        <span className="border rounded-none p-2">
                             <button onClick={handleClick}>
                                 {!showWebcam && (
                                     <CameraOutlined

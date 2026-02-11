@@ -32,10 +32,10 @@ const Profile = ({ user, onLogout }) => {
     const SettingItem = ({ icon, title, description, action, type = "link" }) => (
         <motion.div
             variants={itemVariants}
-            className="flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-50 shadow-sm hover:shadow-md transition-all group"
+            className="flex items-center justify-between p-4 bg-white rounded-none border border-gray-50 shadow-sm hover:shadow-md transition-all group"
         >
             <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-colors">
+                <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
                     {icon}
                 </div>
                 <div>
@@ -47,7 +47,7 @@ const Profile = ({ user, onLogout }) => {
                 {type === "switch" ? (
                     <Switch size="small" defaultChecked className="bg-slate-200" />
                 ) : (
-                    <Button type="text" className="text-slate-300 group-hover:text-emerald-500">
+                    <Button type="text" className="text-slate-300 group-hover:text-indigo-500">
                         <RightOutlined />
                     </Button>
                 )}
@@ -73,15 +73,16 @@ const Profile = ({ user, onLogout }) => {
                         <div className="relative">
                             <Avatar
                                 size={120}
+                                shape="square"
                                 icon={<UserOutlined />}
-                                className="ring-8 ring-white shadow-2xl bg-slate-100 text-slate-400"
+                                className="ring-8 ring-white shadow-2xl bg-slate-100 text-slate-400 rounded-none"
                             />
                             <div className="absolute bottom-2 right-2">
                                 <Button
-                                    shape="circle"
+                                    shape="square"
                                     size="middle"
                                     icon={<EditOutlined />}
-                                    className="shadow-xl border-none bg-white text-emerald-600 flex items-center justify-center hover:scale-110 transition-transform"
+                                    className="shadow-xl border-none bg-white text-indigo-600 flex items-center justify-center hover:scale-110 transition-transform rounded-none"
                                 />
                             </div>
                         </div>
@@ -92,10 +93,10 @@ const Profile = ({ user, onLogout }) => {
                         <div>
                             <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">{user?.Name || "User Name"}</h2>
                             <div className="flex items-center gap-2 mt-3">
-                                <Tag color="emerald" className="m-0 rounded-lg border-none font-bold text-[10px] px-2 py-0.5 uppercase tracking-widest">
+                                <Tag color="indigo" className="m-0 rounded-none border-none font-bold text-[10px] px-2 py-0.5 uppercase tracking-widest">
                                     {user?.Role || "Technician"}
                                 </Tag>
-                                <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                                <span className="w-1 h-1 rounded-none bg-slate-200"></span>
                                 <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
                                     <GlobalOutlined className="text-[10px]" /> BH-Technician
                                 </span>
@@ -108,7 +109,7 @@ const Profile = ({ user, onLogout }) => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 pt-8 border-t border-slate-50">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+                            <div className="w-8 h-8 rounded-none bg-slate-50 flex items-center justify-center text-slate-400">
                                 <MailOutlined />
                             </div>
                             <div className="min-w-0">
@@ -117,7 +118,7 @@ const Profile = ({ user, onLogout }) => {
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400">
+                            <div className="w-8 h-8 rounded-none bg-slate-50 flex items-center justify-center text-slate-400">
                                 <PhoneOutlined />
                             </div>
                             <div className="min-w-0">
@@ -133,7 +134,7 @@ const Profile = ({ user, onLogout }) => {
             <div className="space-y-6">
                 <div>
                     <h3 className="text-lg font-black text-slate-900 tracking-tight px-1 mb-4 flex items-center gap-2">
-                        <SafetyCertificateOutlined className="text-emerald-500" />
+                        <SafetyCertificateOutlined className="text-indigo-500" />
                         Account & Security
                     </h3>
                     <div className="space-y-3">
@@ -161,11 +162,11 @@ const Profile = ({ user, onLogout }) => {
                         />
                         <motion.div
                             variants={itemVariants}
-                            className="flex items-center justify-between p-4 bg-red-50/30 rounded-2xl border border-red-50 shadow-sm hover:shadow-md transition-all group cursor-pointer"
+                            className="flex items-center justify-between p-4 bg-red-50/30 rounded-none border border-red-50 shadow-sm hover:shadow-md transition-all group cursor-pointer"
                             onClick={() => onLogout()}
                         >
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                <div className="w-10 h-10 rounded-none bg-red-100 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors">
                                     <LogoutOutlined />
                                 </div>
                                 <div>

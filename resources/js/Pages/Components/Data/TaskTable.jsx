@@ -387,7 +387,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             width: 140,
             render: (text, record) => (
                 <span
-                    className="font-bold text-emerald-600 hover:text-emerald-800 cursor-pointer transition-colors"
+                    className="font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer transition-colors"
                     onClick={() => handleShowService(record.document_no)}
                 >
                     {text}
@@ -414,7 +414,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             key: "service_order_type",
             width: 130,
             render: (type) => (
-                <Tag className="rounded-full px-3 border-none bg-gray-100 text-gray-700 font-bold text-[10px] uppercase">
+                <Tag className="rounded-none px-3 border-none bg-gray-100 text-gray-700 font-bold text-[10px] uppercase">
                     {type}
                 </Tag>
             )
@@ -428,10 +428,10 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                 let color = 'default';
                 if (status?.includes('RECD')) color = 'blue';
                 if (status?.includes('ASGND')) color = 'cyan';
-                if (status?.includes('COMP')) color = 'emerald';
+                if (status?.includes('COMP')) color = 'indigo';
 
                 return (
-                    <Tag color={color} className="rounded-full px-3 font-extrabold text-[10px] uppercase">
+                    <Tag color={color} className="rounded-none px-3 font-extrabold text-[10px] uppercase">
                         {status}
                     </Tag>
                 );
@@ -444,7 +444,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             width: 130,
             render: (status) => (
                 <Tag
-                    className={`rounded-full px-3 border-none font-bold text-[10px] uppercase ${status === 'PENDING' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'
+                    className={`rounded-none px-3 border-none font-bold text-[10px] uppercase ${status === 'PENDING' ? 'bg-orange-100 text-orange-600' : 'bg-indigo-100 text-indigo-600'
                         }`}
                 >
                     {status}
@@ -472,7 +472,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             width: 180,
             render: (text) => (
                 <span className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center">
+                    <div className="w-5 h-5 rounded-none bg-slate-100 flex items-center justify-center">
                         <UserOutlined className="text-[10px] text-slate-400" />
                     </div>
                     <span className="text-slate-700 font-medium truncate max-w-[140px]">{text || 'Unassigned'}</span>
@@ -489,7 +489,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                 const date = new Date(record.schedule_date);
                 const formattedDate = `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
 
-                return <span className="text-emerald-600 font-bold text-xs">{formattedDate}</span>;
+                return <span className="text-indigo-600 font-bold text-xs">{formattedDate}</span>;
             },
         },
         {
@@ -506,7 +506,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     open={isPopoverOpen === record.document_no}
                     onOpenChange={(visible) => setIsPopoverOpen(visible ? record.document_no : null)}
                 >
-                    <button className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 text-gray-400 transition-colors">
+                    <button className="flex items-center justify-center w-8 h-8 rounded-none hover:bg-gray-100 text-gray-400 transition-colors">
                         <MoreOutlined className="text-lg" />
                     </button>
                 </Popover>
@@ -730,33 +730,73 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
-                    <div className="w-full sm:w-1/3 relative group">
+        <div className="space-y-2 sm:space-y-6">
+            <div className="bg-slate-50/50 p-1 sm:p-6 rounded-none border border-slate-100">
+                {/* Mobile Search & Filters */}
+                <div className="sm:hidden mb-6 space-y-4 px-1">
+                    <Input
+                        placeholder="Search by job number, company..."
+                        prefix={<SearchOutlined className="text-slate-400 text-lg" />}
+                        className="bg-white border border-slate-200 rounded-full h-12 px-5 text-sm font-medium shadow-sm"
+                        value={searchText}
+                        onChange={(e) => handleSearch(e.target.value)}
+                    />
+
+                    <div className="flex gap-3 items-center">
+                        <button
+                            onClick={() => setSiderOpen(true)}
+                            className="min-w-[48px] h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 shadow-sm"
+                        >
+                            <FilterOutlined className="text-lg" />
+                        </button>
+
+                        <div className="flex-1 overflow-x-auto pb-2 -mx-1 px-1">
+                            <div className="flex gap-2">
+                                {['All Tasks', 'Pending', 'Active', 'Completed', 'Reschedule'].map(status => (
+                                    <button
+                                        key={status}
+                                        className={`whitespace-nowrap px-5 h-12 rounded-full text-sm font-bold border transition-all ${((status === 'All Tasks' && !filter.status) || filter.status === status) // Simple check, might need refinement based on actual filter logic
+                                            ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-200'
+                                            : 'bg-white border-slate-200 text-slate-500 hover:border-indigo-300'
+                                            }`}
+                                        onClick={() => {
+                                            // For now just console log as I need to verify how setFilter should work with these strings
+                                            console.log("Filter clicked:", status);
+                                        }}
+                                    >
+                                        {status}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="hidden sm:flex flex-row gap-4 justify-between items-center mb-8">
+                    <div className="w-full sm:w-1/3">
                         <Input
-                            className="w-full pl-10 pr-4 py-2 bg-slate-50 border-slate-100 rounded-xl hover:border-emerald-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
-                            placeholder="Search tasks, documents, names..."
+                            placeholder="Type to search..."
                             value={searchText}
                             onChange={(e) => handleSearch(e.target.value)}
-                            prefix={<SearchOutlined className="text-slate-400 group-hover:text-emerald-500 transition-colors" />}
+                            prefix={<SearchOutlined className="text-slate-400 mr-2" />}
+                            className="bg-white border-none rounded-none h-12 px-5 text-sm font-medium shadow-sm shadow-slate-100/50 hover:bg-white focus:bg-white transition-all"
                         />
                     </div>
 
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className="hidden sm:flex items-center gap-3 w-full sm:w-auto">
                         <Button
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 h-10 px-6 rounded-xl border-slate-200 hover:border-emerald-400 hover:text-emerald-600 font-bold transition-all"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-3 h-12 px-8 rounded-none border-slate-200 bg-white hover:border-indigo-300 hover:text-indigo-600 font-bold text-slate-600 transition-all shadow-sm shadow-slate-100/30"
                             onClick={() => setSiderOpen(true)}
                         >
                             <FilterOutlined />
-                            <span>Filter</span>
+                            <span>Filters</span>
                         </Button>
 
                         <Button
                             disabled={selectedOrders?.length === 0}
-                            className={`flex-1 sm:flex-none h-10 px-6 rounded-xl font-bold transition-all border-none ${selectedOrders?.length > 0
-                                ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-200'
-                                : 'bg-slate-100 text-slate-400 border-none'
+                            className={`flex-1 sm:flex-none h-12 px-8 rounded-none font-black transition-all border-none ${selectedOrders?.length > 0
+                                ? 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-md shadow-indigo-100'
+                                : 'bg-slate-100 text-slate-300'
                                 }`}
                             onClick={handleBulkOrderAssign}
                         >
@@ -765,18 +805,26 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between mb-4 border-l-4 border-emerald-500 pl-4 h-8">
-                    <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                        List of Tasks
-                    </h2>
+                <div className="flex items-center justify-between mb-4 sm:mb-6 px-2">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                            Orders
+                        </h2>
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                            Manage and track service tasks
+                        </p>
+                    </div>
                     {selectedOrders.length > 0 && (
-                        <span className="text-xs font-bold text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full animate-pulse">
-                            {selectedOrders.length} selected
-                        </span>
+                        <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-none border border-indigo-100">
+                            <span className="w-2 h-2 rounded-none bg-indigo-500 animate-pulse" />
+                            <span className="text-xs font-black text-indigo-700 uppercase tracking-wider">
+                                {selectedOrders.length} selected
+                            </span>
+                        </div>
                     )}
                 </div>
 
-                <div className="border rounded-2xl border-gray-100 overflow-hidden bg-white shadow-sm transition-all hover:shadow-md">
+                <div className="bg-white rounded-none border border-slate-100 overflow-hidden">
                     {/* Desktop View: Table */}
                     <div className="hidden md:block">
                         <Table
@@ -798,7 +846,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     </div>
 
                     {/* Mobile View: Cards */}
-                    <div className="md:hidden p-4 space-y-4">
+                    <div className="md:hidden p-0 sm:p-4 space-y-2 sm:space-y-4">
                         {loading && !data ? (
                             <div className="flex justify-center p-8">
                                 <Spin />
@@ -1109,7 +1157,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             <div>
                 {!siderOpen && (
                     <FloatButton
-                        //className="bg-emerald-600 text-white"
+                        //className="bg-indigo-600 text-white"
                         style={{ backgroundColor: "#3F51B5", color: "white" }}
                         icon={<FilterOutlined className="hover:text-white" />}
                         onClick={() => setSiderOpen(true)}

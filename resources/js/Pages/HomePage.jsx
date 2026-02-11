@@ -6,16 +6,34 @@ import "../../css/Dashboard.css";
 import Dashboard from "./Screens/Dashboard";
 import { Spin } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 const HomePage = ({ onLoggedOut, user }) => {
     const [showWeekView, setShowWeekView] = useState(false);
     const [handleHome, setHandleHome] = useState(false);
     const [activeView, setActiveView] = useState("list");
     const [unreadCount, setUnreadCount] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const handleUserLoggedOut = () => {
         onLoggedOut();
     };
+
+    const handleGlobalLogout = () => {
+        setLoading(true);
+        axios
+            .post("/logout")
+            .then(() => {
+                onLoggedOut();
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
     const handleWeekView = () => {
         setShowWeekView(true);
         setActiveView("weekly");
@@ -43,7 +61,7 @@ const HomePage = ({ onLoggedOut, user }) => {
             {/* Desktop Header */}
             <div className="hidden sm:block sticky top-0 z-50">
                 <Header
-                    userLogout={() => handleUserLoggedOut()}
+                    userLogout={() => handleGlobalLogout()}
                     user={user}
                     handleView={() => handleWeekView()}
                     handleHome={() => handleHomeScreen()}
@@ -53,17 +71,20 @@ const HomePage = ({ onLoggedOut, user }) => {
             </div>
 
             {/* Mobile Header */}
-            <MobileHeader
-                title={viewTitles[activeView]}
-                user={user}
-                unreadCount={unreadCount}
-                onNotificationClick={() => console.log("Notifications clicked")}
-            />
+            {activeView !== "list" && (
+                <MobileHeader
+                    title={viewTitles[activeView]}
+                    user={user}
+                    unreadCount={unreadCount}
+                    onNotificationClick={() => console.log("Notifications clicked")}
+                    onLogout={() => handleGlobalLogout()}
+                />
+            )}
 
             <motion.main
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="pt-20 sm:pt-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+                className={`${activeView === "list" ? "pt-0 px-0" : "pt-20 px-4"} sm:pt-6 sm:px-6 lg:px-8 max-w-7xl mx-auto`}
             >
                 <div className="dashboard-card-modern">
                     <Dashboard

@@ -23,11 +23,11 @@ const DetailCard = ({
                     <div className="space-y-1">
                         <p className="font-bold text-xl text-gray-900 tracking-tight">{name}</p>
                         <div className="flex flex-wrap gap-3">
-                            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-none">
                                 <CalendarOutlined className="text-gray-400" />
                                 {date}
                             </div>
-                            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-none">
                                 <ClockCircleOutlined className="text-gray-400" />
                                 {time}
                             </div>
@@ -35,11 +35,11 @@ const DetailCard = ({
                     </div>
 
                     {statusDescription && (
-                        <div className="bg-emerald-50/50 border border-emerald-100 p-3 rounded-xl flex gap-3 items-start">
-                            <InfoCircleOutlined className="text-emerald-500 mt-0.5" />
+                        <div className="bg-indigo-50/50 border border-indigo-100 p-3 rounded-none flex gap-3 items-start">
+                            <InfoCircleOutlined className="text-indigo-500 mt-0.5" />
                             <div className="space-y-0.5">
-                                <p className="text-[10px] uppercase tracking-widest font-bold text-emerald-400">Current Status</p>
-                                <p className="text-sm font-semibold text-emerald-700 leading-tight">
+                                <p className="text-[10px] uppercase tracking-widest font-bold text-indigo-400">Current Status</p>
+                                <p className="text-sm font-semibold text-indigo-700 leading-tight">
                                     {statusDescription}
                                 </p>
                             </div>
@@ -57,7 +57,7 @@ const DetailCard = ({
                             whileHover={{ scale: 1.05 }}
                             src={url}
                             alt="Detail"
-                            className="w-full sm:w-48 h-32 sm:h-32 object-cover rounded-2xl shadow-lg shadow-gray-200 border border-gray-100"
+                            className="w-full sm:w-48 h-32 sm:h-32 object-cover rounded-none shadow-lg shadow-gray-200 border border-gray-100"
                         />
                     </div>
                 )}

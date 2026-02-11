@@ -515,26 +515,28 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* Left Column: Overview */}
                     <div className="w-full lg:w-1/3">
-                        <div className="app-card overflow-hidden">
-                            <div className="bg-gradient-to-r from-slate-700 to-slate-900 px-6 py-4">
-                                <h3 className="text-white font-extrabold flex items-center gap-2">
-                                    <FileOutlined />
-                                    <span>Task Overview</span>
+                        <div className="bg-white rounded-none border border-slate-100 overflow-hidden">
+                            <div className="bg-slate-50/80 px-8 py-5 border-b border-slate-100">
+                                <h3 className="text-slate-900 font-black text-base flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-none bg-indigo-100 flex items-center justify-center">
+                                        <FileOutlined className="text-indigo-600" />
+                                    </div>
+                                    <span className="tracking-tight">Task Overview</span>
                                 </h3>
                             </div>
-                            <div className="p-2">
-                                <Descriptions bordered column={1} size="small" className="modern-descriptions">
+                            <div className="p-4">
+                                <Descriptions column={1} size="small" className="minimal-descriptions">
                                     {descriptions.map((item, index) => (
                                         <Descriptions.Item
                                             key={index}
                                             label={
-                                                <div className="flex items-center gap-2 text-gray-500 font-bold text-[11px] uppercase tracking-wider">
-                                                    {item.icon}
+                                                <div className="flex items-center gap-3 text-slate-400 font-black text-[10px] uppercase tracking-[0.12em]">
+                                                    <span className="opacity-60">{item.icon}</span>
                                                     {item.label}
                                                 </div>
                                             }
                                         >
-                                            <span className="font-semibold text-gray-800">{item.value}</span>
+                                            <span className="font-bold text-slate-700">{item.value || 'N/A'}</span>
                                         </Descriptions.Item>
                                     ))}
                                 </Descriptions>
@@ -547,20 +549,21 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                         {/* Task Item Details Table */}
                         <div className="app-card p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-lg font-extrabold text-slate-900 border-l-4 border-emerald-500 pl-4 h-6 flex items-center">
+                                <h3 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                                    <span className="w-1.5 h-6 bg-indigo-500 rounded-none" />
                                     Device Details
                                 </h3>
                                 {user.Role !== "Read Only" && (
                                     <Button
                                         onClick={() => setModelOpen(true)}
-                                        className="bg-emerald-600 text-white rounded-xl font-bold h-10 px-6 hover:bg-emerald-700 shadow-md shadow-emerald-100 border-none"
+                                        className="bg-indigo-500 text-white rounded-none font-black h-12 px-8 hover:bg-indigo-600 transition-all border-none text-sm group"
                                     >
                                         Request Spare Part
                                     </Button>
                                 )}
                             </div>
 
-                            <div className="overflow-x-auto rounded-xl border border-gray-100">
+                            <div className="overflow-x-auto rounded-none border border-gray-100">
                                 <Table
                                     dataSource={dataSource}
                                     columns={columns}
@@ -573,10 +576,10 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
 
                         {/* Spare Parts List */}
                         <div className="app-card p-6">
-                            <h3 className="text-lg font-extrabold text-slate-900 mb-6 border-l-4 border-emerald-500 pl-4 h-6 flex items-center">
+                            <h3 className="text-lg font-extrabold text-slate-900 mb-6 border-l-4 border-indigo-500 pl-4 h-6 flex items-center">
                                 Service Spare Parts
                             </h3>
-                            <div className="overflow-x-auto rounded-xl border border-slate-100">
+                            <div className="overflow-x-auto rounded-none border border-slate-100">
                                 <Table
                                     columns={tableColumns}
                                     dataSource={data}
@@ -592,7 +595,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                         {/* Activity Form */}
                         {user.Role !== "Read Only" && (
                             <div className="app-card p-6 md:p-8">
-                                <h3 className="text-lg font-extrabold text-slate-900 mb-8 border-l-4 border-emerald-500 pl-4 h-6 flex items-center">
+                                <h3 className="text-lg font-extrabold text-slate-900 mb-8 border-l-4 border-indigo-500 pl-4 h-6 flex items-center">
                                     Log Activity
                                 </h3>
                                 <Form
@@ -611,7 +614,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                             name="repair_status_code"
                                         >
                                             <Select
-                                                className="h-11 rounded-xl"
+                                                className="h-11 rounded-none"
                                                 loading={loading}
                                                 placeholder="Select BC Status"
                                                 options={taskCode.map((task) => ({
@@ -626,7 +629,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                             name="service_order_status"
                                         >
                                             <Select
-                                                className="h-11 rounded-xl"
+                                                className="h-11 rounded-none"
                                                 loading={loadingInfo}
                                                 options={statusOptions.map((opt) => ({
                                                     label: `${opt.value} - ${opt.label}`,
@@ -642,18 +645,18 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                     >
                                         <Input.TextArea
                                             rows={4}
-                                            className="rounded-xl bg-gray-50 border-gray-200"
+                                            className="rounded-none bg-gray-50 border-gray-200"
                                             placeholder="Enter your service findings and remarks..."
                                         />
                                     </Form.Item>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
                                         <Form.Item label={<span className="font-bold text-slate-700 italic">Work Evidence (Image)</span>}>
-                                            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center transition-all hover:bg-emerald-50 hover:border-emerald-300">
+                                            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-none p-6 flex flex-col items-center justify-center transition-all hover:bg-indigo-50 hover:border-indigo-300">
                                                 {!showWebcam && !cameraImage && !imageShow && (
                                                     <div className="text-center group cursor-pointer" onClick={handleClick}>
-                                                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                                                            <CameraOutlined className="text-2xl text-emerald-500" />
+                                                        <div className="w-16 h-16 bg-white rounded-none flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                                                            <CameraOutlined className="text-2xl text-indigo-500" />
                                                         </div>
                                                         <p className="text-sm font-bold text-slate-600">Take Photo or Upload</p>
                                                         <p className="text-[10px] text-slate-400 mt-1 uppercase">JPG, PNG up to 10MB</p>
@@ -662,7 +665,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
 
                                                 {showWebcam && !cameraImage && (
                                                     <div className="w-full flex flex-col items-center">
-                                                        <div className="rounded-2xl overflow-hidden shadow-lg border-4 border-white mb-4">
+                                                        <div className="rounded-none overflow-hidden shadow-lg border-4 border-white mb-4">
                                                             <Webcam
                                                                 audio={false}
                                                                 screenshotFormat="image/jpeg"
@@ -673,9 +676,9 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                                             />
                                                         </div>
                                                         <div className="flex gap-2">
-                                                            <Button onClick={captureImage} className="bg-emerald-600 text-white rounded-lg h-9 font-bold border-none">Capture</Button>
-                                                            <Button onClick={() => setUseFrontCamera(!useFrontCamera)} className="rounded-lg h-9">Flip</Button>
-                                                            <Button onClick={handleResetCam} className="rounded-lg h-9">Cancel</Button>
+                                                            <Button onClick={captureImage} className="bg-indigo-600 text-white rounded-none h-9 font-bold border-none">Capture</Button>
+                                                            <Button onClick={() => setUseFrontCamera(!useFrontCamera)} className="rounded-none h-9">Flip</Button>
+                                                            <Button onClick={handleResetCam} className="rounded-none h-9">Cancel</Button>
                                                         </div>
                                                     </div>
                                                 )}
@@ -684,12 +687,12 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                                     <div className="relative group/preview">
                                                         <img
                                                             src={cameraImage || uploadImage}
-                                                            className="w-40 h-40 object-cover rounded-2xl shadow-md border-4 border-white"
+                                                            className="w-40 h-40 object-cover rounded-none shadow-md border-4 border-white"
                                                             alt="Evidence"
                                                         />
                                                         <Button
                                                             onClick={handleReset}
-                                                            className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-red-500 text-white border-none flex items-center justify-center shadow-lg transform scale-0 group-hover/preview:scale-100 transition-transform"
+                                                            className="absolute -top-2 -right-2 w-8 h-8 rounded-none bg-red-500 text-white border-none flex items-center justify-center shadow-lg transform scale-0 group-hover/preview:scale-100 transition-transform"
                                                         >
                                                             ✕
                                                         </Button>
@@ -701,7 +704,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                                         {({ getRootProps, getInputProps }) => (
                                                             <div {...getRootProps()} className="mt-4 w-full">
                                                                 <input {...getInputProps()} />
-                                                                <Button ghost className="w-full border-emerald-200 text-emerald-500 rounded-lg font-bold">Choose File</Button>
+                                                                <Button ghost className="w-full border-indigo-200 text-indigo-500 rounded-none font-bold">Choose File</Button>
                                                             </div>
                                                         )}
                                                     </Dropzone>
@@ -710,8 +713,8 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                         </Form.Item>
 
                                         <Form.Item label={<span className="font-bold text-gray-700 italic">Customer Signature</span>}>
-                                            <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-4 transition-all hover:bg-gray-100 animate-in">
-                                                <div className="bg-white rounded-xl shadow-inner mb-3 overflow-hidden border border-gray-100 h-[150px]">
+                                            <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-none p-4 transition-all hover:bg-gray-100 animate-in">
+                                                <div className="bg-white rounded-none shadow-inner mb-3 overflow-hidden border border-gray-100 h-[150px]">
                                                     <ReactSignatureCanvas
                                                         ref={signRef}
                                                         penColor="black"
@@ -734,7 +737,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                             type="primary"
                                             htmlType="submit"
                                             block
-                                            className="h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-extrabold text-md shadow-xl shadow-emerald-200 transition-transform active:scale-95 border-none"
+                                            className="h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-none font-extrabold text-md shadow-xl shadow-indigo-200 transition-transform active:scale-95 border-none"
                                             loading={submitLoading}
                                         >
                                             {submitLoading ? "Updating Portal..." : "Submit Completed Activity"}

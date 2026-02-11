@@ -31,7 +31,7 @@ export default function SiderDrawer({
                 <button
                     type="button"
                     className={`absolute top-1/2 -translate-y-1/2 transition-transform duration-300 ${show ? "right-[31%]" : "-right-10"
-                        } w-14 h-14 rounded-full bg-gray-800 text-white text-lg flex items-center justify-center`}
+                        } w-14 h-14 rounded-none bg-gray-800 text-white text-lg flex items-center justify-center`}
                     aria-label="Close"
                     onClick={onClose}
                 >
@@ -75,7 +75,7 @@ export default function SiderDrawer({
                                 </Button>
 
                                 <Button
-                                    className="w-1/2 bg-emerald-600 text-white border-none hover:bg-emerald-700 h-10 font-bold"
+                                    className="w-1/2 bg-indigo-600 text-white border-none hover:bg-indigo-700 h-10 font-bold"
                                     onClick={onSaveButtonClick}
                                 >
                                     {saveButton}

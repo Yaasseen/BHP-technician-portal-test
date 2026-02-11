@@ -17,7 +17,7 @@ function TaskCard({ team }) {
         </div>
     );
     return (
-        <div className="border rounded-lg shadow-sm h-full w-full">
+        <div className="border rounded-none shadow-sm h-full w-full">
             <div className="bg-gray-100 rounded-t-lg border-b flex justify-between p-2">
                 <p className="pl-2 font-semibold">{team.name}</p>
                 <span className="flex items-center space-x-2 text-sm pr-2">
@@ -36,9 +36,9 @@ function TaskCard({ team }) {
                             <CarryOutOutlined />
                             <p className="text-sm">{subTeam.task}</p>
                             <div
-                                className={`flex items-center text-xs px-3 py-1 rounded-md space-x-2 border ${
+                                className={`flex items-center text-xs px-3 py-1 rounded-none space-x-2 border ${
                                     subTeam.taskStatus === "Free"
-                                        ? "bg-green-50 border-green-400 text-green-600"
+                                        ? "bg-indigo-50 border-indigo-400 text-indigo-600"
                                         : "bg-red-50 border-red-400 text-red-600"
                                 }`}
                             >
@@ -52,18 +52,18 @@ function TaskCard({ team }) {
                         {subTeam.jobs.map((job, idx) => (
                             <div
                                 key={idx}
-                                className="border rounded-lg p-2 mb-2 space-y-3"
+                                className="border rounded-none p-2 mb-2 space-y-3"
                             >
                                 <div className="flex items-center space-x-2 justify-between">
                                     <div className="flex items-center space-x-1">
                                         <p
-                                            className={`w-2 h-2 rounded-full ${
+                                            className={`w-2 h-2 rounded-none ${
                                                 job.status === "Pending"
                                                     ? "bg-yellow-400"
                                                     : job.status === "Delayed"
                                                     ? "bg-red-400"
                                                     : job.status === "Completed"
-                                                    ? "bg-green-400"
+                                                    ? "bg-indigo-400"
                                                     : "bg-blue-400"
                                             }`}
                                         />
@@ -74,7 +74,7 @@ function TaskCard({ team }) {
                                                     : job.status === "Delayed"
                                                     ? "text-red-400"
                                                     : job.status === "Completed"
-                                                    ? "text-green-500"
+                                                    ? "text-indigo-500"
                                                     : "text-blue-400"
                                             }`}
                                         >

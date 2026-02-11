@@ -120,7 +120,7 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
         <div className="pt-5">
             {contextHolder}
             <div className="form-container sm:p-5 bg-white ">
-                <h2 className="font-extrabold text-xl pb-5 border-b border-slate-100 text-slate-900 border-l-4 border-emerald-500 pl-4 h-8 flex items-center">
+                <h2 className="font-extrabold text-xl pb-5 border-b border-slate-100 text-slate-900 border-l-4 border-indigo-500 pl-4 h-8 flex items-center">
                     Assign Team
                 </h2>
                 <Form
@@ -174,7 +174,7 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
                                     <Button
                                         type="primary"
                                         htmlType="submit"
-                                        className="bg-emerald-600 border-none hover:bg-emerald-700 h-10 font-bold shadow-md shadow-emerald-100 px-6"
+                                        className="bg-indigo-600 border-none hover:bg-indigo-700 h-10 font-bold shadow-md shadow-indigo-100 px-6"
                                     >
                                         {submitLoading ? (
                                             <div className="px-4 py-2">
@@ -269,7 +269,7 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
                                     <Button
                                         type="primary"
                                         htmlType="submit"
-                                        className="bg-emerald-600 border-none hover:bg-emerald-700 h-10 font-bold shadow-md shadow-emerald-100 px-6"
+                                        className="bg-indigo-600 border-none hover:bg-indigo-700 h-10 font-bold shadow-md shadow-indigo-100 px-6"
                                     >
                                         {submitLoading ? (
                                             <div className="px-4 py-2">

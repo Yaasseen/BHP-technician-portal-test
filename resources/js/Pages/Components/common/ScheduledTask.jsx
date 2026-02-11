@@ -79,7 +79,7 @@ function ScheduledTask({ taskId, formResponse, selectedOrders }) {
             {contextHolder}
             <div className="pt-5">
                 <div className="form-container sm:p-5 bg-white">
-                    <h2 className="font-extrabold text-xl pb-5 border-b border-slate-100 text-slate-800 border-l-4 border-l-emerald-500 pl-4 h-8 flex items-center">
+                    <h2 className="font-extrabold text-xl pb-5 border-b border-slate-100 text-slate-800 border-l-4 border-l-indigo-500 pl-4 h-8 flex items-center">
                         Scheduled Visit
                     </h2>
                     <Form
@@ -129,7 +129,7 @@ function ScheduledTask({ taskId, formResponse, selectedOrders }) {
                             <Button
                                 type="primary"
                                 htmlType="submit"
-                                className="bg-emerald-600 border-none hover:bg-emerald-700 h-10 font-bold shadow-md shadow-emerald-100 flex items-center justify-center p-6"
+                                className="bg-indigo-600 border-none hover:bg-indigo-700 h-10 font-bold shadow-md shadow-indigo-100 flex items-center justify-center p-6"
                             >
                                 {submitLoading ? (
                                     <div className="px-5 py-1">

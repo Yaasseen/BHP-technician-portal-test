@@ -17,26 +17,26 @@ const ServiceOrderCardItem = ({ serviceOrder, className }) => {
         >
             <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                    <p className="font-bold text-lg text-slate-900 group-hover:text-emerald-600 transition-colors">
+                    <p className="font-bold text-lg text-slate-900 group-hover:text-indigo-600 transition-colors">
                         {serviceOrder.document_no}
                     </p>
-                    <div className="flex items-center gap-2 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full w-fit">
+                    <div className="flex items-center gap-2 text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-none w-fit">
                         <ClockCircleOutlined />
                         {serviceOrder.schedule_date}
                     </div>
                     {statusDescription && (
-                        <div className="bg-emerald-50/50 border border-emerald-100 p-3 rounded-xl flex gap-3 items-start mt-2"> {/* Added mt-2 for spacing */}
-                            <InfoCircleOutlined className="text-emerald-500 mt-0.5" />
+                        <div className="bg-indigo-50/50 border border-indigo-100 p-3 rounded-none flex gap-3 items-start mt-2"> {/* Added mt-2 for spacing */}
+                            <InfoCircleOutlined className="text-indigo-500 mt-0.5" />
                             <div className="space-y-0.5">
-                                <p className="text-[10px] uppercase tracking-widest font-bold text-emerald-400">Current Status</p>
-                                <p className="text-sm font-semibold text-emerald-700 leading-tight">
+                                <p className="text-[10px] uppercase tracking-widest font-bold text-indigo-400">Current Status</p>
+                                <p className="text-sm font-semibold text-indigo-700 leading-tight">
                                     {statusDescription}
                                 </p>
                             </div>
                         </div>
                     )}
                 </div>
-                <div className="text-slate-300 group-hover:text-emerald-600 transition-colors">
+                <div className="text-slate-300 group-hover:text-indigo-600 transition-colors">
                     <RightOutlined className="text-lg" />
                 </div>
             </div>
@@ -54,7 +54,7 @@ const ServiceOrderCardItem = ({ serviceOrder, className }) => {
 
             <div className="pt-3 border-t border-gray-50 flex items-center justify-between mt-1">
                 <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                    <div className="w-6 h-6 bg-gray-100 rounded-none flex items-center justify-center">
                         <UserOutlined className="text-[10px] text-gray-500" />
                     </div>
                     <span className="text-xs text-gray-500 font-medium">

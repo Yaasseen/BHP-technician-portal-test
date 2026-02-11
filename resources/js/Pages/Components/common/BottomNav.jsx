@@ -21,7 +21,7 @@ const BottomNav = ({ activeView, setActiveView }) => {
                     <button
                         key={item.key}
                         onClick={() => setActiveView(item.key)}
-                        className={`flex flex-col items-center justify-center w-full h-full transition-colors relative ${activeView === item.key ? "text-emerald-600" : "text-slate-400"
+                        className={`flex flex-col items-center justify-center w-full h-full transition-colors relative ${activeView === item.key ? "text-indigo-600" : "text-slate-400"
                             }`}
                     >
                         <span className="text-xl mb-1">{item.icon}</span>
@@ -31,7 +31,7 @@ const BottomNav = ({ activeView, setActiveView }) => {
                         {activeView === item.key && (
                             <motion.div
                                 layoutId="activeNav"
-                                className="absolute -top-px left-1/2 -translate-x-1/2 w-12 h-0.5 bg-emerald-600 rounded-full"
+                                className="absolute -top-px left-1/2 -translate-x-1/2 w-12 h-0.5 bg-indigo-600 rounded-none"
                             />
                         )}
                     </button>

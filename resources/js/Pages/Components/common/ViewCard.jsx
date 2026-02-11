@@ -18,14 +18,14 @@ function ViewCard({ name, taskNo, teams }) {
             bg: "bg-orange-50",
         },
         Free: {
-            text: "text-green-500",
-            border: "border-green-400",
-            bg: "bg-green-50",
+            text: "text-indigo-500",
+            border: "border-indigo-400",
+            bg: "bg-indigo-50",
         },
     };
 
     return (
-        <div className="border rounded-lg m-4">
+        <div className="border rounded-none m-4">
             <div className="bg-gray-100  rounded-t-lg border-b flex justify-between p-2">
                 <p className="pl-2">{name}</p>
                 <span className="flex items-center space-x-2 text-sm pr-2">
@@ -49,7 +49,7 @@ function ViewCard({ name, taskNo, teams }) {
                             <div className="flex space-x-3">
                                 <p className="text-gray-500">{team.region}</p>
                                 <div
-                                    className={`flex text-xs items-center px-3 py-1 rounded-md space-x-2 ${currentColors.text} ${currentColors.bg} ${currentColors.border} border`}
+                                    className={`flex text-xs items-center px-3 py-1 rounded-none space-x-2 ${currentColors.text} ${currentColors.bg} ${currentColors.border} border`}
                                 >
                                     <FlagOutlined />
                                     <p>{team.bookingStatus}</p>
