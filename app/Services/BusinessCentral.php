@@ -27,13 +27,13 @@ class BusinessCentral
     private const CACHE_KEY_SPARE_PARTS = 'spare_parts_list';
     private const CACHE_KEY_LOCATIONS = 'location_list';
     private const CACHE_KEY_TEAMS = 'team_list';
-    
+
     private const SOAP_NAMESPACE = 'urn:microsoft-dynamics-schemas/codeunit/ServiceOrderApp';
 
     public function __construct(Utility $utility)
     {
         $this->utility = $utility;
-        
+
         $this->oDataBaseUrl = config('services.business_central.odata_base_url') ?? '';
         $this->oDataUsername = config('services.business_central.odata_username') ?? '';
         $this->oDataPassword = config('services.business_central.odata_password') ?? '';
@@ -46,7 +46,7 @@ class BusinessCentral
     /**
      * Resolve instance from container (Backward Compatibility)
      */
-    public static function getInstance(): self 
+    public static function getInstance(): self
     {
         return app(self::class);
     }
@@ -85,7 +85,7 @@ class BusinessCentral
         try {
             $client = $this->getHttpClient();
             $url = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/{$endpoint}";
-            
+
             if (!empty($queryParams)) {
                 $url .= '?' . http_build_query($queryParams);
             }
@@ -96,16 +96,15 @@ class BusinessCentral
             // Ideally, we should refactor calls to pass query params separately, but for now:
             $response = $client->get($url);
             $responseContent = $response->getBody()->getContents();
-            
+
             // Log a snippet of the response or count to avoid massive logs for lists
             $data = json_decode($responseContent, true);
             $value = $data['value'] ?? $data;
 
             $count = is_array($value) ? count($value) : 1;
             Log::channel('business_central')->info("OData Response from {$endpoint}: Fetched {$count} records.");
-            
-            return $value;
 
+            return $value;
         } catch (\Exception $e) {
             Log::channel('business_central')->error("Failed to fetch OData from {$endpoint}: " . $e->getMessage());
             return null;
@@ -119,7 +118,7 @@ class BusinessCentral
     {
         $endpoint = "/{$this->bcInstanceName}/WS/TBH/Codeunit/ServiceOrderApp";
         $namespace = self::SOAP_NAMESPACE;
-        
+
         $payload = <<<XML
             <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
                 <Body>
@@ -144,12 +143,11 @@ class BusinessCentral
 
             $responseBody = $response->getBody()->getContents();
             Log::channel('business_central')->info("SOAP Response [{$action}]: ", ['response' => $responseBody]);
-            
-            return $responseBody;
 
+            return $responseBody;
         } catch (RequestException $e) {
             Log::channel('business_central')->critical("SOAP Request Failed [{$action}]");
-            
+
             if ($e->hasResponse()) {
                 $responseBody = $e->getResponse()->getBody()->getContents();
                 Log::channel('business_central')->error('Guzzle Error', ['error' => $e->getMessage(), 'response' => $responseBody]);
@@ -170,10 +168,10 @@ class BusinessCentral
         return Cache::remember(self::CACHE_KEY_TECHNICIAN_LIST, now()->addMinutes(self::CACHE_TTL_MINUTES), function () {
             $data = $this->fetchOData('TechnicianApp');
             $technicianList = [];
-            
+
             if ($data) {
                 foreach ($data as $item) {
-                     $technicianList[$item['ID']] = $item;
+                    $technicianList[$item['ID']] = $item;
                 }
             }
             return $technicianList;
@@ -184,7 +182,7 @@ class BusinessCentral
     {
         // Currently returning empty array based on legacy code.
         // If this needs to be populated, implement the logic here.
-        return $this->regionList ?? []; 
+        return $this->regionList ?? [];
     }
 
     public function getTeamList(): array
@@ -202,11 +200,11 @@ class BusinessCentral
             // Fetch Service Lines
             // Note: passing query params manually to match existing format exactly for now
             $serviceLines = $this->fetchOData("ServiceLines?\$filter=Replication_Counter gt $maxReplicationCount");
-            
+
             // Fetch Repair Status List
             $repairStatusList = $this->fetchOData("RepairStatusList");
             $repairStatusMapping = [];
-            
+
             if ($repairStatusList) {
                 foreach ($repairStatusList as $status) {
                     $repairStatusMapping[$status['Code']] = $status['Service_Order_Status'];
@@ -223,7 +221,7 @@ class BusinessCentral
             } else {
                 foreach ($serviceLines as $line) {
                     $documentNo = $line['Document_No'];
-                    
+
                     // Add service_order_status
                     $repairStatusCode = $line['Repair_Status_Code'];
                     // Logic fix: $repairStatusDict was undefined in original code, assumed correct mapping here
@@ -231,7 +229,7 @@ class BusinessCentral
 
                     // Fetch individual header
                     $serviceHeaderData = $this->fetchOData("ServiceHeaders?\$filter=No eq '$documentNo'");
-                    
+
                     if (!empty($serviceHeaderData)) {
                         $headerData = $serviceHeaderData[0];
                         $combinedResponse[] = array_merge($line, $headerData);
@@ -245,7 +243,6 @@ class BusinessCentral
             ]);
 
             return $combinedResponse;
-
         } catch (\Exception $e) {
             Log::channel('business_central')->error('Failed to pull service orders: ' . $e->getMessage());
             return [];
@@ -255,14 +252,14 @@ class BusinessCentral
     public function serviceOrdersToBeDeleted($maxReplicationCount = 100): array
     {
         // NOTE: The URL in original code used a different instance/company hardcoded?
-        // "/ECOM0923/ODataV4/Company('TBH')/ServiceOrderArchived"
+        // "/ECOM0923/ODataV4/Company('TBH')/DeletedServiceOrders"
         // Preserving that behavior if intentional, but using config variables for consistency where possible.
         // If ECOM0923 is truly hardcoded, it suggests a specific archive environment. 
         // For professional refactor, we usually stick to the configured instance. 
         // I will use the configured instance for consistency unless specifically told otherwise,
         // but note the deviation from original hardcoded 'ECOM0923'.
-        
-        $data = $this->fetchOData("ServiceOrderArchived?\$filter=Replication_Counter gt $maxReplicationCount");
+
+        $data = $this->fetchOData("DeletedServiceOrders?\$filter=Replication_Counter gt $maxReplicationCount");
         return $data ?? [];
     }
 
@@ -307,7 +304,7 @@ class BusinessCentral
             <returnVal>{$returnVal}</returnVal>
             <response>true</response>
         ";
-        
+
         return $this->sendSoapRequest('UpdateServiceStatus', $body);
     }
 
@@ -322,7 +319,7 @@ class BusinessCentral
             <returnVal>''</returnVal>
             <response>true</response>
         ";
-        
+
         return $this->sendSoapRequest('SendSMS', $body);
     }
 
@@ -338,21 +335,21 @@ class BusinessCentral
             <serviceItemNo>{$serviceItemNo}</serviceItemNo>
             <response>''</response>
         ";
-        
+
         return $this->sendSoapRequest('RequestSpareParts', $body);
     }
 
     public function updatePortalImage($serviceOrderNo, $orderPicture, $sLNo, $imageIsSignature): string
     {
         $imageIsSignatureValue = $imageIsSignature ? 'true' : 'false';
-        
+
         $body = "
             <serviceOrderNo>{$serviceOrderNo}</serviceOrderNo>
             <orderPicture>{$orderPicture}</orderPicture>
             <sLNo>{$sLNo}</sLNo>
             <imageIsSignature>{$imageIsSignatureValue}</imageIsSignature>
         ";
-        
+
         return $this->sendSoapRequest('UpdatePortalImage', $body);
     }
 
