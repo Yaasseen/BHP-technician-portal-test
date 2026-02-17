@@ -729,6 +729,12 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
         );
     };
 
+    const hasActiveFilters = Object.keys(filter).some(key => {
+        if (key === 'period') return filter[key] !== 'all';
+        if (key === 'scheduled' || key === 'not_scheduled') return filter[key] === true;
+        return filter[key] !== null;
+    });
+
     return (
         <div className="space-y-2 sm:space-y-6">
             <div className="bg-slate-50/50 p-1 sm:p-6 rounded-none border border-slate-100">
@@ -737,38 +743,51 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     <Input
                         placeholder="Search by job number, company..."
                         prefix={<SearchOutlined className="text-slate-400 text-lg" />}
-                        className="bg-white border border-slate-200 rounded-full h-12 px-5 text-sm font-medium shadow-sm"
+                        className="bg-white border border-slate-200 rounded-none h-12 px-5 text-sm font-medium shadow-sm focus:border-indigo-500"
                         value={searchText}
                         onChange={(e) => handleSearch(e.target.value)}
                     />
 
                     <div className="flex gap-3 items-center">
-                        <button
-                            onClick={() => setSiderOpen(true)}
-                            className="min-w-[48px] h-12 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 shadow-sm"
-                        >
-                            <FilterOutlined className="text-lg" />
-                        </button>
-
-                        <div className="flex-1 overflow-x-auto pb-2 -mx-1 px-1">
-                            <div className="flex gap-2">
-                                {['All Tasks', 'Pending', 'Active', 'Completed', 'Reschedule'].map(status => (
-                                    <button
-                                        key={status}
-                                        className={`whitespace-nowrap px-5 h-12 rounded-full text-sm font-bold border transition-all ${((status === 'All Tasks' && !filter.status) || filter.status === status) // Simple check, might need refinement based on actual filter logic
-                                            ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-200'
-                                            : 'bg-white border-slate-200 text-slate-500 hover:border-indigo-300'
-                                            }`}
-                                        onClick={() => {
-                                            // For now just console log as I need to verify how setFilter should work with these strings
-                                            console.log("Filter clicked:", status);
-                                        }}
-                                    >
-                                        {status}
-                                    </button>
-                                ))}
-                            </div>
+                        <div className="relative">
+                            <button
+                                onClick={() => setSiderOpen(true)}
+                                className={`min-w-[48px] h-12 border rounded-none flex items-center justify-center shadow-sm active:bg-slate-50 transition-all ${hasActiveFilters
+                                    ? 'bg-indigo-50 border-indigo-200 text-indigo-600'
+                                    : 'bg-white border-slate-200 text-slate-500'
+                                    }`}
+                            >
+                                <FilterOutlined className="text-lg" />
+                            </button>
+                            {hasActiveFilters && (
+                                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                                </span>
+                            )}
                         </div>
+
+                        {hasActiveFilters && (
+                            <button
+                                onClick={clearFilter}
+                                className="h-12 px-4 bg-white border border-red-100 text-red-500 font-bold rounded-none text-xs uppercase tracking-wider hover:bg-red-50 transition-colors"
+                            >
+                                Clear
+                            </button>
+                        )}
+
+                        <Button
+                            disabled={selectedOrders?.length === 0}
+                            className={`h-12 px-5 rounded-none border-none font-black text-xs uppercase tracking-wider transition-all ${selectedOrders?.length > 0
+                                ? 'bg-indigo-500 text-white shadow-md shadow-indigo-100'
+                                : 'bg-slate-100 text-slate-300'
+                                }`}
+                            onClick={handleBulkOrderAssign}
+                        >
+                            Bulk Assign
+                        </Button>
+
+
                     </div>
                 </div>
 
@@ -785,12 +804,27 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
 
                     <div className="hidden sm:flex items-center gap-3 w-full sm:w-auto">
                         <Button
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-3 h-12 px-8 rounded-none border-slate-200 bg-white hover:border-indigo-300 hover:text-indigo-600 font-bold text-slate-600 transition-all shadow-sm shadow-slate-100/30"
+                            className={`flex-1 sm:flex-none flex items-center justify-center gap-3 h-12 px-8 rounded-none border font-bold transition-all shadow-sm ${hasActiveFilters
+                                ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
+                                : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-indigo-600'
+                                }`}
                             onClick={() => setSiderOpen(true)}
                         >
                             <FilterOutlined />
                             <span>Filters</span>
+                            {hasActiveFilters && (
+                                <span className="ml-1 w-2 h-2 rounded-full bg-indigo-500"></span>
+                            )}
                         </Button>
+
+                        {hasActiveFilters && (
+                            <Button
+                                className="flex-1 sm:flex-none h-12 px-6 rounded-none font-bold text-red-500 border border-red-100 bg-red-50/50 hover:bg-red-50 hover:border-red-200 transition-all"
+                                onClick={clearFilter}
+                            >
+                                Clear
+                            </Button>
+                        )}
 
                         <Button
                             disabled={selectedOrders?.length === 0}
@@ -884,6 +918,37 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     </div>
                 </div>
             </div>
+            {/* Mobile Bulk Assignment Sticky Bar */}
+            {selectedOrders.length > 0 && (
+                <div className="fixed bottom-20 left-0 right-0 z-40 sm:hidden px-4 pb-2">
+                    <div className="bg-indigo-600 rounded-xl shadow-2xl shadow-indigo-300/50 p-3 flex items-center justify-between gap-3 border border-indigo-500">
+                        <div className="flex items-center gap-2 text-white">
+                            <span className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center text-sm font-black">
+                                {selectedOrders.length}
+                            </span>
+                            <span className="text-xs font-bold tracking-wide">Selected</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                size="small"
+                                className="h-9 px-4 rounded-lg border-0 text-white bg-orange-500 hover:bg-orange-600 font-bold text-xs shadow-md"
+                                onClick={() => handleSelectionChange([])}
+                            >
+                                Clear
+                            </Button>
+                            <Button
+                                type="primary"
+                                size="small"
+                                className="h-9 px-5 rounded-lg bg-white text-indigo-700 border-0 font-black text-xs shadow-lg hover:bg-indigo-50"
+                                onClick={handleBulkOrderAssign}
+                            >
+                                Assign Team
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Modal */}
             <div>
                 <div>
@@ -938,216 +1003,184 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     saveButton={"Apply Filter"}
                     clearButton={"Clear Filter"}
                     body={
-                        <div className="flex flex-col gap-y-6 mt-4 px-2">
+                        <div className="flex flex-col gap-y-8 mt-2">
                             {/* Period Selection */}
                             <div className="w-full">
-                                <label className="text-sm font-medium  text-gray-700">
-                                    Period
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">
+                                    Time Period
                                 </label>
 
                                 <Radio.Group
-                                    className="w-full flex flex-col sm:flex-row space-y-2 sm:space-y-0 mt-2"
+                                    className="w-full grid grid-cols-4 gap-0"
                                     onChange={handlePeriodFilterChange}
                                     value={filter.period}
+                                    buttonStyle="solid"
                                 >
-                                    <Radio.Button
-                                        value="24h"
-                                        className="w-full sm:w-1/4 sm:rounded-l-md bg-gray-50 text-center text-xs py-2"
-                                    >
-                                        24 hours
-                                    </Radio.Button>
-                                    <Radio.Button
-                                        value="7d"
-                                        className="w-full sm:w-1/4 rounded-none bg-gray-50 text-center text-xs py-2"
-                                    >
-                                        7 days
-                                    </Radio.Button>
-                                    <Radio.Button
-                                        value="30d"
-                                        className="w-full sm:w-1/4 rounded-none bg-gray-50 text-center text-xs py-2"
-                                    >
-                                        30 days
-                                    </Radio.Button>
-                                    <Radio.Button
-                                        value="12m"
-                                        className="w-full sm:w-1/4 sm:rounded-r-md bg-gray-50 text-center text-xs py-2"
-                                    >
-                                        12 months
-                                    </Radio.Button>
+                                    {['24h', '7d', '30d', '12m'].map((period) => (
+                                        <Radio.Button
+                                            key={period}
+                                            value={period}
+                                            className={`text-center flex items-center justify-center h-10 text-xs font-bold border-slate-200 transition-all ${filter.period === period ? '!bg-indigo-600 !border-indigo-600 !text-white z-10' : 'bg-slate-50 text-slate-500 hover:text-indigo-600'
+                                                }`}
+                                        >
+                                            {period === '24h' ? '24H' : period === '7d' ? '7 Days' : period === '30d' ? '30 Days' : '1 Year'}
+                                        </Radio.Button>
+                                    ))}
                                 </Radio.Group>
                             </div>
 
                             {/* Status Checkboxes */}
                             <div className="w-full">
-                                <label className="text-sm font-medium  text-gray-700">
-                                    Scheduled Status
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">
+                                    Schedule Status
                                 </label>
-                                <div className="flex items-center gap-8 mt-2">
-                                    <Checkbox
-                                        checked={filter.scheduled}
-                                        onChange={() =>
-                                            setFilter({
-                                                ...filter,
-                                                scheduled: !filter.scheduled,
-                                                not_scheduled: false,
-                                            })
-                                        }
-                                        className="text-sm text-gray-700"
+                                <div className="flex items-center gap-4">
+                                    <div
+                                        className={`flex-1 border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.scheduled ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-slate-200 hover:border-indigo-200'}`}
+                                        onClick={() => setFilter({ ...filter, scheduled: !filter.scheduled, not_scheduled: false })}
                                     >
-                                        Scheduled
-                                    </Checkbox>
-                                    <Checkbox
-                                        checked={filter.not_scheduled}
-                                        onChange={() =>
-                                            setFilter({
-                                                ...filter,
-                                                scheduled: false,
-                                                not_scheduled:
-                                                    !filter.not_scheduled,
-                                            })
-                                        }
-                                        className="text-sm text-gray-700"
+                                        <Checkbox checked={filter.scheduled} className="custom-checkbox pointer-events-none" />
+                                        <span className={`text-sm font-bold ${filter.scheduled ? 'text-indigo-700' : 'text-slate-600'}`}>Scheduled</span>
+                                    </div>
+
+                                    <div
+                                        className={`flex-1 border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.not_scheduled ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-slate-200 hover:border-indigo-200'}`}
+                                        onClick={() => setFilter({ ...filter, not_scheduled: !filter.not_scheduled, scheduled: false })}
                                     >
-                                        Not Scheduled
-                                    </Checkbox>
+                                        <Checkbox checked={filter.not_scheduled} className="custom-checkbox pointer-events-none" />
+                                        <span className={`text-sm font-bold ${filter.not_scheduled ? 'text-indigo-700' : 'text-slate-600'}`}>Unscheduled</span>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Brand Code */}
-                            <div className="w-full ">
-                                <label className="text-sm font-medium  text-gray-700">
-                                    Brand and Device Description
+                            <div className="w-full">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
+                                    Brand & Device
                                 </label>
-
                                 <Select
                                     showSearch
                                     filterOption={(input, option) =>
-                                        option.label
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
+                                        option.label.toLowerCase().includes(input.toLowerCase())
                                     }
-                                    className="w-full mt-2"
+                                    className="w-full"
                                     loading={loading}
                                     onChange={handleBrandCodeChange}
-                                    placeholder="Select Brand Code"
+                                    placeholder="Search brands..."
                                     options={brandCode.map((brand) => ({
                                         label: brand,
                                         value: brand,
                                     }))}
                                     value={filter.brand_code}
                                     allowClear
-                                    size="middle"
+                                    size="large"
+                                    suffixIcon={<SearchOutlined className="text-slate-400" />}
                                 />
                             </div>
 
                             {/* Repair Status Code */}
                             <div className="w-full">
-                                <label className="text-sm font-medium text-gray-700">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
                                     Repair Status
                                 </label>
                                 <Select
                                     showSearch
                                     filterOption={(input, option) =>
-                                        option.label
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
+                                        option.label.toLowerCase().includes(input.toLowerCase())
                                     }
-                                    className="w-full mt-2"
+                                    className="w-full"
                                     loading={loading}
                                     onChange={handleRepairStatusChange}
-                                    placeholder="Select Status Code"
+                                    placeholder="Select status..."
                                     options={taskCode.map((taskCode) => ({
                                         label: taskCode.taskDescription,
                                         value: taskCode.taskCode,
                                     }))}
                                     value={filter.repair_status_code}
                                     allowClear
-                                    size="middle"
+                                    size="large"
                                 />
                             </div>
+
                             {/* Service Status Code */}
                             <div className="w-full">
-                                <label className="text-sm font-medium text-gray-700">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
                                     Order Status
                                 </label>
                                 <Select
                                     showSearch
                                     filterOption={(input, option) =>
-                                        option.label
-                                            .toLowerCase()
-                                            .includes(input.toLowerCase())
+                                        option.label.toLowerCase().includes(input.toLowerCase())
                                     }
-                                    className="w-full mt-2"
+                                    className="w-full"
                                     loading={loading}
                                     onChange={handlePortalStatusChange}
-                                    placeholder="Select Status Code"
+                                    placeholder="Select order status..."
                                     options={portalStatus}
                                     value={filter.portal_status}
                                     allowClear
-                                    size="middle"
+                                    size="large"
                                 />
                             </div>
 
                             {/* Team List */}
                             <div className="w-full">
-                                <label className="text-sm font-medium  text-gray-700">
-                                    Team
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
+                                    Assigned Team
                                 </label>
                                 <Select
-                                    className="w-full mt-2"
+                                    className="w-full"
                                     loading={loading}
                                     onChange={handleTeamChange}
-                                    placeholder="Select Team"
+                                    placeholder="Select team..."
                                     options={teamList.map((team) => ({
                                         label: team,
                                         value: team,
                                     }))}
                                     value={filter.team}
                                     allowClear
-                                    size="middle"
+                                    size="large"
+                                    suffixIcon={<UserOutlined className="text-slate-400" />}
                                 />
                             </div>
 
                             {/* Date Range */}
                             <div className="w-full">
-                                <label className="text-sm font-medium  text-gray-700">
-                                    Scheduled Date Range
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
+                                    Date Range
                                 </label>
-                                <div className="w-full flex items-center gap-x-3 mt-2">
+                                <div className="grid grid-cols-2 gap-3">
                                     <DatePicker
-                                        placeholder="From"
+                                        placeholder="Start Date"
                                         value={fromDate}
-                                        onChange={(date) =>
-                                            handleDateChange(date, "from")
-                                        }
-                                        className="w-1/2"
-                                        size="middle"
+                                        onChange={(date) => handleDateChange(date, "from")}
+                                        className="w-full"
+                                        size="large"
+                                        format="DD/MM/YYYY"
                                     />
                                     <DatePicker
-                                        placeholder="To"
+                                        placeholder="End Date"
                                         value={toDate}
-                                        onChange={(date) =>
-                                            handleDateChange(date, "to")
-                                        }
-                                        className="w-1/2"
-                                        size="middle"
+                                        onChange={(date) => handleDateChange(date, "to")}
+                                        className="w-full"
+                                        size="large"
+                                        format="DD/MM/YYYY"
                                     />
                                 </div>
                             </div>
 
                             {/* Specific Date */}
-                            <div className="w-full mb-4  text-gray-700">
-                                <label className="text-sm font-medium  text-gray-700">
-                                    Scheduled Date
+                            <div className="w-full">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">
+                                    Specific Date
                                 </label>
                                 <DatePicker
-                                    className="w-full mt-2"
-                                    placeholder="Select Specific Date"
+                                    className="w-full"
+                                    placeholder="Select a specific date"
                                     value={specificDate}
-                                    onChange={(date) =>
-                                        handleDateChange(date, "single")
-                                    }
-                                    size="middle"
+                                    onChange={(date) => handleDateChange(date, "single")}
+                                    size="large"
+                                    format="DD/MM/YYYY"
                                 />
                             </div>
                         </div>

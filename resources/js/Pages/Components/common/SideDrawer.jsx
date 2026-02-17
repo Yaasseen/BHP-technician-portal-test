@@ -1,5 +1,7 @@
-﻿import { useEffect } from "react";
+﻿// Custom Drawer Component
+import { useEffect } from "react";
 import { Button } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 
 export default function SiderDrawer({
     show,
@@ -23,67 +25,67 @@ export default function SiderDrawer({
 
     return (
         <div
-            className={`fixed inset-0 h-screen w-full bg-black bg-opacity-50 transition-opacity duration-300 z-[999] ${show ? "opacity-100 visible" : "opacity-0 invisible"
+            className={`fixed inset-0 h-screen w-full bg-slate-900/40 backdrop-blur-sm transition-all duration-300 z-[999] ${show ? "opacity-100 visible" : "opacity-0 invisible"
                 }`}
             onClick={onClose}
         >
-            <div className="">
-                <button
-                    type="button"
-                    className={`absolute top-1/2 -translate-y-1/2 transition-transform duration-300 ${show ? "right-[31%]" : "-right-10"
-                        } w-14 h-14 rounded-none bg-gray-800 text-white text-lg flex items-center justify-center`}
-                    aria-label="Close"
-                    onClick={onClose}
-                >
-                    ✕
-                </button>
-            </div>
-
             {/* Sidebar */}
             <div
-                className={`fixed top-0 right-0 w-[98%] sm:w-[60%] lg:w-[30%] bg-white h-[90vh] sm:h-screen overflow-y-auto shadow-lg transition-transform duration-300 ${show ? "translate-x-0" : "translate-x-full"
+                className={`fixed top-0 right-0 w-[85%] sm:w-[450px] bg-white h-full shadow-2xl transition-transform duration-300 ease-out flex flex-col ${show ? "translate-x-0" : "translate-x-full"
                     }`}
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className="flex flex-col  w-full">
-                    {heading && (
-                        <div className="flex-1 flex items-center justify-between p-4  border-b">
-                            <p className="text-lg font-semibold  ">{heading}</p>
-                            <p onClick={onClickHeading}>{headingBody}</p>
-                        </div>
-                    )}
-
-                    <div className="px-4 py-2 max-h-[90%] overflow-y-auto">
-                        {body}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="w-full text-center">
-                        {onSaveButtonClick && (
-                            <div
-                                style={{
-                                    boxShadow:
-                                        "0 -4px 6px -1px rgba(0, 0, 0, 0.1)",
-                                }}
-                                className="w-full px-4 py-3 border-t border-gray-300 flex justify-between gap-1"
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white z-10">
+                    <div>
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none">{heading || "Filters"}</h2>
+                        {headingBody && (
+                            <p
+                                className="text-xs font-bold text-indigo-500 uppercase tracking-widest mt-1 cursor-pointer hover:text-indigo-700 transition-colors"
+                                onClick={onClickHeading}
                             >
-                                <Button
-                                    className="w-1/2"
-                                    onClick={onClearButtonClick}
-                                >
-                                    {clearButton}
-                                </Button>
-
-                                <Button
-                                    className="w-1/2 bg-indigo-600 text-white border-none hover:bg-indigo-700 h-10 font-bold"
-                                    onClick={onSaveButtonClick}
-                                >
-                                    {saveButton}
-                                </Button>
-                            </div>
+                                {headingBody}
+                            </p>
                         )}
                     </div>
+                    <button
+                        type="button"
+                        className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all rounded-none"
+                        aria-label="Close"
+                        onClick={onClose}
+                    >
+                        <CloseOutlined className="text-lg" />
+                    </button>
                 </div>
+
+                {/* Body */}
+                <div className="flex-1 overflow-y-auto px-6 py-6 scrollbar-hide">
+                    {body}
+                </div>
+
+                {/* Footer */}
+                {(onSaveButtonClick || onClearButtonClick) && (
+                    <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-4 flex gap-3">
+                        {onClearButtonClick && (
+                            <Button
+                                className="flex-1 h-12 bg-white border border-slate-200 text-slate-600 font-bold hover:border-slate-300 hover:text-slate-800 rounded-none shadow-sm"
+                                onClick={onClearButtonClick}
+                            >
+                                {clearButton || "Clear"}
+                            </Button>
+                        )}
+
+                        {onSaveButtonClick && (
+                            <Button
+                                type="primary"
+                                className="flex-1 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold border-none rounded-none shadow-md shadow-indigo-100"
+                                onClick={onSaveButtonClick}
+                            >
+                                {saveButton || "Apply"}
+                            </Button>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

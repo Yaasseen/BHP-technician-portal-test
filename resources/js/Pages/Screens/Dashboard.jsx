@@ -19,6 +19,7 @@ const Dashboard = ({
     activeView,
     setActiveView,
     onLogout, // Added onLogout prop
+    showWeekView,
 }) => {
     const { setWeekOffset, setStartDate } = useSchedule();
     const [documentNo, setDocumentNo] = useState(null);
@@ -104,7 +105,7 @@ const Dashboard = ({
                             showWeekView={showWeekView}
                         />
                     ) : (
-                        <div className="space-y-6">
+                        <div className="flex flex-col gap-6">
                             <div className="hidden sm:block">
                                 <DashboardList
                                     user={user}
@@ -116,7 +117,7 @@ const Dashboard = ({
                             </div>
 
                             {activeView === "list" ? (
-                                <div className="space-y-6">
+                                <div className="flex flex-col gap-6">
                                     <MobileHeroHeader
                                         user={user}
                                         onNotificationClick={() => console.log("Notifications")}
@@ -147,7 +148,11 @@ const Dashboard = ({
                                     />
                                 </div>
                             ) : activeView === "profile" ? (
-                                <Profile user={user} onLogout={onLogout} />
+                                <Profile
+                                    user={user}
+                                    onLogout={onLogout}
+                                    onBack={() => setActiveView("list")}
+                                />
                             ) : null}
                         </div>
                     )}

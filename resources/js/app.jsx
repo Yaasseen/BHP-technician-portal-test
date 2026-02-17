@@ -1,5 +1,8 @@
+import './bootstrap';
+import '../css/app.css';
 import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom/client";
+import '@ant-design/v5-patch-for-react-19';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./Pages/HomePage";
 import AboutPage from "./Pages/AboutPage";
@@ -41,6 +44,21 @@ function App() {
 
     useEffect(() => {
         fetchData();
+
+        const interceptor = axios.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                if (error.response && error.response.status === 401) {
+                    setIsLoggedIn(false);
+                    setUser(null);
+                }
+                return Promise.reject(error);
+            }
+        );
+
+        return () => {
+            axios.interceptors.response.eject(interceptor);
+        };
     }, []);
 
     if (loading) {
@@ -74,7 +92,7 @@ function App() {
 
 export default App;
 
-const root = ReactDOM.createRoot(document.getElementById("app"));
+const root = createRoot(document.getElementById("app"));
 root.render(
     <ScheduleProvider>
         <App />

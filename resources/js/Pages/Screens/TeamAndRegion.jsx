@@ -9,7 +9,7 @@ import {
     Modal,
     message,
 } from "antd";
-import { CalendarOutlined, TeamOutlined, GlobalOutlined, CheckCircleFilled, PlusCircleOutlined } from "@ant-design/icons";
+import { CalendarOutlined, TeamOutlined, GlobalOutlined, CheckCircleFilled, PlusCircleOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import axios from "axios";
 import moment from "moment";
 import ServiceOrderSelection from "./ServiceOrderSelection";
@@ -131,7 +131,14 @@ const TeamRegionConfig = ({
                 setConfig(newConfig);
             } catch (error) {
                 console.error("Error fetching team schedules:", error);
-                messageApi.error("Error fetching team schedules.");
+                if (error.response && error.response.status === 403) {
+                    messageApi.open({
+                        type: "warning",
+                        content: "You do not have permission to view team schedules.",
+                    });
+                } else {
+                    messageApi.error("Error fetching team schedules.");
+                }
             } finally {
                 setLoading(false);
                 setLoadingScreen(false);
@@ -234,12 +241,17 @@ const TeamRegionConfig = ({
     return (
         <>
             {contextHolder}
-            return (
             <div className="space-y-8 pb-10">
                 {contextHolder}
 
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">
+                        <Button
+                            onClick={returnWeekView}
+                            className="w-10 h-10 rounded-none bg-white border-slate-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
+                        >
+                            <ArrowLeftOutlined className="text-lg" />
+                        </Button>
                         <div className="w-12 h-12 rounded-none bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-100">
                             <CalendarOutlined className="text-white text-2xl" />
                         </div>

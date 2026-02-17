@@ -20,6 +20,11 @@ import {
     CalendarOutlined,
     DollarOutlined,
     CameraOutlined,
+    ArrowLeftOutlined,
+    PhoneOutlined,
+    CheckCircleOutlined,
+    SettingOutlined,
+    UploadOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import TextArea from "antd/es/input/TextArea";
@@ -330,11 +335,19 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
     };
 
     const handleSignature = () => {
-        if (signRef.current) {
-            const signature = signRef.current
-                .getTrimmedCanvas()
-                .toDataURL("image/png");
-            setSignData(signature);
+        if (signRef.current && !signRef.current.isEmpty()) {
+            try {
+                const signature = signRef.current
+                    .getTrimmedCanvas()
+                    .toDataURL("image/png");
+                setSignData(signature);
+            } catch (e) {
+                // Fallback if trimmed canvas has 0 dimensions
+                const signature = signRef.current
+                    .getCanvas()
+                    .toDataURL("image/png");
+                setSignData(signature);
+            }
         }
     };
 
@@ -498,287 +511,327 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
     //     );
     // }
 
-    console.log("Service==>", serviceData);
 
     return (
-        <>
-            {/* <button
-                onClick={handleScreenContent}
-                className="flex space-x-2 items-center mb-10"
-            >
-                <ArrowLeftOutlined />
-                <p>Back to Dashboard</p>
-            </button> */}
+        <div className="min-h-screen bg-slate-50 pb-24">
+            {contextHolder}
 
-            <div className="space-y-6 pb-12">
-                {contextHolder}
-                <div className="flex flex-col lg:flex-row gap-6">
-                    {/* Left Column: Overview */}
-                    <div className="w-full lg:w-1/3">
-                        <div className="bg-white rounded-none border border-slate-100 overflow-hidden">
-                            <div className="bg-slate-50/80 px-8 py-5 border-b border-slate-100">
-                                <h3 className="text-slate-900 font-black text-base flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-none bg-indigo-100 flex items-center justify-center">
-                                        <FileOutlined className="text-indigo-600" />
+            {/* Gradient Header */}
+            <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-500 px-5 pt-5 pb-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-8 -mb-8 blur-xl"></div>
+
+                <div className="relative z-10 flex items-start justify-between">
+                    <div className="flex items-start gap-3">
+                        <button
+                            onClick={handleScreenContent}
+                            className="mt-1 text-white text-xl bg-transparent border-0 p-0 cursor-pointer"
+                        >
+                            <ArrowLeftOutlined />
+                        </button>
+                        <div>
+                            <h1 className="text-xl font-extrabold text-white leading-tight m-0">Service Details</h1>
+                            <p className="text-white/70 text-xs font-semibold mt-0.5">Job #{serviceData?.jobNo || document_no}</p>
+                        </div>
+                    </div>
+                    <div className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-lg mt-0.5">
+                        <span className="text-white font-bold text-[10px] tracking-widest uppercase">
+                            {serviceData?.status || "PENDING"}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* All Content Container */}
+            <div className="max-w-7xl mx-auto px-5 -mt-8 relative z-10 pb-10">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+                    {/* Left Column: Reference Info (Overview & Details) */}
+                    {/* Left Column: Reference Info (Overview Only) */}
+                    <div className="space-y-5 lg:col-span-1">
+                        {/* Overview Card */}
+                        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 sticky top-5">
+                            <h3 className="text-slate-900 font-bold text-lg mb-6 border-b border-slate-100 pb-4">Overview</h3>
+                            <div className="space-y-5">
+                                {descriptions.map((item, index) => (
+                                    <div key={index} className="flex items-start gap-4 group">
+                                        <div className="mt-1 text-slate-400 text-lg group-hover:text-indigo-600 transition-colors duration-300">
+                                            {item.icon}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">{item.label}</p>
+                                            <p className="text-slate-900 font-bold text-sm leading-snug break-words">{item.value || "N/A"}</p>
+                                        </div>
                                     </div>
-                                    <span className="tracking-tight">Task Overview</span>
-                                </h3>
-                            </div>
-                            <div className="p-4">
-                                <Descriptions column={1} size="small" className="minimal-descriptions">
-                                    {descriptions.map((item, index) => (
-                                        <Descriptions.Item
-                                            key={index}
-                                            label={
-                                                <div className="flex items-center gap-3 text-slate-400 font-black text-[10px] uppercase tracking-[0.12em]">
-                                                    <span className="opacity-60">{item.icon}</span>
-                                                    {item.label}
-                                                </div>
-                                            }
-                                        >
-                                            <span className="font-bold text-slate-700">{item.value || 'N/A'}</span>
-                                        </Descriptions.Item>
-                                    ))}
-                                </Descriptions>
+                                ))}
                             </div>
                         </div>
                     </div>
 
-                    {/* Right Column: Details & Forms */}
-                    <div className="w-full lg:w-2/3 space-y-6">
-                        {/* Task Item Details Table */}
-                        <div className="app-card p-6">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                                    <span className="w-1.5 h-6 bg-indigo-500 rounded-none" />
-                                    Device Details
-                                </h3>
+                    {/* Right Column: Details, Spare Parts, Form, History */}
+                    <div className="space-y-6 lg:col-span-2">
+
+                        {/* Details Section */}
+                        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-slate-900 font-bold text-lg m-0">Details</h3>
                                 {user.Role !== "Read Only" && (
                                     <Button
                                         onClick={() => setModelOpen(true)}
-                                        className="bg-indigo-500 text-white rounded-none font-black h-12 px-8 hover:bg-indigo-600 transition-all border-none text-sm group"
+                                        className="bg-indigo-600 text-white font-bold h-9 px-4 rounded-lg border-none shadow-sm hover:bg-indigo-700 transition-colors"
                                     >
-                                        Request Spare Part
+                                        Request SparePart
                                     </Button>
                                 )}
                             </div>
-
-                            <div className="overflow-x-auto rounded-none border border-gray-100">
-                                <Table
-                                    dataSource={dataSource}
-                                    columns={columns}
-                                    pagination={false}
-                                    size="middle"
-                                    className="modern-table"
-                                />
+                            <div className="overflow-x-auto border border-slate-100 rounded-lg">
+                                <table className="w-full text-left border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr className="bg-slate-50 border-b border-slate-100">
+                                            <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">SN.</th>
+                                            <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Document No</th>
+                                            <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Line No</th>
+                                            <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Service Item No</th>
+                                            <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Group Code</th>
+                                            <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Item No.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        <tr>
+                                            <td className="px-5 py-4 text-slate-500 font-bold text-xs">1</td>
+                                            <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{dataSource?.[0]?.documentNo || 'N/A'}</td>
+                                            <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{dataSource?.[0]?.lineNo || 'N/A'}</td>
+                                            <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{dataSource?.[0]?.serviceItemNo || 'N/A'}</td>
+                                            <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{dataSource?.[0]?.serviceItemGroupCode || ''}</td>
+                                            <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{dataSource?.[0]?.itemNo || 'N/A'}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
-                        {/* Spare Parts List */}
-                        <div className="app-card p-6">
-                            <h3 className="text-lg font-extrabold text-slate-900 mb-6 border-l-4 border-indigo-500 pl-4 h-6 flex items-center">
-                                Service Spare Parts
-                            </h3>
-                            <div className="overflow-x-auto rounded-none border border-slate-100">
-                                <Table
-                                    columns={tableColumns}
-                                    dataSource={data}
-                                    pagination={false}
-                                    scroll={{ y: 275 }}
-                                    loading={loadingInfo}
-                                    size="middle"
-                                    className="modern-table"
-                                />
-                            </div>
+                        {/* Service Spare Part Section */}
+                        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                            <h3 className="text-slate-900 font-bold text-lg mb-6">Service Spare Part</h3>
+
+                            {loadingInfo ? (
+                                <div className="flex justify-center py-8"><Spin /></div>
+                            ) : data && data.length > 0 ? (
+                                <div className="overflow-x-auto border border-slate-100 rounded-lg">
+                                    <table className="w-full text-left border-collapse min-w-[600px]">
+                                        <thead>
+                                            <tr className="bg-slate-50 border-b border-slate-100">
+                                                <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Type</th>
+                                                <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">No</th>
+                                                <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Description</th>
+                                                <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Location Code</th>
+                                                <th className="px-5 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-50">
+                                            {data.map((part, idx) => (
+                                                <tr key={idx}>
+                                                    <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{part.Type || 'N/A'}</td>
+                                                    <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{part.No || 'N/A'}</td>
+                                                    <td className="px-5 py-4 text-slate-700 font-bold text-xs">{part.Description || `Part ${idx + 1}`}</td>
+                                                    <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{part.Location_Code || 'N/A'}</td>
+                                                    <td className="px-5 py-4 text-slate-700 font-bold text-xs whitespace-nowrap">{part.Quantity || 0}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-10 text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                                    <FileOutlined className="text-3xl mb-2 opacity-50" />
+                                    <p className="text-sm m-0">No data</p>
+                                </div>
+                            )}
                         </div>
 
-                        {/* Activity Form */}
-                        {user.Role !== "Read Only" && (
-                            <div className="app-card p-6 md:p-8">
-                                <h3 className="text-lg font-extrabold text-slate-900 mb-8 border-l-4 border-indigo-500 pl-4 h-6 flex items-center">
-                                    Log Activity
-                                </h3>
+                        {/* Log Activity Form */}
+                        {user.Role !== "Read Only" ? (
+                            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
                                 <Form
                                     form={form}
                                     layout="vertical"
                                     onFinish={handleSubmitForm}
-                                    className="modern-form"
+                                    className="space-y-6"
                                     initialValues={{
                                         repair_status_code: serviceData?.taskCode,
                                         service_order_status: serviceData?.status,
                                     }}
                                 >
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
-                                        <Form.Item
-                                            label={<span className="font-bold text-gray-700">BC Status</span>}
-                                            name="repair_status_code"
-                                        >
-                                            <Select
-                                                className="h-11 rounded-none"
-                                                loading={loading}
-                                                placeholder="Select BC Status"
-                                                options={taskCode.map((task) => ({
-                                                    label: task.taskDescription,
-                                                    value: task.taskCode,
-                                                }))}
-                                            />
-                                        </Form.Item>
+                                    <div className="space-y-5">
+                                        <div>
+                                            <p className="text-slate-900 font-bold text-sm mb-2">Service Order Business Central Status</p>
+                                            <Form.Item name="repair_status_code" className="mb-0">
+                                                <Select
+                                                    className="h-10 rounded-lg"
+                                                    loading={loading}
+                                                    placeholder="Select BC Status"
+                                                    options={taskCode.map((task) => ({
+                                                        label: task.taskDescription,
+                                                        value: task.taskCode,
+                                                    }))}
+                                                />
+                                            </Form.Item>
+                                        </div>
 
-                                        <Form.Item
-                                            label={<span className="font-bold text-gray-700">Portal Status</span>}
-                                            name="service_order_status"
-                                        >
-                                            <Select
-                                                className="h-11 rounded-none"
-                                                loading={loadingInfo}
-                                                options={statusOptions.map((opt) => ({
-                                                    label: `${opt.value} - ${opt.label}`,
-                                                    value: opt.value,
-                                                }))}
-                                            />
-                                        </Form.Item>
-                                    </div>
+                                        <div>
+                                            <p className="text-slate-900 font-bold text-sm mb-2">Service Order Portal Status</p>
+                                            <Form.Item name="service_order_status" className="mb-0">
+                                                <Select
+                                                    className="h-10 rounded-lg"
+                                                    loading={loadingInfo}
+                                                    placeholder="Select Portal Status"
+                                                    options={statusOptions.map((opt) => ({
+                                                        label: `${opt.value} - ${opt.label}`,
+                                                        value: opt.value,
+                                                    }))}
+                                                />
+                                            </Form.Item>
+                                        </div>
 
-                                    <Form.Item
-                                        label={<span className="font-bold text-gray-700">Findings & Remarks</span>}
-                                        name="description"
-                                    >
-                                        <Input.TextArea
-                                            rows={4}
-                                            className="rounded-none bg-gray-50 border-gray-200"
-                                            placeholder="Enter your service findings and remarks..."
-                                        />
-                                    </Form.Item>
+                                        <div>
+                                            <p className="text-slate-900 font-bold text-sm mb-2">Description</p>
+                                            <Form.Item name="description" className="mb-0">
+                                                <Input.TextArea
+                                                    rows={3}
+                                                    className="rounded-lg border-slate-200 focus:border-indigo-500 focus:shadow-indigo-100"
+                                                    placeholder="Enter description..."
+                                                />
+                                            </Form.Item>
+                                        </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
-                                        <Form.Item label={<span className="font-bold text-slate-700 italic">Work Evidence (Image)</span>}>
-                                            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-none p-6 flex flex-col items-center justify-center transition-all hover:bg-indigo-50 hover:border-indigo-300">
-                                                {!showWebcam && !cameraImage && !imageShow && (
-                                                    <div className="text-center group cursor-pointer" onClick={handleClick}>
-                                                        <div className="w-16 h-16 bg-white rounded-none flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                                                            <CameraOutlined className="text-2xl text-indigo-500" />
+                                        <div>
+                                            <p className="text-slate-900 font-bold text-sm mb-2">Upload Image</p>
+                                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-center transition-colors hover:border-indigo-200">
+                                                {!showWebcam && !cameraImage && !imageShow ? (
+                                                    <div className="space-y-3">
+                                                        <CameraOutlined className="text-3xl text-slate-300" />
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <Button type="text" onClick={handleClick} className="text-indigo-600 font-bold hover:bg-indigo-50 px-3 h-8">Capture</Button>
+                                                            <span className="text-slate-400 text-xs">or</span>
+                                                            <Dropzone onDrop={handleUpload}>
+                                                                {({ getRootProps, getInputProps }) => (
+                                                                    <div {...getRootProps()} className="inline-block cursor-pointer">
+                                                                        <input {...getInputProps()} />
+                                                                        <span className="text-indigo-600 font-bold hover:underline text-sm px-2">browse files</span>
+                                                                    </div>
+                                                                )}
+                                                            </Dropzone>
                                                         </div>
-                                                        <p className="text-sm font-bold text-slate-600">Take Photo or Upload</p>
-                                                        <p className="text-[10px] text-slate-400 mt-1 uppercase">JPG, PNG up to 10MB</p>
+                                                        <p className="text-xs text-slate-400 m-0">Supports: PNG, JPG</p>
                                                     </div>
-                                                )}
-
-                                                {showWebcam && !cameraImage && (
-                                                    <div className="w-full flex flex-col items-center">
-                                                        <div className="rounded-none overflow-hidden shadow-lg border-4 border-white mb-4">
-                                                            <Webcam
-                                                                audio={false}
-                                                                screenshotFormat="image/jpeg"
-                                                                ref={webcamRef}
-                                                                videoConstraints={videoConstraints}
-                                                                playsInline
-                                                                className="w-full max-w-[320px]"
-                                                            />
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            <Button onClick={captureImage} className="bg-indigo-600 text-white rounded-none h-9 font-bold border-none">Capture</Button>
-                                                            <Button onClick={() => setUseFrontCamera(!useFrontCamera)} className="rounded-none h-9">Flip</Button>
-                                                            <Button onClick={handleResetCam} className="rounded-none h-9">Cancel</Button>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {(cameraImage || imageShow) && (
-                                                    <div className="relative group/preview">
-                                                        <img
-                                                            src={cameraImage || uploadImage}
-                                                            className="w-40 h-40 object-cover rounded-none shadow-md border-4 border-white"
-                                                            alt="Evidence"
-                                                        />
-                                                        <Button
-                                                            onClick={handleReset}
-                                                            className="absolute -top-2 -right-2 w-8 h-8 rounded-none bg-red-500 text-white border-none flex items-center justify-center shadow-lg transform scale-0 group-hover/preview:scale-100 transition-transform"
-                                                        >
-                                                            ✕
-                                                        </Button>
-                                                    </div>
-                                                )}
-
-                                                {!showWebcam && !cameraImage && !imageShow && (
-                                                    <Dropzone onDrop={handleUpload}>
-                                                        {({ getRootProps, getInputProps }) => (
-                                                            <div {...getRootProps()} className="mt-4 w-full">
-                                                                <input {...getInputProps()} />
-                                                                <Button ghost className="w-full border-indigo-200 text-indigo-500 rounded-none font-bold">Choose File</Button>
+                                                ) : (
+                                                    <div className="flex flex-col items-center w-full">
+                                                        {showWebcam && !cameraImage && (
+                                                            <div className="w-full max-w-md mb-4">
+                                                                <div className="rounded-lg overflow-hidden border-2 border-slate-200 mb-3 bg-black">
+                                                                    <Webcam
+                                                                        audio={false}
+                                                                        screenshotFormat="image/jpeg"
+                                                                        ref={webcamRef}
+                                                                        videoConstraints={videoConstraints}
+                                                                        className="w-full"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex gap-3">
+                                                                    <Button type="primary" onClick={captureImage} className="flex-1 bg-indigo-600 h-10 rounded-lg font-bold">Capture Photo</Button>
+                                                                    <Button onClick={handleResetCam} className="flex-1 h-10 rounded-lg font-bold">Cancel</Button>
+                                                                </div>
                                                             </div>
                                                         )}
-                                                    </Dropzone>
+                                                        {(cameraImage || imageShow) && (
+                                                            <div className="relative inline-block group">
+                                                                <img
+                                                                    src={cameraImage || uploadImage}
+                                                                    className="h-48 w-auto object-cover rounded-lg shadow-sm border border-slate-200"
+                                                                    alt="Evidence"
+                                                                />
+                                                                <Button
+                                                                    onClick={handleReset}
+                                                                    className="absolute -top-2 -right-2 rounded-full bg-white text-slate-500 border shadow-md h-7 w-7 flex items-center justify-center text-xs hover:text-red-500 hover:border-red-200"
+                                                                >
+                                                                    ✕
+                                                                </Button>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
-                                        </Form.Item>
+                                        </div>
 
-                                        <Form.Item label={<span className="font-bold text-gray-700 italic">Customer Signature</span>}>
-                                            <div className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-none p-4 transition-all hover:bg-gray-100 animate-in">
-                                                <div className="bg-white rounded-none shadow-inner mb-3 overflow-hidden border border-gray-100 h-[150px]">
-                                                    <ReactSignatureCanvas
-                                                        ref={signRef}
-                                                        penColor="black"
-                                                        onEnd={handleSignature}
-                                                        canvasProps={{
-                                                            className: "w-full h-full cursor-crosshair",
-                                                        }}
-                                                    />
-                                                </div>
-                                                <div className="flex justify-between items-center px-1">
-                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Sign inside the box</span>
-                                                    <Button size="small" type="link" onClick={ClearSignature} className="text-red-500 font-bold p-0">Clear</Button>
-                                                </div>
+                                        <div>
+                                            <div className="flex justify-between items-center mb-2">
+                                                <p className="text-slate-900 font-bold text-sm m-0">Signature</p>
+                                                <Button size="small" type="text" onClick={ClearSignature} className="text-slate-400 text-xs hover:text-red-500">Clear</Button>
                                             </div>
-                                        </Form.Item>
+                                            <div className="bg-white rounded-xl border border-slate-200 h-[160px] relative overflow-hidden">
+                                                <ReactSignatureCanvas
+                                                    ref={signRef}
+                                                    penColor="black"
+                                                    onEnd={handleSignature}
+                                                    canvasProps={{
+                                                        className: "w-full h-full cursor-crosshair block",
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div className="flex justify-end pt-8">
+                                    <div className="flex justify-end pt-4 border-t border-slate-50 mt-6">
                                         <Button
                                             type="primary"
                                             htmlType="submit"
-                                            block
-                                            className="h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-none font-extrabold text-md shadow-xl shadow-indigo-200 transition-transform active:scale-95 border-none"
+                                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm h-10 px-8 shadow-sm shadow-indigo-200 border-none transition-all"
                                             loading={submitLoading}
                                         >
-                                            {submitLoading ? "Updating Portal..." : "Submit Completed Activity"}
+                                            {submitLoading ? "Updating..." : "Update"}
                                         </Button>
                                     </div>
                                 </Form>
                             </div>
+                        ) : (
+                            <div className="p-8 text-center text-slate-400 bg-white rounded-xl border border-slate-100 shadow-sm">
+                                <p>Read Only Mode - Cannot log activity.</p>
+                            </div>
                         )}
-                        <div className="mt-5 mb-10">
+
+                        {/* History */}
+                        <div className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                            <h3 className="text-slate-900 font-bold text-sm mb-4 border-b border-slate-200 pb-2">History</h3>
                             <ServiceOrderActivities
                                 document_no={document_no}
                                 uploadTrigger={uploadTrigger}
                                 reloadList={modelOpen}
                             />
                         </div>
-                        <div>
-                            <Modal
-                                open={modelOpen}
-                                onCancel={handleModelClose}
-                                footer={null}
-                                centered
-                            >
-                                <SparePartForm
-                                    serviceItemNo={
-                                        dataSource[0]?.serviceItemNo
-                                    }
-                                    locationOptions={locationOptions}
-                                    document_no={document_no}
-                                    sparePartsData={spareParts}
-                                    loadingState={loadingData}
-                                    formResponse={() => handleModelClose()}
-                                    reloadList={() => triggerReload()}
-                                    handleSparePart={handleSparePart}
-                                />
-                            </Modal>
-                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
-        </>
+
+            <Modal
+                open={modelOpen}
+                onCancel={handleModelClose}
+                footer={null}
+                centered
+                className="modern-modal"
+            >
+                <SparePartForm
+                    serviceItemNo={dataSource[0]?.serviceItemNo}
+                    locationOptions={locationOptions}
+                    document_no={document_no}
+                    sparePartsData={spareParts}
+                    loadingState={loadingData}
+                    formResponse={() => handleModelClose()}
+                    reloadList={() => triggerReload()}
+                    handleSparePart={handleSparePart}
+                />
+            </Modal>
+        </div >
     );
 }
 

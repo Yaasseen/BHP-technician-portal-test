@@ -12,6 +12,7 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [taskCode, setTaskCode] = useState([]);
     const [technicianRegion, setTechniciansRegion] = useState([]);
+    const [form] = Form.useForm();
 
     console.log("==>", selectedOrders);
 
@@ -33,6 +34,12 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
                 setTechnicians(technicianData);
             } catch (error) {
                 console.error("Error fetching technician list", error);
+                if (error.response && error.response.status === 403) {
+                    messageApi.open({
+                        type: "warning",
+                        content: "You do not have permission to view the technician list.",
+                    });
+                }
             }
             setLoading(false);
         };
@@ -114,7 +121,6 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
         }
     };
 
-    const [form] = Form.useForm();
 
     return (
         <div className="pt-5">

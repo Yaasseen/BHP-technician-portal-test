@@ -22,7 +22,7 @@ class TechnicianController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
         if ($user->Technician_Type !== 'Team Leader' && $user->Technician_Type !== 'CSC') {
-            return response()->json(['error' => 'Unauthorized.'], 401);
+            return response()->json(['error' => 'Forbidden. You do not have permission to view this list.'], 403);
         }
         $technicianList = $this->businessCentral->technicianList();
 
@@ -50,7 +50,7 @@ class TechnicianController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
         if ($user->Technician_Type !== 'Team Leader' && $user->Technician_Type !== 'CSC') {
-            return response()->json(['error' => 'Unauthorized.'], 401);
+            return response()->json(['error' => 'Forbidden. You do not have permission to view this list.'], 403);
         }
         $regionList = $this->businessCentral->getRegionList();
         return response()->json($regionList);
@@ -60,7 +60,7 @@ class TechnicianController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
         if ($user->Technician_Type !== 'Team Leader' && $user->Technician_Type !== 'CSC') {
-            return response()->json(['error' => 'Unauthorized.'], 401);
+            return response()->json(['error' => 'Forbidden. You do not have permission to view this list.'], 403);
         }
         $teamList = $this->businessCentral->getTeamList();
         return response()->json($teamList);
@@ -88,6 +88,3 @@ class TechnicianController extends Controller
         ]);
     }
 }
-
-
-

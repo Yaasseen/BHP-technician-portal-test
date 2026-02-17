@@ -388,6 +388,12 @@ const TeamScheduler = ({
         <>
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
                 <div className="flex items-center gap-3">
+                    <Button
+                        onClick={handleScreen}
+                        className="w-10 h-10 rounded-none bg-white border-slate-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
+                    >
+                        <ArrowLeftOutlined className="text-lg" />
+                    </Button>
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-none bg-slate-50 border border-slate-100 flex items-center justify-center">
                             <CalendarOutlined className="text-indigo-500 text-xl" />

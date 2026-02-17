@@ -53,17 +53,17 @@ class ServiceOrderActivityController extends Controller
             return response()->json([
                 'message' => 'No activities found for the given document number.',
                 'data' => [],
-            ], 404);
+            ], 200);
         }
 
         $activitiesFormatted = $activities->map(function ($activity) use ($technicianLookup) {
-            $imageUrl = $activity->image_data 
-            ? URL::route('service-order-activities.image', ['id' => $activity->id]) 
-            : null;
+            $imageUrl = $activity->image_data
+                ? URL::route('service-order-activities.image', ['id' => $activity->id])
+                : null;
 
-            $signatureUrl = $activity->signature_data 
-            ? URL::route('service-order-activities.signature', ['id' => $activity->id]) 
-            : null;
+            $signatureUrl = $activity->signature_data
+                ? URL::route('service-order-activities.signature', ['id' => $activity->id])
+                : null;
 
             return [
                 'document_no' => $activity->document_no,
@@ -74,9 +74,8 @@ class ServiceOrderActivityController extends Controller
                 'created_by' => $technicianLookup[$activity->created_by] ?? null,
                 'updated_by' => $technicianLookup[$activity->updated_by] ?? null,
                 'image_url' => $imageUrl ?? null,
-                'signature_url' => $signatureUrl ?? null, 
+                'signature_url' => $signatureUrl ?? null,
             ];
-           
         });
 
         return response()->json([
@@ -95,7 +94,6 @@ class ServiceOrderActivityController extends Controller
         $mimeType = 'image/' . pathinfo($serviceOrderActivity->image_name, PATHINFO_EXTENSION);
         // Log::info("IMgmimetype",  [$mimeType]);
         return response($serviceOrderActivity->image_data)->header('Content-Type', $mimeType);
-
     }
 
     public function getSignature($id)
@@ -194,10 +192,12 @@ class ServiceOrderActivityController extends Controller
                 $serviceOrder->repair_status_code,
                 $serviceOrder->technician_id
             );
-            
-            if (str_contains(strtolower($response), 'error') || 
-                str_contains($response, 'You cannot change status') || 
-                empty($response)) {
+
+            if (
+                str_contains(strtolower($response), 'error') ||
+                str_contains($response, 'You cannot change status') ||
+                empty($response)
+            ) {
                 Log::error("Service Order status update failed: {$response}");
                 throw new \Exception($response); // Throw the actual error from Business Central
             }
@@ -209,7 +209,7 @@ class ServiceOrderActivityController extends Controller
                     $serviceOrder->document_no,
                     base64_encode($imageBinary), // Convert binary to base64
                     $serviceOrder->priority_weight,
-                    false 
+                    false
                 );
             }
 
@@ -219,8 +219,8 @@ class ServiceOrderActivityController extends Controller
                 $this->businessCentral->updatePortalImage(
                     $serviceOrder->document_no,
                     base64_encode($signatureBinary), // Convert binary to base64
-                    $serviceOrder->priority_weight, 
-                    true 
+                    $serviceOrder->priority_weight,
+                    true
                 );
             }
 
@@ -229,7 +229,6 @@ class ServiceOrderActivityController extends Controller
             return response()->json([
                 'message' => 'Service Order Activity created successfully.'
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Service Order Activity failed: " . $e->getMessage(), [$e]);

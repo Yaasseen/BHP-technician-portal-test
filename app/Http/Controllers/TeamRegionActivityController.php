@@ -34,7 +34,6 @@ class TeamRegionActivityController extends Controller
             'assigned_date' => now()->toDateString(),
             'assigned_time' => now()->toTimeString(),
         ]);
-    
     }
 
 
@@ -48,7 +47,7 @@ class TeamRegionActivityController extends Controller
 
         // Fetch technician list from BusinessCentral
         $technicianList = $this->businessCentral->technicianList();
-        
+
         $technicianLookup = [];
         foreach ($technicianList as $technician) {
             if (isset($technician['ID'], $technician['First_Name'], $technician['Last_Name'])) {
@@ -76,9 +75,9 @@ class TeamRegionActivityController extends Controller
         // Format activities with assigned_by mapped to technician name
         $activitiesFormatted = $activities->map(function ($activity) use ($technicianLookup) {
             return [
-                'id' => $activity->id,  
-                'document_no' => $activity->document_no,  
-                'team' => $activity->team,  
+                'id' => $activity->id,
+                'document_no' => $activity->document_no,
+                'team' => $activity->team,
                 'region' => $activity->region,
                 'schedule_date' => $activity->schedule_date,
                 'assigned_date' => $activity->assigned_date,
@@ -105,7 +104,7 @@ class TeamRegionActivityController extends Controller
 
         // Fetch technician list from BusinessCentral
         $technicianList = $this->businessCentral->technicianList();
-        
+
         // Create a lookup array for technician names
         $technicianLookup = [];
         foreach ($technicianList as $technician) {
@@ -120,7 +119,8 @@ class TeamRegionActivityController extends Controller
         if (!$activity) {
             return response()->json([
                 'message' => 'Activity not found',
-            ], 404);
+                'activity' => null,
+            ], 200);
         }
 
         // Format response
@@ -140,8 +140,4 @@ class TeamRegionActivityController extends Controller
             'activity' => $activityFormatted,
         ], 200);
     }
-
-
-
-
 }

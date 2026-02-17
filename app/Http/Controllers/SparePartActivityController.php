@@ -36,7 +36,7 @@ class SparePartActivityController extends Controller
 
         // Fetch technician list from BusinessCentral
         $technicianList = $this->businessCentral->technicianList();
-        
+
         $technicianLookup = [];
         foreach ($technicianList as $technician) {
             if (isset($technician['ID'], $technician['First_Name'], $technician['Last_Name'])) {
@@ -52,7 +52,7 @@ class SparePartActivityController extends Controller
             return response()->json([
                 'message' => 'No activities found for the given document number.',
                 'data' => [],
-            ], 404);
+            ], 200);
         }
 
         // Format the response
@@ -131,7 +131,6 @@ class SparePartActivityController extends Controller
                 'message' => 'Spare Part Request created successfully.',
                 'data' => $sparepartActivity,
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Spare Part Request failed: " . $e->getMessage());
@@ -160,7 +159,5 @@ class SparePartActivityController extends Controller
             'message' => 'Service Spare Parts fetched successfully.',
             'data' => $service_spare_parts,
         ], 200);
-
     }
-
 }

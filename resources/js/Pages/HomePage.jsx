@@ -89,7 +89,7 @@ const HomePage = ({ onLoggedOut, user }) => {
                 <div className="dashboard-card-modern">
                     <Dashboard
                         user={user}
-                        handleView={showWeekView}
+                        showWeekView={showWeekView}
                         showDashboard={() => handleDashboard()}
                         showHome={handleHome}
                         activeView={activeView}

@@ -8,12 +8,13 @@ import {
     LogoutOutlined,
     RightOutlined,
     EditOutlined,
-    GlobalOutlined
+    GlobalOutlined,
+    ArrowLeftOutlined
 } from "@ant-design/icons";
 import { Avatar, Tag, Button, Switch } from "antd";
 import { motion } from "framer-motion";
 
-const Profile = ({ user, onLogout }) => {
+const Profile = ({ user, onLogout, onBack }) => {
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -60,7 +61,7 @@ const Profile = ({ user, onLogout }) => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="max-w-2xl mx-auto space-y-8 pb-10"
+            className="max-w-3xl mx-auto space-y-8 pb-10"
         >
             {/* Profile Header Card */}
             <motion.div variants={itemVariants} className="app-card overflow-hidden group/header">
@@ -90,16 +91,26 @@ const Profile = ({ user, onLogout }) => {
                 </div>
                 <div className="pt-16 pb-8 px-8">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">{user?.Name || "User Name"}</h2>
-                            <div className="flex items-center gap-2 mt-3">
-                                <Tag color="indigo" className="m-0 rounded-none border-none font-bold text-[10px] px-2 py-0.5 uppercase tracking-widest">
-                                    {user?.Role || "Technician"}
-                                </Tag>
-                                <span className="w-1 h-1 rounded-none bg-slate-200"></span>
-                                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                                    <GlobalOutlined className="text-[10px]" /> BH-Technician
-                                </span>
+                        <div className="flex items-center gap-4">
+                            {onBack && (
+                                <Button
+                                    onClick={onBack}
+                                    className="w-10 h-10 rounded-none bg-white/10 hover:bg-white/20 border-white/20 text-white flex items-center justify-center transition-all"
+                                >
+                                    <ArrowLeftOutlined className="text-lg" />
+                                </Button>
+                            )}
+                            <div>
+                                <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">{user?.Name || "User Name"}</h2>
+                                <div className="flex items-center gap-2 mt-3">
+                                    <Tag color="indigo" className="m-0 rounded-none border-none font-bold text-[10px] px-2 py-0.5 uppercase tracking-widest">
+                                        {user?.Role || "Technician"}
+                                    </Tag>
+                                    <span className="w-1 h-1 rounded-none bg-slate-200"></span>
+                                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                                        <GlobalOutlined className="text-[10px]" /> BH-Technician
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <Button type="primary" className="btn-primary flex items-center gap-2">
