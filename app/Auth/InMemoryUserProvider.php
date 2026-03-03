@@ -25,8 +25,6 @@ class InMemoryUserProvider implements UserProvider
             }
         }
         return null;
-        // throw new \Exception("This User ID is not registered", 401);
-
     }
 
     public function retrieveByToken($identifier, $token)
@@ -41,20 +39,19 @@ class InMemoryUserProvider implements UserProvider
 
     public function retrieveByCredentials(array $credentials)
     {
-        $technicianList = $this->businessCentral->technicianList();
-        // Log::info("In memory auth provider", [$technicianList]);
-        foreach ($technicianList as $technician) {
-            Log::info("In memory auth provider", [$technician]);
+        $username = $credentials['username'] ?? null;
 
-            if ($technician['ID'] === $credentials['username']) {
-                return new InMemoryUser($technician);
-            }
+        if (!$username) {
+            return null;
         }
 
-        // return null;
-        return null;
-        // throw new \Exception("This User ID is not registered", 401);
+        $technician = $this->businessCentral->getTechnicianById($username);
 
+        if ($technician) {
+            return new InMemoryUser($technician);
+        }
+
+        return null;
     }
 
     public function validateCredentials(Authenticatable $user, array $credentials)

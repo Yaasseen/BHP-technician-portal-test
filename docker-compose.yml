@@ -50,7 +50,7 @@ services:
     container_name: technician-portal-vite
     restart: unless-stopped
     working_dir: /var/www
-    command: npm run dev
+    command: bun dev
     ports:
       - "5173:5173"
     volumes:

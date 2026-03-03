@@ -178,6 +178,19 @@ class BusinessCentral
         });
     }
 
+    public function getTechnicianById(string $identifier): ?array
+    {
+        // Query BC directly for the specific username (ID) without caching
+        $data = $this->fetchOData("TechnicianApp?\$filter=ID eq '{$identifier}'");
+
+        if (!empty($data) && isset($data[0])) {
+            return $data[0];
+        }
+
+        return null;
+    }
+
+
     public function getRegionList(): array
     {
         // Currently returning empty array based on legacy code.
@@ -259,7 +272,7 @@ class BusinessCentral
         // I will use the configured instance for consistency unless specifically told otherwise,
         // but note the deviation from original hardcoded 'ECOM0923'.
 
-        // $data = $this->fetchOData("DeletedServiceOrders?\$filter=Replication_Counter gt $maxReplicationCount");
+        //$data = $this->fetchOData("DeletedServiceOrders?\$filter=Replication_Counter gt $maxReplicationCount");
         $data = $this->fetchOData("DeletedServiceOrders");
         return $data ?? [];
     }
