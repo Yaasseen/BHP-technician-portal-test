@@ -259,7 +259,8 @@ class BusinessCentral
         // I will use the configured instance for consistency unless specifically told otherwise,
         // but note the deviation from original hardcoded 'ECOM0923'.
 
-        $data = $this->fetchOData("DeletedServiceOrders?\$filter=Replication_Counter gt $maxReplicationCount");
+        // $data = $this->fetchOData("DeletedServiceOrders?\$filter=Replication_Counter gt $maxReplicationCount");
+        $data = $this->fetchOData("DeletedServiceOrders");
         return $data ?? [];
     }
 

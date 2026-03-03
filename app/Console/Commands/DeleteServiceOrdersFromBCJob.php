@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use App\Models\ServiceOrder;
 use Illuminate\Support\Facades\Log;
 use App\Services\BusinessCentral;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
 
 
 class DeleteServiceOrdersFromBCJob extends Command
@@ -24,16 +24,16 @@ class DeleteServiceOrdersFromBCJob extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->service = BusinessCentral::getInstance();  
-		$this->utility = new Utility();		
+        $this->service = BusinessCentral::getInstance();
+        $this->utility = new Utility();
     }
 
     public function handle()
     {
-		Log::info("DeleteServiceOrdersFromBCJob@handle Job Started");
+        Log::info("DeleteServiceOrdersFromBCJob@handle Job Started");
         try {
-			
-			$maxReplicationCount = $this->utility->getMaxReplicationCount();
+
+            $maxReplicationCount = $this->utility->getMaxReplicationCount();
 
             $serviceResponse = $this->service->serviceOrdersToBeDeleted($maxReplicationCount);
 
@@ -41,34 +41,41 @@ class DeleteServiceOrdersFromBCJob extends Command
                 Log::warning('DeleteServiceOrdersFromBCJob@handle No service orders fetched.');
                 return;
             }
-			
-			Log::info("Getting the formatted records");
-			$formattedResponse = $serviceResponse;
-			
-			DB::transaction(function() use ($formattedResponse) {
-				$documentNos = collect($formattedResponse)->pluck('No');
-				$deletedCount = 0;
-				
-				$documentNos->chunk(1000)->each(function ($chunk) use (&$deletedCount) {
-					$deletedCount += ServiceOrder::whereIn('document_no', $chunk)->delete();
-				});
-				
-				foreach ($formattedResponse as $item) {
-					$deletedCount += ServiceOrder::where('document_no', $item['No'])->delete();
 
-					$newCount = $item['Replication_Counter'];
-					if ($newCount > $maxReplicationCount) {
-						$maxReplicationCount = $newCount;
-					}
-				}
-				 Log::info("DeleteServiceOrdersFromBCJob@handle Service Orders deleted successfully: ", [
-					'count' => $deletedCount,
-				 ]);
-			});
-			
-			$this->utility->updateMaxReplicationCount($maxReplicationCount);
-			Log::info("DeleteServiceOrdersFromBCJob@handle Service orders deleted successfully: Max Replication Counter :{[$maxReplicationCount]}");
+            Log::info("Getting the formatted records");
+            $formattedResponse = $serviceResponse;
 
+            DB::transaction(function () use ($formattedResponse, &$maxReplicationCount) {
+                $documentNos = collect($formattedResponse)->pluck('No')->filter()->values();
+                $deletedCount = 0;
+
+                $documentNos->chunk(1000)->each(function ($chunk) use (&$deletedCount) {
+                    Log::info('Attempting to delete ServiceOrders Chunk', $chunk->toArray());
+
+                    $chunkDeleted = ServiceOrder::whereIn('document_no', $chunk)->delete();
+                    $deletedCount += $chunkDeleted;
+                    Log::info("Deleted {$chunkDeleted} rows in this chunk.");
+
+                    $remaining = ServiceOrder::whereIn('document_no', $chunk)->get();
+                    if ($remaining->isNotEmpty()) {
+                        Log::warning('WARNING: The following Service Orders still exist in DB after delete attempt:', $remaining->pluck('document_no')->toArray());
+                    } else {
+                        Log::info('Verification Success: All records in this chunk were confirmed deleted.');
+                    }
+                });
+
+                $maxReplicationCounterInResponse = collect($formattedResponse)->max('Replication_Counter');
+
+                if ($maxReplicationCounterInResponse > $maxReplicationCount) {
+                    $maxReplicationCount = $maxReplicationCounterInResponse;
+                }
+                Log::info("DeleteServiceOrdersFromBCJob@handle Service Orders deleted successfully: ", [
+                    'count' => $deletedCount,
+                ]);
+            });
+
+            // $this->utility->updateMaxReplicationCount($maxReplicationCount);
+            Log::info("DeleteServiceOrdersFromBCJob@handle Service orders deleted successfully: Max Replication Counter :{[$maxReplicationCount]}");
         } catch (\Exception $e) {
             Log::error('DeleteServiceOrdersFromBCJob@handle Error deleting required service orders.', [
                 'message' => $e->getMessage(),
