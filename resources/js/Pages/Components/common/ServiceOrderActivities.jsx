@@ -145,9 +145,9 @@ const ServiceOrderActivities = ({ document_no, uploadTrigger, reloadList }) => {
                         date={
                             part.requested_date
                                 ? moment(
-                                      part.requested_date,
-                                      "YYYY-MM-DD"
-                                  ).format("DD/MM/YYYY")
+                                    part.requested_date,
+                                    "YYYY-MM-DD"
+                                ).format("DD/MM/YYYY")
                                 : "N/A"
                         }
                         time={part.requested_time || " "}
@@ -178,6 +178,7 @@ const ServiceOrderActivities = ({ document_no, uploadTrigger, reloadList }) => {
                                 "DD/MM/YYYY"
                             ),
                         }}
+                        statusDescription={TaskDescription(order.status)}
                         className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
                     />
                 ))
