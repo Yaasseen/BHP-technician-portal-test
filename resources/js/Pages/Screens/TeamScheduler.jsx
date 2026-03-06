@@ -28,6 +28,8 @@ const TeamScheduler = ({
     handleScreen,
     setTicketInfo,
     screenContent,
+    showWeekView,
+    newTicketRequest = false,
 }) => {
     const { weekOffset, setWeekOffset, startDate, setStartDate } =
         useSchedule();
