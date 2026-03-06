@@ -5,10 +5,11 @@ import {
     EnvironmentOutlined,
     TeamOutlined,
     UserOutlined,
-    RightOutlined
+    RightOutlined,
+    InfoCircleOutlined
 } from "@ant-design/icons";
 
-const ServiceOrderCardItem = ({ serviceOrder, className }) => {
+const ServiceOrderCardItem = ({ serviceOrder, className, statusDescription }) => {
     return (
         <motion.div
             whileHover={{ scale: 1.01 }}
