@@ -438,7 +438,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
             icon: <HomeOutlined />,
         },
         {
-            label: "Service Order Type:",
+            label: "Product Type:",
             value: OrderDetails.serviceOrderType,
             icon: <FileOutlined />,
         },

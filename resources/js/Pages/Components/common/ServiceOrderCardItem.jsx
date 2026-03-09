@@ -71,4 +71,3 @@ const ServiceOrderCardItem = ({ serviceOrder, className, statusDescription }) =>
 };
 
 export default ServiceOrderCardItem;
-
