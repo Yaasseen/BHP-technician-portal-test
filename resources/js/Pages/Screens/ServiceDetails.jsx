@@ -81,9 +81,43 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
     const handleCloseWebCamp = () => {
         setShowWebcam((prev) => !prev);
     };
-    const captureImage = () => {
+
+    const compressImage = (base64Str, maxWidth = 1200, maxHeight = 1200, quality = 0.7) => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = base64Str;
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL("image/jpeg", quality));
+            };
+        });
+    };
+
+    const captureImage = async () => {
         const imageSrc = webcamRef.current.getScreenshot();
-        setCameraImage(imageSrc);
+        if (imageSrc) {
+            const compressed = await compressImage(imageSrc);
+            setCameraImage(compressed);
+        }
     };
     const triggerReload = () => {
         setReloadList((prev) => !prev);
@@ -313,21 +347,15 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
             return;
         }
 
-        // if (file.size > MAX_FILE_SIZE) {
-        //     messageApi.open({
-        //         type: "error",
-        //         content:
-        //             "File is too large. Please upload an image under 1 MB.",
-        //     });
-        //     return;
-        // }
-
-        setImageShow(file);
-        const ImageUrl = URL.createObjectURL(file);
-        setUploadImage(ImageUrl);
-        console.log("==>", ImageUrl);
-
-        console.log("==>", file);
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const compressed = await compressImage(e.target.result);
+            setCameraImage(compressed);
+            setImageShow(null); // Clear file upload state to use compressed base64 instead
+            setUploadImage(compressed);
+            console.log("Compressed image size:", Math.round(compressed.length / 1024), "KB");
+        };
+        reader.readAsDataURL(file);
     };
 
     const ClearSignature = () => {
