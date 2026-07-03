@@ -16,6 +16,7 @@ services:
       - APP_ENV=production
       - APP_DEBUG=false
       - APP_URL=${APP_URL:-https://bph-technical.durgagupta.com.np}
+      - TZ=Indian/Mauritius
     volumes:
       # Only persist storage, do NOT mount code (use image code)
       - ./storage:/var/www/storage
@@ -42,6 +43,7 @@ services:
       - APP_ENV=production
       - APP_DEBUG=false
       - APP_URL=${APP_URL:-https://bph-technical.durgagupta.com.np}
+      - TZ=Indian/Mauritius
     volumes:
       - ./storage:/var/www/storage
     networks:
@@ -57,6 +59,7 @@ services:
     restart: always
     environment:
       - APP_DOMAIN=${APP_DOMAIN:-bph-technical.durgagupta.com.np}
+      - TZ=Indian/Mauritius
     ports:
       - "6002:80"
     volumes:
@@ -78,6 +81,7 @@ services:
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-tbh_portal_prod}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      TZ: Indian/Mauritius
     volumes:
       - ./mysql-data:/var/lib/mysql
     networks:

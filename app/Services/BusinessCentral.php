@@ -40,7 +40,7 @@ class BusinessCentral
         $this->soapBaseUrl = config('services.business_central.soap_base_url') ?? '';
         $this->soapUsername = config('services.business_central.soap_username') ?? '';
         $this->soapPassword = config('services.business_central.soap_password') ?? '';
-        $this->bcInstanceName = config('services.business_central.bc_instance_name') ?? 'bc270';
+        $this->bcInstanceName = config('services.business_central.instance_name') ?? '';
     }
 
     /**
@@ -309,13 +309,16 @@ class BusinessCentral
         });
     }
 
-    public function updateServiceOrderStatus($documentNo, $itemNo, $repairStatusCode, $returnVal): string
+    public function updateServiceOrderStatus($documentNo, $itemNo, $repairStatusCode, $returnVal, $comment = ''): string
     {
+        $safeComment = htmlspecialchars((string) $comment, ENT_XML1, 'UTF-8');
+
         $body = "
             <documentNo>{$documentNo}</documentNo>
             <itemNo>{$itemNo}</itemNo>
             <repairStatusCode>{$repairStatusCode}</repairStatusCode>
             <returnVal>{$returnVal}</returnVal>
+            <comment>{$safeComment}</comment>
             <response>true</response>
         ";
 

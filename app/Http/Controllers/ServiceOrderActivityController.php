@@ -190,7 +190,8 @@ class ServiceOrderActivityController extends Controller
                 $serviceOrder->document_no,
                 $serviceOrder->item_no,
                 $serviceOrder->repair_status_code,
-                $serviceOrder->technician_id
+                $serviceOrder->technician_id,
+                $validatedData['description'] ?? ''
             );
 
             if (

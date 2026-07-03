@@ -17,6 +17,8 @@ services:
       - .env
     networks:
       - technician-network
+    environment:
+      - TZ=Indian/Mauritius
     depends_on:
       - db
 
@@ -37,6 +39,8 @@ services:
       - .env
     networks:
       - technician-network
+    environment:
+      - TZ=Indian/Mauritius
     depends_on:
       - app
       - db
@@ -60,6 +64,8 @@ services:
       - .env
     networks:
       - technician-network
+    environment:
+      - TZ=Indian/Mauritius
     depends_on:
       - app
 
@@ -70,6 +76,7 @@ services:
     restart: unless-stopped
     environment:
       - APP_DOMAIN=${APP_DOMAIN:-localhost}
+      - TZ=Indian/Mauritius
     ports:
       - "8000:80"
     volumes:
@@ -90,6 +97,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
+      TZ: Indian/Mauritius
     volumes:
       - ./mysql-data:/var/lib/mysql
     env_file:
