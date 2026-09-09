@@ -158,6 +158,30 @@ class ServiceOrderActivityController extends Controller
         }
 
         try {
+            // Check latest BC status first before performing update
+            $serviceOrder = ServiceOrder::where('document_no', $validatedData['document_no'])->first();
+            if ($serviceOrder) {
+                $timeout = env('BC_DIRECT_FETCH_TIMEOUT', 3);
+                $bcData = $this->businessCentral->getSingleServiceOrder($validatedData['document_no'], (int)$timeout);
+
+                if ($bcData) {
+                    $bcRepairStatus = $bcData['Repair_Status_Code'] ?? null;
+                    $localRepairStatus = $serviceOrder->repair_status_code;
+
+                    // Sync latest BC data into local DB first
+                    $serviceOrder = $this->businessCentral->syncSingleServiceOrderFromBCData($bcData);
+
+                    if ($bcRepairStatus !== null && $localRepairStatus !== null && trim($bcRepairStatus) !== trim($localRepairStatus)) {
+                        Log::warning("Status mismatch on activity store for {$validatedData['document_no']}: BC status is '{$bcRepairStatus}', local DB status was '{$localRepairStatus}'");
+                        return response()->json([
+                            'error' => 'Status on our portal and BC was not same. Latest order info has been updated from BC, please try again.',
+                            'message' => 'Status on our portal and BC was not same. Latest order info has been updated from BC, please try again.',
+                            'data' => $serviceOrder,
+                        ], 409);
+                    }
+                }
+            }
+
             DB::beginTransaction();
 
             $serviceOrderActivity = ServiceOrderActivity::create([
@@ -176,7 +200,9 @@ class ServiceOrderActivityController extends Controller
             Log::info("Created ServiceOrderActivity:");
 
             // Update service order repair status code
-            $serviceOrder = ServiceOrder::where('document_no', $validatedData['document_no'])->firstOrFail();
+            if (!$serviceOrder) {
+                $serviceOrder = ServiceOrder::where('document_no', $validatedData['document_no'])->firstOrFail();
+            }
             $serviceOrder->repair_status_code = $validatedData['repair_status_code'];
             if (!empty($validatedData['service_order_status'])) {
                 $serviceOrder->service_order_status = $validatedData['service_order_status'];

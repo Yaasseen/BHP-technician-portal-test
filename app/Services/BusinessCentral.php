@@ -8,6 +8,8 @@ use App\Services\Utility;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\RequestException;
+use App\Models\ServiceOrder;
+use App\Models\ServiceOrderFilter;
 
 class BusinessCentral
 {
@@ -51,7 +53,7 @@ class BusinessCentral
         return app(self::class);
     }
 
-    private function getHttpClient(): Client
+    private function getHttpClient(int $timeout = 30): Client
     {
         return new Client([
             'base_uri' => $this->oDataBaseUrl,
@@ -60,7 +62,7 @@ class BusinessCentral
                 $this->oDataPassword,
                 'ntlm',
             ],
-            'timeout'  => 30, // Good practice to have a timeout
+            'timeout'  => $timeout,
         ]);
     }
 
@@ -80,10 +82,10 @@ class BusinessCentral
     /**
      * Generic OData Fetcher
      */
-    private function fetchOData(string $endpoint, array $queryParams = []): ?array
+    private function fetchOData(string $endpoint, array $queryParams = [], int $timeout = 30): ?array
     {
         try {
-            $client = $this->getHttpClient();
+            $client = $this->getHttpClient($timeout);
             $url = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/{$endpoint}";
 
             if (!empty($queryParams)) {
@@ -94,7 +96,7 @@ class BusinessCentral
 
             // Handle manual OData filters passed directly in endpoint (legacy support)
             // Ideally, we should refactor calls to pass query params separately, but for now:
-            $response = $client->get($url);
+            $response = $client->get($url, ['timeout' => $timeout]);
             $responseContent = $response->getBody()->getContents();
 
             // Log a snippet of the response or count to avoid massive logs for lists
@@ -260,6 +262,93 @@ class BusinessCentral
             Log::channel('business_central')->error('Failed to pull service orders: ' . $e->getMessage());
             return [];
         }
+    }
+
+    /**
+     * Pull single Service Order from BC directly with timeout
+     */
+    public function getSingleServiceOrder(string $documentNo, int $timeoutSeconds = 3): ?array
+    {
+        try {
+            Log::channel('business_central')->info("Pulling single Service Order from BC directly for document {$documentNo} with timeout {$timeoutSeconds}s");
+
+            $serviceLines = $this->fetchOData("ServiceLines?\$filter=Document_No eq '{$documentNo}'", [], $timeoutSeconds);
+            $serviceHeaderData = $this->fetchOData("ServiceHeaders?\$filter=No eq '{$documentNo}'", [], $timeoutSeconds);
+
+            if (empty($serviceLines) && empty($serviceHeaderData)) {
+                Log::channel('business_central')->warning("No service lines or header found in BC for document {$documentNo}");
+                return null;
+            }
+
+            $repairStatusList = $this->fetchOData("RepairStatusList", [], $timeoutSeconds);
+            $repairStatusMapping = [];
+            if ($repairStatusList) {
+                foreach ($repairStatusList as $status) {
+                    $repairStatusMapping[$status['Code']] = $status['Service_Order_Status'];
+                }
+            }
+
+            $line = !empty($serviceLines) ? $serviceLines[0] : [];
+            $header = !empty($serviceHeaderData) ? $serviceHeaderData[0] : [];
+
+            $combined = array_merge($line, $header);
+
+            if (!empty($combined['Repair_Status_Code'])) {
+                $combined['Service_Order_Status'] = $repairStatusMapping[$combined['Repair_Status_Code']] ?? ($combined['Service_Order_Status'] ?? null);
+            }
+
+            return $combined;
+        } catch (\Exception $e) {
+            Log::channel('business_central')->error("Failed to fetch single service order {$documentNo} from BC: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Sync/update local ServiceOrder record from BC item array
+     */
+    public function syncSingleServiceOrderFromBCData(array $item): ServiceOrder
+    {
+        $docNo = $item['Document_No'] ?? ($item['No'] ?? null);
+
+        $serviceOrder = ServiceOrder::updateOrCreate(
+            ['document_no' => $docNo],
+            [
+                'gspn_no' => $item['GSPN_Number'] ?? null,
+                'order_date' => $item['Order_Date'] ?? null,
+                'name' => $item['Name'] ?? null,
+                'address' => $item['Address'] ?? null,
+                'address_2' => $item['Address_2'] ?? null,
+                'city' => $item['City'] ?? null,
+                'phone_no' => $item['Phone_No'] ?? null,
+                'warranty_type' => $item['Warranty_Type'] ?? null,
+                'remarks' => $item['Remarks'] ?? null,
+                'item_no' => $item['Item_No'] ?? null,
+                'description' => $item['Description'] ?? null,
+                'serial_no' => $item['Serial_No'] ?? null,
+                'repair_status_code' => $item['Repair_Status_Code'] ?? null,
+                'document_type' => $item['Document_Type'] ?? null,
+                'service_order_type' => $item['Service_Order_Type'] ?? null,
+                'line_no' => $item['Line_No'] ?? null,
+                'actual_purchase_date' => $item['Actual_Purchase_Date'] ?? null,
+                'shortcut_dimension_1_code' => $item['Shortcut_Dimension_1_Code'] ?? null,
+                'replication_counter' => $item['Replication_Counter'] ?? null,
+                'service_order_status' => $item['Service_Order_Status'] ?? null,
+                'service_item_no' => $item['Service_Item_No'] ?? null,
+                'service_item_group_code' => $item['Service_Item_Group_Code'] ?? null,
+                'brand_code' => $item['Brand_Code'] ?? null,
+                'mobile_no' => $item['Mobile_No'] ?? null,
+                'customer_no' => $item['Customer_No'] ?? null,
+            ]
+        );
+
+        if (!empty($item['Brand_Code'])) {
+            ServiceOrderFilter::firstOrCreate([
+                'brand_code' => $item['Brand_Code'],
+            ]);
+        }
+
+        return $serviceOrder;
     }
 
     public function serviceOrdersToBeDeleted($maxReplicationCount = 100): array

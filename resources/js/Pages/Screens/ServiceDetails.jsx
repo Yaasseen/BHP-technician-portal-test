@@ -174,11 +174,15 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                 console.log("==> 3", error.response?.data);
 
                 const errorMessage =
-                    error.response?.data?.error || "An error occurred";
+                    error.response?.data?.error || error.response?.data?.message || "An error occurred";
                 messageApi.open({
                     type: "error",
                     content: errorMessage,
+                    duration: 6,
                 });
+                if (error.response?.status === 409) {
+                    setCallStatus((prev) => !prev);
+                }
             })
             .finally(() => {
                 setCameraImage(null);
@@ -529,15 +533,24 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
         { title: "Quantity", dataIndex: "Quantity", key: "quantity" },
     ];
 
-    const [form] = Form.useForm();
-
-    // if (loading) {
-    //     return (
-    //         <div className="flex justify-center items-center h-screen">
-    //             <Spin size="large" />
-    //         </div>
-    //     );
-    // }
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
+                <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center max-w-sm w-full text-center space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center relative">
+                        <Spin indicator={<LoadingOutlined className="text-3xl text-indigo-600" spin />} />
+                    </div>
+                    <div className="space-y-1">
+                        <h3 className="text-base font-black text-slate-900 tracking-tight m-0">Syncing Service Details</h3>
+                        <p className="text-xs font-semibold text-slate-500 m-0">Fetching live data directly from Business Central...</p>
+                    </div>
+                    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden relative">
+                        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-full w-2/3 animate-pulse rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
 
     return (
@@ -813,10 +826,11 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                         <Button
                                             type="primary"
                                             htmlType="submit"
-                                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm h-10 px-8 shadow-sm shadow-indigo-200 border-none transition-all"
+                                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm h-10 px-8 shadow-sm shadow-indigo-200 border-none transition-all flex items-center justify-center gap-2"
                                             loading={submitLoading}
+                                            disabled={submitLoading}
                                         >
-                                            {submitLoading ? "Updating..." : "Update"}
+                                            {submitLoading ? "Syncing with Business Central..." : "Update"}
                                         </Button>
                                     </div>
                                 </Form>

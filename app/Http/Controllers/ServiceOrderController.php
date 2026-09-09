@@ -9,13 +9,16 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
-
-
-
+use App\Services\BusinessCentral;
 
 class ServiceOrderController extends Controller
 {
+    protected $businessCentral;
+
+    public function __construct()
+    {
+        $this->businessCentral = BusinessCentral::getInstance();
+    }
 
     public function getServiceOrdersByDateRange(Request $request)
     {
@@ -90,12 +93,12 @@ class ServiceOrderController extends Controller
 
             // Condition 2: CSC or Team Leader with empty Technician_Dept sees all orders
             elseif (in_array($user->Technician_Type, ['CSC', 'Team Leader']) && trim($user->Technician_Dept) == '') {
-                // Show all — no filter
+                // Show all  no filter
             }
 
-            // Condition 3: Admin sees all — no filter
+            // Condition 3: Admin sees all  no filter
             elseif ($user->Technician_Type == 'Admin') {
-                // Show all — no filter
+                // Show all  no filter
             }
 
             // Else: filter by department prefix (e.g., 'Electrical%')
@@ -268,6 +271,14 @@ class ServiceOrderController extends Controller
 
     public function getServiceOrder($document_no)
     {
+        $timeout = env('BC_DIRECT_FETCH_TIMEOUT', 3);
+        $bcData = $this->businessCentral->getSingleServiceOrder($document_no, (int)$timeout);
+
+        if ($bcData) {
+            $serviceOrder = $this->businessCentral->syncSingleServiceOrderFromBCData($bcData);
+            return response()->json($serviceOrder);
+        }
+
         $serviceOrder = ServiceOrder::find($document_no);
 
         if (!$serviceOrder) {
@@ -284,6 +295,25 @@ class ServiceOrderController extends Controller
 
         if (!$serviceOrder) {
             return response()->json(['message' => 'Service Order not found'], 404);
+        }
+
+        $timeout = env('BC_DIRECT_FETCH_TIMEOUT', 3);
+        $bcData = $this->businessCentral->getSingleServiceOrder($document_no, (int)$timeout);
+
+        if ($bcData) {
+            $bcStatus = $bcData['Repair_Status_Code'] ?? null;
+            $localStatus = $serviceOrder->repair_status_code;
+
+            // Sync latest BC data to DB
+            $serviceOrder = $this->businessCentral->syncSingleServiceOrderFromBCData($bcData);
+
+            if ($bcStatus !== null && $localStatus !== null && trim($bcStatus) !== trim($localStatus)) {
+                return response()->json([
+                    'error' => 'Status on our portal and BC was not same. Latest order info has been updated from BC, please try again.',
+                    'message' => 'Status on our portal and BC was not same. Latest order info has been updated from BC, please try again.',
+                    'data' => $serviceOrder,
+                ], 409);
+            }
         }
 
         $validatedData = $request->validate([
