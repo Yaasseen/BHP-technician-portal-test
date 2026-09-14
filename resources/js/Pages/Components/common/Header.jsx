@@ -9,6 +9,7 @@ import {
     TeamOutlined,
     ScanOutlined,
     BarChartOutlined,
+    SettingOutlined,
 } from "@ant-design/icons";
 import NotificationBell from "./Notification";
 import MenuItem from "antd/es/menu/MenuItem";
@@ -272,6 +273,20 @@ const Header = ({
                                 }`}
                             >
                                 <BarChartOutlined /> Ageing
+                            </p>
+                        </li>
+                    )}
+                    {user.Role === "Admin" && (
+                        <li>
+                            <p
+                                onClick={() => navigateTo("settings")}
+                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
+                                    activeView === "settings"
+                                        ? "bg-indigo-50 text-indigo-600 font-medium"
+                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
+                                }`}
+                            >
+                                <SettingOutlined /> Settings
                             </p>
                         </li>
                     )}

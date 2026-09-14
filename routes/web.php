@@ -18,6 +18,7 @@ use App\Http\Controllers\ServiceOrderFilterController;
 use App\Http\Controllers\GigoLocationController;
 use App\Http\Controllers\GigoMovementController;
 use App\Http\Controllers\AgeingController;
+use App\Http\Controllers\AppSettingController;
 use Inertia\Inertia;
 
 Route::middleware('web')->group(function () {
@@ -95,6 +96,8 @@ Route::middleware(['web', 'auth'])->group(function () {
 
     Route::get('/task-statastics', [TaskStatisticsController::class, 'getServiceOrderCounts']);
     Route::get('/ageing-summary', [AgeingController::class, 'getSummary']);
+    Route::get('/app-settings', [AppSettingController::class, 'index']);
+    Route::put('/app-settings', [AppSettingController::class, 'update']);
     Route::get('/weekly-schedule-overview', [TaskStatisticsController::class, 'getWeeklyScheduleOverview']);
 
     // Team Schedule

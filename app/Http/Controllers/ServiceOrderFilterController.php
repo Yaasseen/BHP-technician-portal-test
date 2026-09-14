@@ -58,9 +58,7 @@ class ServiceOrderFilterController extends Controller
 
     public function getStatuses(): JsonResponse
     {
-        return response()->json(
-            ['PENDING', 'TECH-ASSN', 'RESCH-UNAVAI', 'RESCH-COMP', 'INPROGRESS', 'COMPLETED']
-        );
+        return response()->json(array_keys(config('portal.statuses')));
     }
 
 }

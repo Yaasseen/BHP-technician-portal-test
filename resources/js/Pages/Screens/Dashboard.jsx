@@ -8,6 +8,7 @@ import TeamRegionConfig from "./TeamAndRegion";
 import ServiceDetails from "./ServiceDetails";
 import GigoDashboard from "./Gigo/GigoDashboard";
 import AgeingDashboard from "./Ageing/AgeingDashboard";
+import SettingsPanel from "./Settings/SettingsPanel";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
 
@@ -98,6 +99,8 @@ const Dashboard = ({
                                     <GigoDashboard user={user} />
                                 ) : activeView === "ageing" ? (
                                     <AgeingDashboard user={user} />
+                                ) : activeView === "settings" ? (
+                                    <SettingsPanel user={user} />
                                 ) : null}
                             </div>
                         </div>

@@ -249,75 +249,6 @@ class AssignServiceOrder extends Controller
     }
 
 
-    // public function assignOutdoorServiceDepartmentRegion(Request $request)
-    // {
-    //     $user = Auth::guard('in-memory')->user();
-
-    //     // Only allow Team Leaders or CSC
-    //     if ($user->Technician_Type !== 'Team Leader' && $user->Technician_Type !== 'CSC') {
-    //         return response()->json(['error' => 'Unauthorized.'], 401);
-    //     }
-
-    //     $validated = $request->validate([
-    //         'department' => 'required|string',
-    //         'region' => 'required|string',
-    //         'schedule_date' => 'required|date',
-    //         'selectedOrders' => 'required|array|min:1', 
-    //         'selectedOrders.*' => 'string', 
-    //     ]);
-
-    //     $department = $validated['department'];
-    //     $region = $validated['region'];
-    //     $schedule_date = $validated['schedule_date'];
-    //     $selectedOrders = $validated['selectedOrders'];
-    //     $orderCount = count($selectedOrders);
-
-    //     // Count existing orders assigned to this department & region on the same day
-    //     $existingOrderCount = ServiceOrder::where('department', $department)
-    //         ->where('region', $region)
-    //         ->whereDate('schedule_date', $schedule_date)
-    //         ->count();
-    //     // Check if adding new orders exceeds the 10-order limit
-    //     if (($existingOrderCount + $orderCount) > 12) {
-    //         return response()->json([
-    //             'error' => 'Cannot assign more than 12 service orders to the same team and region on the same day.',
-    //             'existing_count' => $existingOrderCount,
-    //             'new_orders_attempted' => $orderCount,
-    //         ], 400);
-    //     }
-
-    //     // Proceed with updating service orders
-    //     $updatedCount = ServiceOrder::whereIn('document_no', $selectedOrders)
-    //         ->update([
-    //             'department' => $department,
-    //             'region' => $region,
-    //             'schedule_date' => $schedule_date,
-    //         ]);
-
-    //     if ($updatedCount > 0) {
-    //         foreach ($selectedOrders as $documentNumber) {
-    //             $this->teamRegionActivityController->teamRegionActivity(
-    //                 $documentNumber,
-    //                 $department,
-    //                 $region,
-    //                 $schedule_date,
-    //                 $user->id, // Assigned By
-    //                 $user->id  // Updated By
-    //             );
-    //         }
-    //         return response()->json([
-    //             'message' => 'Service Orders updated successfully.',
-    //             'updated_count' => $updatedCount,
-    //         ], 200);
-    //     } else {
-    //         return response()->json([
-    //             'error' => 'No matching service orders found or already updated.',
-    //         ], 404);
-    //     }
-    // }
-
-
-
     public function assignOutdoorServiceDepartmentRegion(Request $request)
     {
         $user = Auth::guard('in-memory')->user();
@@ -349,10 +280,11 @@ class AssignServiceOrder extends Controller
             ->where('region', $region)
             ->whereDate('schedule_date', $schedule_date)
             ->count();
-        // Check if adding new orders exceeds the 12-order limit
-        if (($existingOrderCount + $orderCount) > 12) {
+        // Check if adding new orders exceeds the configured daily order cap
+        $dailyCap = \App\Models\AppSetting::current()->outdoor_daily_order_cap;
+        if (($existingOrderCount + $orderCount) > $dailyCap) {
             return response()->json([
-                'error' => 'Cannot assign more than 12 service orders to the same team and region on the same day.',
+                'error' => "Cannot assign more than {$dailyCap} service orders to the same team and region on the same day.",
                 'existing_count' => $existingOrderCount,
                 'new_orders_attempted' => $orderCount,
             ], 400);
