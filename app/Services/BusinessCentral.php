@@ -40,7 +40,7 @@ class BusinessCentral
         $this->soapBaseUrl = config('services.business_central.soap_base_url') ?? '';
         $this->soapUsername = config('services.business_central.soap_username') ?? '';
         $this->soapPassword = config('services.business_central.soap_password') ?? '';
-        $this->bcInstanceName = config('services.business_central.bc_instance_name') ?? 'bc270';
+        $this->bcInstanceName = config('services.business_central.instance_name') ?? 'bc270';
     }
 
     /**
@@ -61,6 +61,7 @@ class BusinessCentral
                 'ntlm',
             ],
             'timeout'  => 30, // Good practice to have a timeout
+            'verify' => config('services.business_central.ssl_verify', true),
         ]);
     }
 
@@ -74,6 +75,7 @@ class BusinessCentral
                 'ntlm',
             ],
             'timeout'  => 30,
+            'verify' => config('services.business_central.ssl_verify', true),
         ]);
     }
 
