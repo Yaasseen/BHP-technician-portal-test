@@ -930,7 +930,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                         </Form.Item>
 
                                         <Form.Item label="Signature">
-                                            <div className="bg-white  lg:w-[550px] w-11/12 ">
+                                            <div className="bg-white w-11/12 lg:w-full lg:max-w-[550px] ">
                                                 <div
                                                     ref={signatureContainerRef}
                                                     className="border rounded-lg m-2 w-full sm:w-[400px] h-[200px]"
