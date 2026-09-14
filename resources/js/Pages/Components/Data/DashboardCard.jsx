@@ -26,7 +26,7 @@ const DashboardCard = ({
 
     return (
         <div className="w-full">
-            <Card className="p-4 sm:p-5">
+            <Card className="p-4 sm:p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 border-0">
                 <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3">
                     <Progress
                         type="circle"

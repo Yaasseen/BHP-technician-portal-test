@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Empty, Spin } from "antd";
+import { Table, Empty, Spin, Button } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
+import { exportToExcel } from "../../../utils/exportToExcel";
+
+const exportColumns = [
+    { header: "Document No", key: "document_no" },
+    { header: "Customer", key: "name" },
+    { header: "Repair Status", key: "repair_status_code" },
+    { header: "Technician", key: "technician_name" },
+];
 
 const LocationContents = ({ locationId }) => {
     const [orders, setOrders] = useState([]);
@@ -28,18 +37,31 @@ const LocationContents = ({ locationId }) => {
     }
 
     return (
-        <Table
-            rowKey="document_no"
-            dataSource={orders}
-            scroll={{ x: true }}
-            size="small"
-            columns={[
-                { title: "Document No", dataIndex: "document_no" },
-                { title: "Customer", dataIndex: "name" },
-                { title: "Repair Status", dataIndex: "repair_status_code" },
-                { title: "Technician", dataIndex: "technician_name" },
-            ]}
-        />
+        <div className="flex flex-col gap-2">
+            <div className="flex justify-end">
+                <Button
+                    size="small"
+                    icon={<DownloadOutlined />}
+                    onClick={() =>
+                        exportToExcel("gigo-location", exportColumns, orders)
+                    }
+                >
+                    Export to Excel
+                </Button>
+            </div>
+            <Table
+                rowKey="document_no"
+                dataSource={orders}
+                scroll={{ x: true }}
+                size="small"
+                columns={[
+                    { title: "Document No", dataIndex: "document_no" },
+                    { title: "Customer", dataIndex: "name" },
+                    { title: "Repair Status", dataIndex: "repair_status_code" },
+                    { title: "Technician", dataIndex: "technician_name" },
+                ]}
+            />
+        </div>
     );
 };
 

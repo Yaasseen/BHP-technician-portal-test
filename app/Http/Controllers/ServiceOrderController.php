@@ -90,12 +90,12 @@ class ServiceOrderController extends Controller
 
             // Condition 2: CSC or Team Leader with empty Technician_Dept sees all orders
             elseif (in_array($user->Technician_Type, ['CSC', 'Team Leader']) && trim($user->Technician_Dept) == '') {
-                // Show all — no filter
+                // Show all ï¿½ no filter
             }
 
-            // Condition 3: Admin sees all — no filter
+            // Condition 3: Admin sees all ï¿½ no filter
             elseif ($user->Technician_Type == 'Admin') {
-                // Show all — no filter
+                // Show all ï¿½ no filter
             }
 
             // Else: filter by department prefix (e.g., 'Electrical%')
@@ -158,6 +158,13 @@ class ServiceOrderController extends Controller
             }
 
             $query->orderBy('order_date', 'desc');
+
+            if ($request->boolean('export')) {
+                return response()->json([
+                    'serviceOrders' => $query->limit(5000)->get(),
+                    'filter' => $filter,
+                ], 200);
+            }
 
             $serviceOrders = $query->paginate($pageSize, ['*'], 'page', $currentPage);
             $sql = $query->toSql();

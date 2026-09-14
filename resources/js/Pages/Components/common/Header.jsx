@@ -203,7 +203,7 @@ const Header = ({
                                 handleViewScreen();
                                 closeSidebar();
                             }}
-                            className="block px-4 py-2 text-black hover:bg-gray-200 hover:text-blue-700 rounded transition duration-300 cursor-pointer"
+                            className="block px-4 py-2 text-black hover:bg-gray-200 hover:text-indigo-600 rounded transition duration-300 cursor-pointer"
                         >
                             Home
                         </p>
@@ -214,7 +214,7 @@ const Header = ({
                             className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
                                 activeView === "list"
                                     ? "bg-indigo-50 text-indigo-600 font-medium"
-                                    : "text-black hover:bg-gray-200 hover:text-blue-700"
+                                    : "text-black hover:bg-gray-200 hover:text-indigo-600"
                             }`}
                         >
                             <UnorderedListOutlined /> List
@@ -226,7 +226,7 @@ const Header = ({
                             className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
                                 activeView === "weekly"
                                     ? "bg-indigo-50 text-indigo-600 font-medium"
-                                    : "text-black hover:bg-gray-200 hover:text-blue-700"
+                                    : "text-black hover:bg-gray-200 hover:text-indigo-600"
                             }`}
                         >
                             <CalendarOutlined /> Weekly View
@@ -239,7 +239,7 @@ const Header = ({
                                 className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
                                     activeView === "teamandregion"
                                         ? "bg-indigo-50 text-indigo-600 font-medium"
-                                        : "text-black hover:bg-gray-200 hover:text-blue-700"
+                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
                                 }`}
                             >
                                 <TeamOutlined /> Team and Region
@@ -253,7 +253,7 @@ const Header = ({
                                 className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
                                     activeView === "gigo"
                                         ? "bg-indigo-50 text-indigo-600 font-medium"
-                                        : "text-black hover:bg-gray-200 hover:text-blue-700"
+                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
                                 }`}
                             >
                                 <ScanOutlined /> GIGO

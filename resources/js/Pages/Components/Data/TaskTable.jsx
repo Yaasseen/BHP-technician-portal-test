@@ -12,15 +12,17 @@ import {
     Pagination,
     DatePicker,
     Select,
-    FloatButton,
+    Tag,
+    Empty,
+    Badge,
+    message,
 } from "antd";
 import {
     SearchOutlined,
     MoreOutlined,
     CalendarOutlined,
-    CalendarTwoTone,
-    CalendarFilled,
     FilterOutlined,
+    DownloadOutlined,
 } from "@ant-design/icons";
 
 import AssignTeam from "../common/AssignTeam";
@@ -29,6 +31,7 @@ import AssignRegion from "../common/AssignRegion";
 import { title } from "motion/react-client";
 import { set } from "date-fns";
 import SiderDrawer from "../common/SideDrawer";
+import { exportToExcel } from "../../../utils/exportToExcel";
 
 const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
     const [data, setData] = useState();
@@ -58,6 +61,8 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
     const [toDate, setToDate] = useState(null);
     const [specificDate, setSpecificDate] = useState(null);
     const [siderOpen, setSiderOpen] = useState(false);
+    const [exporting, setExporting] = useState(false);
+    const [messageApi, contextHolder] = message.useMessage();
 
     const [filter, setFilter] = useState({
         scheduled: false,
@@ -373,6 +378,74 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
         setSelectedOrders(selectedRowKeys);
     };
 
+    const statusColor = (value) => {
+        if (!value) return "default";
+        const v = value.toUpperCase();
+        if (v.includes("CANCEL")) return "red";
+        if (v.includes("FINISH") || v.includes("COMPLETE")) return "green";
+        if (v.includes("TECH-ASSN") || v.includes("ASSN")) return "purple";
+        if (v.startsWith("ASGND")) return "blue";
+        if (v.startsWith("RECD")) return "cyan";
+        if (v === "PENDING") return "default";
+        return "geekblue";
+    };
+
+    const activeFilterCount = [
+        appliedFilter.scheduled,
+        appliedFilter.not_scheduled,
+        appliedFilter.period && appliedFilter.period !== "all",
+        appliedFilter.repair_status_code,
+        appliedFilter.brand_code,
+        appliedFilter.team,
+        appliedFilter.portal_status,
+        appliedFilter.start,
+        appliedFilter.end,
+        appliedFilter.specific_date,
+    ].filter(Boolean).length;
+
+    const exportColumns = [
+        { header: "Document No", key: "document_no" },
+        { header: "Order Date", key: "order_date" },
+        { header: "Customer Name", key: "name" },
+        { header: "Service Type", key: "service_order_type" },
+        { header: "Service Repair Status", key: "repair_status_code" },
+        { header: "Service Order Status", key: "status" },
+        { header: "Brand and Device", key: "brand_code" },
+        { header: "Allocated Team", key: "department" },
+        { header: "Technician Name", key: "technician_name" },
+        { header: "Scheduled Date", key: "schedule_date" },
+    ];
+
+    const handleExport = () => {
+        setExporting(true);
+        axios
+            .post("/service-orders", {
+                tableParams,
+                searchText: appliedSearchText,
+                filter: appliedFilter,
+                export: true,
+            })
+            .then((results) => {
+                const rows = results.data.serviceOrders || [];
+                if (rows.length === 0) {
+                    messageApi.open({
+                        type: "info",
+                        content: "No service orders match the current filters.",
+                    });
+                    return;
+                }
+                exportToExcel("service-orders", exportColumns, rows);
+            })
+            .catch((error) => {
+                console.error("Error exporting data:", error);
+                messageApi.open({
+                    type: "error",
+                    content: "Failed to export service orders.",
+                });
+            })
+            .finally(() => setExporting(false));
+    };
+
     const columns = [
         {
             title: "Document No",
@@ -407,11 +480,15 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             title: "Service repair status",
             dataIndex: "repair_status_code",
             key: "repair_status_code",
+            render: (value) =>
+                value ? <Tag color={statusColor(value)}>{value}</Tag> : "",
         },
         {
             title: "Service Order Status",
             dataIndex: "status",
             key: "status",
+            render: (value) =>
+                value ? <Tag color={statusColor(value)}>{value}</Tag> : "",
         },
         {
             title: "Brand and device",
@@ -453,6 +530,8 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
         {
             title: "Actions",
             key: "actions",
+            fixed: "right",
+            width: 70,
             render: (_, record) => (
                 <div>
                     <Popover
@@ -467,7 +546,10 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                             )
                         }
                     >
-                        <MoreOutlined className="text-black text-lg" />
+                        <Button
+                            type="text"
+                            icon={<MoreOutlined className="text-black text-lg" />}
+                        />
                     </Popover>
                 </div>
             ),
@@ -691,13 +773,14 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
 
     return (
         <div className="">
+            {contextHolder}
             <div className="  bg-white rounded-b-xl ">
                 <div>
                     <div className="flex flex-wrap gap-4 mb-5 mt-5 justify-between sm:justify-start">
                         <div className="flex w-full justify-between items-center">
                            <div className="w-[60%] sm:w-[25%]">
                                 <Input
-                                    className="w-full px-3 sm:py-2 rounded-md border border-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-3 sm:py-2 rounded-md border border-gray-200 focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="Search"
                                     value={searchText}
                                     onChange={(e) =>
@@ -706,40 +789,56 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                     prefix={<SearchOutlined />}
                                 />
                             </div>
-                            <Button
-                                className="bg-indigo-500 text-white"
-                                onClick={() => setSiderOpen(true)}
-                            >
-                                <FilterOutlined className="mr-1" />
-                                Filter
-                            </Button>
+                            <Badge count={activeFilterCount} size="small">
+                                <Button
+                                    className="bg-indigo-500 text-white"
+                                    onClick={() => setSiderOpen(true)}
+                                >
+                                    <FilterOutlined className="mr-1" />
+                                    Filter
+                                </Button>
+                            </Badge>
                         </div>
                     </div>
                 </div>
 
                 <Divider />
 
-                <div className="flex justify-between items-center">
+                <div className="flex flex-wrap gap-2 justify-between items-center">
                     <p className="font-semibold text-lg pb-4 pt-3">
                         List of Tasks
                     </p>
-                    <Button
-                        disabled={selectedOrders?.length === 0}
-                        className="bg-indigo-500 text-white"
-                        onClick={handleBulkOrderAssign}
-                    >
-                        Bulk Assignment
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button
+                            icon={<DownloadOutlined />}
+                            loading={exporting}
+                            onClick={handleExport}
+                        >
+                            Export to Excel
+                        </Button>
+                        <Button
+                            disabled={selectedOrders?.length === 0}
+                            className="bg-indigo-500 text-white"
+                            onClick={handleBulkOrderAssign}
+                        >
+                            Bulk Assignment
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="border rounded-md  border-gray-200 h-1/2">
                     <Table
                         size="middle"
-                        scroll={{ x: 400 }}
+                        scroll={{ x: 1100 }}
                       className="bg-white rounded-md whitespace-nowrap lg:whitespace-normal text-sm"
                         columns={columns}
                         rowKey={(record) => record.document_no}
                         dataSource={data}
+                        locale={{
+                            emptyText: (
+                                <Empty description="No service orders match your filters" />
+                            ),
+                        }}
                         pagination={tableParams.pagination}
                         loading={loading}
                         onChange={handleTableChange}
@@ -805,7 +904,10 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     saveButton={"Apply Filter"}
                     clearButton={"Clear Filter"}
                     body={
-                        <div className="flex flex-col gap-y-6 mt-4 px-2">
+                        <div className="flex flex-col gap-y-8 mt-4 px-2">
+                            <p className="text-xs uppercase tracking-wide text-gray-400 font-semibold -mb-4">
+                                Schedule
+                            </p>
                             {/* Period Selection */}
                             <div className="w-full">
                                 <label className="text-sm font-medium  text-gray-700">
@@ -880,6 +982,9 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                 </div>
                             </div>
 
+                            <p className="text-xs uppercase tracking-wide text-gray-400 font-semibold -mb-4">
+                                Status &amp; Brand
+                            </p>
                             {/* Brand Code */}
                             <div className="w-full ">
                                 <label className="text-sm font-medium  text-gray-700">
@@ -955,6 +1060,9 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                 />
                             </div>
 
+                            <p className="text-xs uppercase tracking-wide text-gray-400 font-semibold -mb-4">
+                                Team
+                            </p>
                             {/* Team List */}
                             <div className="w-full">
                                 <label className="text-sm font-medium  text-gray-700">
@@ -1020,16 +1128,6 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                         </div>
                     }
                 />
-            </div>
-            <div>
-                {!siderOpen && (
-                    <FloatButton
-                        //className="bg-indigo-500 text-white"
-                        style={{ backgroundColor: "#3F51B5", color: "white" }}
-                        icon={<FilterOutlined className="hover:text-white" />}
-                        onClick={() => setSiderOpen(true)}
-                    />
-                )}
             </div>
         </div>
     );
