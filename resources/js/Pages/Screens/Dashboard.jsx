@@ -7,6 +7,7 @@ import TeamSchedulerWeek from "../Screens/TeamScheduler";
 import TeamRegionConfig from "./TeamAndRegion";
 import ServiceDetails from "./ServiceDetails";
 import GigoDashboard from "./Gigo/GigoDashboard";
+import AgeingDashboard from "./Ageing/AgeingDashboard";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
 
@@ -95,6 +96,8 @@ const Dashboard = ({
                                     />
                                 ) : activeView === "gigo" ? (
                                     <GigoDashboard user={user} />
+                                ) : activeView === "ageing" ? (
+                                    <AgeingDashboard user={user} />
                                 ) : null}
                             </div>
                         </div>
