@@ -12,6 +12,7 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [taskCode, setTaskCode] = useState([]);
     const [technicianRegion, setTechniciansRegion] = useState([]);
+    const [form] = Form.useForm();
 
     console.log("==>", selectedOrders);
 
@@ -113,8 +114,6 @@ const AssignTeam = ({ taskId, formResponse, selectedOrders, taskStatus }) => {
             setSubmitLoading(false);
         }
     };
-
-    const [form] = Form.useForm();
 
     return (
         <div className="pt-5">
