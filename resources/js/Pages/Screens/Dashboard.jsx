@@ -17,9 +17,8 @@ const Dashboard = ({
     activeView,
     setActiveView,
 }) => {
-    const { setWeekOffset, setStartDate } = useSchedule();
+    const { ticketInfo, setTicketInfo } = useSchedule();
     const [documentNo, setDocumentNo] = useState(null);
-    const [ticketInfo, setTicketInfo] = useState();
     const [locationState, setLocationState] = useState(false);
     const [refreshStatistics, setRefreshStatistics] = useState(false);
 
@@ -46,29 +45,9 @@ const Dashboard = ({
         setActiveView("list");
     };
 
-    const ShowList = () => {
-        setActiveView("list");
-        showDashboard();
-    };
-
-    const HideShowList = () => {
-        setActiveView("weekly");
-        setTicketInfo(null);
-        setWeekOffset(0);
-        setStartDate(null);
-    };
-
     const NavigateWeeklyView = () => {
         setActiveView("weekly");
         setTicketInfo(null);
-    };
-
-    const ShowTeamRegion = () => {
-        setActiveView("teamandregion");
-    };
-
-    const ShowGigo = () => {
-        setActiveView("gigo");
     };
 
     return (
@@ -92,10 +71,6 @@ const Dashboard = ({
                         <div className="bg-white rounded-xl p-4 lg:p-10  p-xs-3">
                             <DashboardList
                                 user={user}
-                                ShowList={ShowList}
-                                HideShowList={HideShowList}
-                                ShowTeamRegion={ShowTeamRegion}
-                                ShowGigo={ShowGigo}
                                 activeView={activeView}
                             />
                             <div>

@@ -4,12 +4,17 @@ import {
     ArrowLeftOutlined,
     MenuOutlined,
     UserOutlined,
+    UnorderedListOutlined,
+    CalendarOutlined,
+    TeamOutlined,
+    ScanOutlined,
 } from "@ant-design/icons";
 import NotificationBell from "./Notification";
 import MenuItem from "antd/es/menu/MenuItem";
 import axios from "axios";
 import { motion } from "framer-motion";
 import NotificationBox from "./NotificationBox";
+import { useSchedule } from "../../../context/ScheduleContext";
 
 const Header = ({
     userLogout,
@@ -25,11 +30,22 @@ const Header = ({
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
+    const { setWeekOffset, setStartDate, setTicketInfo } = useSchedule();
 
     const showSidebar = () => setOpenSidebar(true);
     const closeSidebar = () => setOpenSidebar(false);
 
     const [homeClicked, setHomeClicked] = useState(false);
+
+    const navigateTo = (view) => {
+        setActiveView(view);
+        if (view === "weekly") {
+            setTicketInfo(null);
+            setWeekOffset(0);
+            setStartDate(null);
+        }
+        closeSidebar();
+    };
 
     console.log("=", activeView);
 
@@ -180,15 +196,70 @@ const Header = ({
                 onClose={closeSidebar}
                 open={openSidebar}
             >
-                <ul className="space-y-4">
+                <ul className="space-y-2">
                     <li className="text-lg">
                         <p
-                            onClick={handleViewScreen}
-                            className="block px-4 py-2 text-black hover:bg-gray-200 hover:text-blue-700 rounded transition duration-300"
+                            onClick={() => {
+                                handleViewScreen();
+                                closeSidebar();
+                            }}
+                            className="block px-4 py-2 text-black hover:bg-gray-200 hover:text-blue-700 rounded transition duration-300 cursor-pointer"
                         >
                             Home
                         </p>
                     </li>
+                    <li>
+                        <p
+                            onClick={() => navigateTo("list")}
+                            className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
+                                activeView === "list"
+                                    ? "bg-indigo-50 text-indigo-600 font-medium"
+                                    : "text-black hover:bg-gray-200 hover:text-blue-700"
+                            }`}
+                        >
+                            <UnorderedListOutlined /> List
+                        </p>
+                    </li>
+                    <li>
+                        <p
+                            onClick={() => navigateTo("weekly")}
+                            className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
+                                activeView === "weekly"
+                                    ? "bg-indigo-50 text-indigo-600 font-medium"
+                                    : "text-black hover:bg-gray-200 hover:text-blue-700"
+                            }`}
+                        >
+                            <CalendarOutlined /> Weekly View
+                        </p>
+                    </li>
+                    {user.Role !== "Technician" && (
+                        <li>
+                            <p
+                                onClick={() => navigateTo("teamandregion")}
+                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
+                                    activeView === "teamandregion"
+                                        ? "bg-indigo-50 text-indigo-600 font-medium"
+                                        : "text-black hover:bg-gray-200 hover:text-blue-700"
+                                }`}
+                            >
+                                <TeamOutlined /> Team and Region
+                            </p>
+                        </li>
+                    )}
+                    {user.Role !== "Technician" && (
+                        <li>
+                            <p
+                                onClick={() => navigateTo("gigo")}
+                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
+                                    activeView === "gigo"
+                                        ? "bg-indigo-50 text-indigo-600 font-medium"
+                                        : "text-black hover:bg-gray-200 hover:text-blue-700"
+                                }`}
+                            >
+                                <ScanOutlined /> GIGO
+                            </p>
+                        </li>
+                    )}
                 </ul>
             </Drawer>
             <div className="fixed top-20 right-1  sm:top-20 sm:right-10 ">
