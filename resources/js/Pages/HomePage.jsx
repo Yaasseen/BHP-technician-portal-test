@@ -27,7 +27,7 @@ const HomePage = ({ onLoggedOut, user }) => {
     return (
         <div className="flex">
             <Sidebar user={user} activeView={activeView} setActiveView={setActiveView} />
-            <div className="flex-1 lg:pl-60">
+            <div className="flex-1 min-w-0 lg:pl-60">
                 <div className="sticky top-0 z-50">
                     <Header
                         userLogout={() => handleUserLoggedOut()}
