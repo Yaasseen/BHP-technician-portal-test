@@ -459,7 +459,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             responsive: ["sm"],
             render: (text, record) => (
                 <span
-                    className=" text-indigo-500 hover:underline"
+                    className=" text-red-500 hover:underline"
                     onClick={() => handleShowService(record.document_no)}
                 >
                     {text}
@@ -785,7 +785,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                         <div className="flex w-full justify-between items-center">
                            <div className="w-[60%] sm:w-[25%]">
                                 <Input
-                                    className="w-full px-3 sm:py-2 rounded-md border border-gray-200 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full px-3 sm:py-2 rounded-full border border-gray-200 focus:ring-red-500 focus:border-red-500"
                                     placeholder="Search"
                                     value={searchText}
                                     onChange={(e) =>
@@ -796,7 +796,8 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                             </div>
                             <Badge count={activeFilterCount} size="small">
                                 <Button
-                                    className="bg-indigo-500 text-white"
+                                    shape="round"
+                                    className="bg-red-500 text-white border-red-500"
                                     onClick={() => setSiderOpen(true)}
                                 >
                                     <FilterOutlined className="mr-1" />
@@ -815,6 +816,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     </p>
                     <div className="flex gap-2">
                         <Button
+                            shape="round"
                             icon={<DownloadOutlined />}
                             loading={exporting}
                             onClick={handleExport}
@@ -822,8 +824,9 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                             Export to Excel
                         </Button>
                         <Button
+                            shape="round"
                             disabled={selectedOrders?.length === 0}
-                            className="bg-indigo-500 text-white"
+                            className="bg-red-500 text-white border-red-500"
                             onClick={handleBulkOrderAssign}
                         >
                             Bulk Assignment

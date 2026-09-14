@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Components/common/Header";
+import Sidebar from "./Components/common/Sidebar";
 import "../../css/Dashboard.css";
 import Dashboard from "./Screens/Dashboard";
 import { Spin } from "antd";
@@ -24,26 +25,29 @@ const HomePage = ({ onLoggedOut, user }) => {
     };
 
     return (
-        <div>
-            <div className="sticky top-0 z-50">
-                <Header
-                    userLogout={() => handleUserLoggedOut()}
-                    user={user}
-                    handleView={() => handleWeekView()}
-                    handleHome={() => handleHomeScreen()}
-                    activeView={activeView}
-                    setActiveView={setActiveView}
-                />
-            </div>
-            <div className="dashboard-card">
-                <Dashboard
-                    user={user}
-                    handleView={showWeekView}
-                    showDashboard={() => handleDashboard()}
-                    showHome={handleHome}
-                    activeView={activeView}
-                    setActiveView={setActiveView}
-                />
+        <div className="flex">
+            <Sidebar user={user} activeView={activeView} setActiveView={setActiveView} />
+            <div className="flex-1 lg:pl-60">
+                <div className="sticky top-0 z-50">
+                    <Header
+                        userLogout={() => handleUserLoggedOut()}
+                        user={user}
+                        handleView={() => handleWeekView()}
+                        handleHome={() => handleHomeScreen()}
+                        activeView={activeView}
+                        setActiveView={setActiveView}
+                    />
+                </div>
+                <div className="dashboard-card">
+                    <Dashboard
+                        user={user}
+                        handleView={showWeekView}
+                        showDashboard={() => handleDashboard()}
+                        showHome={handleHome}
+                        activeView={activeView}
+                        setActiveView={setActiveView}
+                    />
+                </div>
             </div>
         </div>
     );

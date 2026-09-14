@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Dropdown, Menu, Avatar, Drawer, Spin } from "antd";
-import {
-    ArrowLeftOutlined,
-    MenuOutlined,
-    UserOutlined,
-    UnorderedListOutlined,
-    CalendarOutlined,
-    TeamOutlined,
-    ScanOutlined,
-    BarChartOutlined,
-    SettingOutlined,
-} from "@ant-design/icons";
+import { ArrowLeftOutlined, MenuOutlined, UserOutlined } from "@ant-design/icons";
 import NotificationBell from "./Notification";
 import MenuItem from "antd/es/menu/MenuItem";
 import axios from "axios";
 import { motion } from "framer-motion";
 import NotificationBox from "./NotificationBox";
-import { useSchedule } from "../../../context/ScheduleContext";
+import NavLinks from "./NavLinks";
 
 const Header = ({
     userLogout,
@@ -32,24 +22,11 @@ const Header = ({
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
-    const { setWeekOffset, setStartDate, setTicketInfo } = useSchedule();
 
     const showSidebar = () => setOpenSidebar(true);
     const closeSidebar = () => setOpenSidebar(false);
 
     const [homeClicked, setHomeClicked] = useState(false);
-
-    const navigateTo = (view) => {
-        setActiveView(view);
-        if (view === "weekly") {
-            setTicketInfo(null);
-            setWeekOffset(0);
-            setStartDate(null);
-        }
-        closeSidebar();
-    };
-
-    console.log("=", activeView);
 
     const ListView = () => {
         handleLitView();
@@ -153,7 +130,7 @@ const Header = ({
         <div className="sticky">
             <header className="top-0 flex justify-between items-center px-4 sm:px-12 py-3 bg-white shadow-sm border-b border-gray-300">
                 <div className="flex gap-x-10 items-center">
-                    <div className="flex items-center rounded-full border border-gray-400 p-3">
+                    <div className="lg:hidden flex items-center rounded-full border border-gray-400 p-3">
                         <MenuOutlined
                             className="text-xl cursor-pointer"
                             onClick={showSidebar}
@@ -199,113 +176,12 @@ const Header = ({
                 onClose={closeSidebar}
                 open={openSidebar}
             >
-                <ul className="space-y-2">
-                    <li className="text-lg">
-                        <p
-                            onClick={() => {
-                                handleViewScreen();
-                                closeSidebar();
-                            }}
-                            className="block px-4 py-2 text-black hover:bg-gray-200 hover:text-indigo-600 rounded transition duration-300 cursor-pointer"
-                        >
-                            Home
-                        </p>
-                    </li>
-                    <li>
-                        <p
-                            onClick={() => navigateTo("list")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
-                                activeView === "list"
-                                    ? "bg-indigo-50 text-indigo-600 font-medium"
-                                    : "text-black hover:bg-gray-200 hover:text-indigo-600"
-                            }`}
-                        >
-                            <UnorderedListOutlined /> List
-                        </p>
-                    </li>
-                    <li>
-                        <p
-                            onClick={() => navigateTo("weekly")}
-                            className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
-                                activeView === "weekly"
-                                    ? "bg-indigo-50 text-indigo-600 font-medium"
-                                    : "text-black hover:bg-gray-200 hover:text-indigo-600"
-                            }`}
-                        >
-                            <CalendarOutlined /> Weekly View
-                        </p>
-                    </li>
-                    {user.Role !== "Technician" && (
-                        <li>
-                            <p
-                                onClick={() => navigateTo("teamandregion")}
-                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
-                                    activeView === "teamandregion"
-                                        ? "bg-indigo-50 text-indigo-600 font-medium"
-                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
-                                }`}
-                            >
-                                <TeamOutlined /> Team and Region
-                            </p>
-                        </li>
-                    )}
-                    {user.Role !== "Technician" && (
-                        <li>
-                            <p
-                                onClick={() => navigateTo("gigo")}
-                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
-                                    activeView === "gigo"
-                                        ? "bg-indigo-50 text-indigo-600 font-medium"
-                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
-                                }`}
-                            >
-                                <ScanOutlined /> GIGO
-                            </p>
-                        </li>
-                    )}
-                    {user.Role !== "Technician" && (
-                        <li>
-                            <p
-                                onClick={() => navigateTo("ageing")}
-                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
-                                    activeView === "ageing"
-                                        ? "bg-indigo-50 text-indigo-600 font-medium"
-                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
-                                }`}
-                            >
-                                <BarChartOutlined /> Ageing
-                            </p>
-                        </li>
-                    )}
-                    {user.Role !== "Technician" && (
-                        <li>
-                            <p
-                                onClick={() => navigateTo("ops")}
-                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
-                                    activeView === "ops"
-                                        ? "bg-indigo-50 text-indigo-600 font-medium"
-                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
-                                }`}
-                            >
-                                <BarChartOutlined /> OPS Dashboard
-                            </p>
-                        </li>
-                    )}
-                    {user.Role === "Admin" && (
-                        <li>
-                            <p
-                                onClick={() => navigateTo("settings")}
-                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
-                                    activeView === "settings"
-                                        ? "bg-indigo-50 text-indigo-600 font-medium"
-                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
-                                }`}
-                            >
-                                <SettingOutlined /> Settings
-                            </p>
-                        </li>
-                    )}
-                </ul>
+                <NavLinks
+                    user={user}
+                    activeView={activeView}
+                    setActiveView={setActiveView}
+                    onItemClick={closeSidebar}
+                />
             </Drawer>
             <div className="fixed top-20 right-1  sm:top-20 sm:right-10 ">
                 {openNotification && (
