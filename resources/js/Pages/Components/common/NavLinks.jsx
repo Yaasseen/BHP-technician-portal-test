@@ -47,6 +47,11 @@ const NavLinks = ({ user, activeView, setActiveView, onItemClick }) => {
                     <CalendarOutlined /> Weekly View
                 </p>
             </li>
+            <li>
+                <p onClick={() => navigateTo("mybasket")} className={itemClass("mybasket")}>
+                    <ScanOutlined /> My Basket
+                </p>
+            </li>
             {user.Role !== "Technician" && (
                 <li>
                     <p
@@ -57,21 +62,21 @@ const NavLinks = ({ user, activeView, setActiveView, onItemClick }) => {
                     </p>
                 </li>
             )}
-            {user.Role !== "Technician" && (
+            {user.Role === "Team Leader" && (
                 <li>
                     <p onClick={() => navigateTo("gigo")} className={itemClass("gigo")}>
                         <ScanOutlined /> GIGO
                     </p>
                 </li>
             )}
-            {user.Role !== "Technician" && (
+            {user.Role === "Team Leader" && (
                 <li>
                     <p onClick={() => navigateTo("ageing")} className={itemClass("ageing")}>
                         <BarChartOutlined /> Ageing
                     </p>
                 </li>
             )}
-            {user.Role !== "Technician" && (
+            {user.Role === "Team Leader" && (
                 <li>
                     <p onClick={() => navigateTo("ops")} className={itemClass("ops")}>
                         <BarChartOutlined /> OPS Dashboard

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Empty, Spin, Button } from "antd";
+import { Table, Empty, Spin, Button, Tag } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
 import { exportToExcel } from "../../../utils/exportToExcel";
 
@@ -59,6 +59,16 @@ const LocationContents = ({ locationId }) => {
                     { title: "Customer", dataIndex: "name" },
                     { title: "Repair Status", dataIndex: "repair_status_code" },
                     { title: "Technician", dataIndex: "technician_name" },
+                    {
+                        title: "Status",
+                        dataIndex: "gigo_pending_ack",
+                        render: (pending) =>
+                            pending ? (
+                                <Tag color="orange">Pending Ack</Tag>
+                            ) : (
+                                <Tag color="green">Confirmed</Tag>
+                            ),
+                    },
                 ]}
             />
         </div>

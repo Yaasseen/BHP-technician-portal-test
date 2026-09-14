@@ -7,6 +7,7 @@ import TeamSchedulerWeek from "../Screens/TeamScheduler";
 import TeamRegionConfig from "./TeamAndRegion";
 import ServiceDetails from "./ServiceDetails";
 import GigoDashboard from "./Gigo/GigoDashboard";
+import MyBasket from "./Gigo/MyBasket";
 import AgeingDashboard from "./Ageing/AgeingDashboard";
 import SettingsPanel from "./Settings/SettingsPanel";
 import OpsDashboard from "./Ops/OpsDashboard";
@@ -98,6 +99,8 @@ const Dashboard = ({
                                     />
                                 ) : activeView === "gigo" ? (
                                     <GigoDashboard user={user} />
+                                ) : activeView === "mybasket" ? (
+                                    <MyBasket user={user} />
                                 ) : activeView === "ageing" ? (
                                     <AgeingDashboard user={user} />
                                 ) : activeView === "settings" ? (

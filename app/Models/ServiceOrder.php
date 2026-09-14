@@ -56,6 +56,8 @@ class ServiceOrder extends Model
         'gigo_location_updated_at',
         'is_posted',
         'posted_at',
+        'gigo_pending_ack',
+        'technician_acknowledged_at',
 
     ];
 }

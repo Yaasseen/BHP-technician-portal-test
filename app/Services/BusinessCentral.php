@@ -400,4 +400,11 @@ class BusinessCentral
             return $this->fetchOData("TeamRegion") ?? [];
         });
     }
+
+    public function refreshTeamsCache(): array
+    {
+        Cache::forget(self::CACHE_KEY_TEAMS);
+
+        return $this->getAllTeams();
+    }
 }

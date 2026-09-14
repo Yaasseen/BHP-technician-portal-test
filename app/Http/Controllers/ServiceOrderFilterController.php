@@ -7,6 +7,7 @@ use App\Models\ServiceOrder;
 use App\Models\ServiceOrderFilter;
 use App\Services\BusinessCentral;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -53,6 +54,23 @@ class ServiceOrderFilterController extends Controller
         $teamNames = array_column($allocatedTeams, 'Values');
 
         return response()->json($teamNames);
+    }
+
+    public function syncTeams()
+    {
+        $user = Auth::guard('in-memory')->user();
+
+        if ($user->Technician_Type !== 'Admin') {
+            return response()->json(['error' => 'Unauthorized.'], 401);
+        }
+
+        $allocatedTeams = $this->businessCentral->refreshTeamsCache();
+        $teamNames = array_column($allocatedTeams, 'Values');
+
+        return response()->json([
+            'message' => count($teamNames) . ' team(s) synced from Business Central.',
+            'data' => $teamNames,
+        ]);
     }
 
 

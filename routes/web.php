@@ -55,12 +55,16 @@ Route::middleware(['web', 'auth'])->group(function () {
     // GIGO location tracking
     Route::get('/gigo-locations', [GigoLocationController::class, 'index']);
     Route::post('/gigo-locations', [GigoLocationController::class, 'store']);
+    Route::post('/gigo-locations/technician-baskets', [GigoLocationController::class, 'createTechnicianBaskets']);
     Route::put('/gigo-locations/{id}', [GigoLocationController::class, 'update']);
     Route::delete('/gigo-locations/{id}', [GigoLocationController::class, 'destroy']);
     Route::get('/gigo-locations/{id}/contents', [GigoMovementController::class, 'locationContents']);
     Route::post('/gigo-movements/scan', [GigoMovementController::class, 'scanSingle']);
     Route::post('/gigo-movements/scan-bulk', [GigoMovementController::class, 'scanBulk']);
     Route::get('/gigo-movements/history/{document_no}', [GigoMovementController::class, 'history']);
+    Route::post('/gigo-movements/acknowledge', [GigoMovementController::class, 'acknowledge']);
+    Route::post('/gigo-movements/return-to-gigo', [GigoMovementController::class, 'returnToGigo']);
+    Route::get('/gigo-my-basket', [GigoMovementController::class, 'myBasket']);
 
     Route::get('/technician-list', [TechnicianController::class, 'getTechnicianList']);
     Route::get('/technician/{id}', [TechnicianController::class, 'getTechnician']);
@@ -117,6 +121,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/repair-status-code', [ServiceOrderFilterController::class, 'getServiceRepairStatusCode']);
     Route::get('/brand-code', [ServiceOrderFilterController::class, 'getBrandCode']);
     Route::get('/allocated-teams', [ServiceOrderFilterController::class, 'fetchTeams']);
+    Route::post('/allocated-teams/sync', [ServiceOrderFilterController::class, 'syncTeams']);
     Route::get('/service-order-portal-status', [ServiceOrderFilterController::class, 'getStatuses']);
 
 });

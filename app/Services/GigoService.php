@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\GigoAcknowledgeException;
 use App\Models\GigoLocation;
 use App\Models\GigoMovement;
 use App\Models\ServiceOrder;
@@ -19,11 +20,14 @@ class GigoService
         return DB::transaction(function () use ($serviceOrder, $toLocation, $moveType, $movedById, $movedByName) {
             $fromLocationId = $serviceOrder->gigo_location_id;
             $fromLocationName = $serviceOrder->gigo_location_name;
+            $isTechnicianBasket = $toLocation->type === 'technician_basket';
 
             $serviceOrder->update([
                 'gigo_location_id' => $toLocation->id,
                 'gigo_location_name' => $toLocation->name,
                 'gigo_location_updated_at' => now(),
+                'gigo_pending_ack' => $isTechnicianBasket,
+                'technician_acknowledged_at' => $isTechnicianBasket ? null : $serviceOrder->technician_acknowledged_at,
             ]);
 
             GigoMovement::create([
@@ -61,6 +65,7 @@ class GigoService
         return DB::transaction(function () use ($serviceOrders, $toLocation, $moveType, $movedById, $movedByName) {
             $movementRows = [];
             $timestamp = now();
+            $isTechnicianBasket = $toLocation->type === 'technician_basket';
 
             foreach ($serviceOrders as $serviceOrder) {
                 $movementRows[] = [
@@ -81,6 +86,8 @@ class GigoService
                 'gigo_location_id' => $toLocation->id,
                 'gigo_location_name' => $toLocation->name,
                 'gigo_location_updated_at' => $timestamp,
+                'gigo_pending_ack' => $isTechnicianBasket,
+                'technician_acknowledged_at' => $isTechnicianBasket ? null : DB::raw('technician_acknowledged_at'),
             ]);
 
             GigoMovement::insert($movementRows);
@@ -101,6 +108,48 @@ class GigoService
         $basket = $this->getOrCreateTechnicianBasket($technicianId, $technicianName);
 
         $this->bulkMoveToLocation($documentNos, $basket->id, 'auto_assign', $movedById, $movedByName);
+    }
+
+    public function acknowledgeReceipt(string $documentNo, string $technicianId, ?string $technicianName): ServiceOrder
+    {
+        $serviceOrder = ServiceOrder::where('document_no', $documentNo)->firstOrFail();
+
+        if ((string) $serviceOrder->technician_id !== (string) $technicianId) {
+            throw new GigoAcknowledgeException("This item isn't assigned to you.");
+        }
+
+        return DB::transaction(function () use ($serviceOrder, $technicianId, $technicianName) {
+            $serviceOrder->update([
+                'gigo_pending_ack' => false,
+                'technician_acknowledged_at' => now(),
+            ]);
+
+            GigoMovement::create([
+                'document_no' => $serviceOrder->document_no,
+                'from_location_id' => $serviceOrder->gigo_location_id,
+                'to_location_id' => $serviceOrder->gigo_location_id,
+                'from_location_name' => $serviceOrder->gigo_location_name,
+                'to_location_name' => $serviceOrder->gigo_location_name,
+                'move_type' => 'technician_ack',
+                'moved_by' => $technicianId,
+                'moved_by_name' => $technicianName,
+            ]);
+
+            return $serviceOrder;
+        });
+    }
+
+    public function returnToGigo(string $documentNo, string $technicianId, ?string $technicianName): ServiceOrder
+    {
+        $serviceOrder = ServiceOrder::where('document_no', $documentNo)->firstOrFail();
+
+        if ((string) $serviceOrder->technician_id !== (string) $technicianId) {
+            throw new GigoAcknowledgeException("This item isn't assigned to you.");
+        }
+
+        $gigoLocation = GigoLocation::where('code', 'GIGO')->where('is_active', true)->firstOrFail();
+
+        return $this->moveToLocation($documentNo, $gigoLocation->id, 'job_complete_return', $technicianId, $technicianName);
     }
 
     public function getOrCreateTechnicianBasket(string $technicianId, string $technicianName): GigoLocation

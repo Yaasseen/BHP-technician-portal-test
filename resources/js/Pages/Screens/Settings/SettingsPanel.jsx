@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { InputNumber, Button, Table, Select, message, Spin, Card } from "antd";
-import { SaveOutlined } from "@ant-design/icons";
+import { SaveOutlined, SyncOutlined } from "@ant-design/icons";
 
 const PRIORITY_OPTIONS = [
     { label: "LOW", value: "LOW" },
@@ -16,6 +16,7 @@ const SettingsPanel = () => {
     const [cap, setCap] = useState(12);
     const [overdueDays, setOverdueDays] = useState(30);
     const [tiers, setTiers] = useState([]);
+    const [syncingTeams, setSyncingTeams] = useState(false);
 
     const fetchSettings = () => {
         setLoading(true);
@@ -59,6 +60,21 @@ const SettingsPanel = () => {
             .finally(() => setSaving(false));
     };
 
+    const handleSyncTeams = () => {
+        setSyncingTeams(true);
+        axios
+            .post("/allocated-teams/sync")
+            .then((res) => {
+                messageApi.success(res.data.message || "Teams synced.");
+            })
+            .catch((error) => {
+                messageApi.error(
+                    error.response?.data?.error || "Failed to sync teams from Business Central."
+                );
+            })
+            .finally(() => setSyncingTeams(false));
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center py-16">
@@ -77,6 +93,24 @@ const SettingsPanel = () => {
                     without a deploy.
                 </p>
             </div>
+
+            <Card className="rounded-2xl shadow-sm" title="Business Central Sync">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                    <div>
+                        <p className="text-sm font-medium text-gray-700">Team List</p>
+                        <p className="text-xs text-gray-500">
+                            Cached from BC for up to 10 minutes. Sync now to pull the latest teams immediately.
+                        </p>
+                    </div>
+                    <Button
+                        icon={<SyncOutlined spin={syncingTeams} />}
+                        loading={syncingTeams}
+                        onClick={handleSyncTeams}
+                    >
+                        Sync Teams Now
+                    </Button>
+                </div>
+            </Card>
 
             <Card className="rounded-2xl shadow-sm" title="Assignment & Overdue Rules">
                 <div className="flex flex-col sm:flex-row gap-6">

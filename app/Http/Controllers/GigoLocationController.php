@@ -3,11 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\GigoLocation;
+use App\Services\BusinessCentral;
+use App\Services\GigoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GigoLocationController extends Controller
 {
+    protected $gigoService;
+    protected $businessCentral;
+
+    public function __construct(GigoService $gigoService)
+    {
+        $this->gigoService = $gigoService;
+        $this->businessCentral = BusinessCentral::getInstance();
+    }
+
     private function authorizeUser()
     {
         $user = Auth::guard('in-memory')->user();
@@ -75,6 +86,39 @@ class GigoLocationController extends Controller
         return response()->json([
             'message' => 'Location updated successfully.',
             'data' => $location,
+        ], 200);
+    }
+
+    public function createTechnicianBaskets(Request $request)
+    {
+        $this->authorizeUser();
+
+        $validated = $request->validate([
+            'technician_ids' => 'required|array|min:1',
+            'technician_ids.*' => 'required|string',
+        ]);
+
+        $technicianList = $this->businessCentral->technicianList();
+        $created = [];
+        $skipped = [];
+
+        foreach ($validated['technician_ids'] as $technicianId) {
+            $technician = $technicianList[$technicianId] ?? null;
+
+            if (!$technician) {
+                $skipped[] = $technicianId;
+                continue;
+            }
+
+            $technicianName = trim(($technician['First_Name'] ?? '') . ' ' . ($technician['Last_Name'] ?? ''));
+            $basket = $this->gigoService->getOrCreateTechnicianBasket($technician['ID'], $technicianName);
+            $created[] = $basket;
+        }
+
+        return response()->json([
+            'message' => count($created) . ' basket(s) ready' . (count($skipped) ? ', ' . count($skipped) . ' skipped (unknown technician).' : '.'),
+            'data' => $created,
+            'skipped' => $skipped,
         ], 200);
     }
 
