@@ -123,6 +123,7 @@ class ServiceOrderActivityController extends Controller
             'image' => 'nullable|string',
             'image_file' => 'nullable|file|mimes:jpeg,png,jpg,webp',
             'signature' => 'nullable|string',
+            'force_override' => 'nullable|boolean',
         ]);
 
         $imageBinary = null;
@@ -156,6 +157,32 @@ class ServiceOrderActivityController extends Controller
                 $signatureName = 'signature_' . uniqid() . '.' . $signatureType; // Use the actual signature type for naming
             } else {
                 throw new \Exception('Invalid base64 signature data');
+            }
+        }
+
+        $serviceOrderBeforeSave = ServiceOrder::where('document_no', $validatedData['document_no'])->firstOrFail();
+        $forceOverride = $request->boolean('force_override');
+
+        $liveStatus = $this->businessCentral->getLiveServiceOrderStatus($validatedData['document_no']);
+
+        if (!$liveStatus['error'] && !$liveStatus['found']) {
+            $serviceOrderBeforeSave->update(['is_posted' => true, 'posted_at' => now()]);
+
+            return response()->json([
+                'error' => 'This service order is no longer active in Business Central (it appears to have been posted). It has been removed from your active list.',
+            ], 422);
+        }
+
+        if (!$liveStatus['error'] && $liveStatus['found']) {
+            $bcStatus = $liveStatus['data']['Repair_Status_Code'] ?? null;
+
+            if ($bcStatus && $bcStatus !== $serviceOrderBeforeSave->repair_status_code && !$forceOverride) {
+                return response()->json([
+                    'conflict' => true,
+                    'portal_status' => $serviceOrderBeforeSave->repair_status_code,
+                    'bc_status' => $bcStatus,
+                    'submitted_status' => $validatedData['repair_status_code'],
+                ], 409);
             }
         }
 

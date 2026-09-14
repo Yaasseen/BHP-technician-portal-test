@@ -87,7 +87,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
         facingMode: useFrontCamera ? "user" : { exact: "environment" },
     };
 
-    const handleSubmitForm = (values) => {
+    const buildActivityFormData = (values, forceOverride) => {
         const formData = new FormData();
         formData.append("repair_status_code", values.repair_status_code);
         formData.append("description", values.description);
@@ -109,6 +109,16 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
             formData.append("image_file", imageShow);
         }
 
+        if (forceOverride) {
+            formData.append("force_override", "1");
+        }
+
+        return formData;
+    };
+
+    const submitActivity = (values, forceOverride = false) => {
+        const formData = buildActivityFormData(values, forceOverride);
+
         setSubmitLoading(true);
 
         axios
@@ -127,12 +137,37 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                 ClearSignature();
                 setUploadTrigger(!uploadTrigger);
                 handleResetCam();
-                setSubmitLoading(false);
+                setCameraImage(null);
+                setImageShow(null);
+                setUploadImage();
+                setCallStatus(!callStatus);
             })
             .catch((error) => {
-                console.log("==> 1", error.response?.data?.error);
-                console.log("==> 2", error.response?.data?.message);
-                console.log("==> 3", error.response?.data);
+                if (error.response?.status === 409 && error.response?.data?.conflict) {
+                    const { portal_status, bc_status, submitted_status } =
+                        error.response.data;
+
+                    Modal.confirm({
+                        title: "Status changed in Business Central",
+                        content: (
+                            <div className="space-y-1">
+                                <p>Portal shows: <b>{portal_status}</b></p>
+                                <p>Business Central now shows: <b>{bc_status}</b></p>
+                                <p>You selected: <b>{submitted_status}</b></p>
+                                <p className="pt-2 text-gray-500">
+                                    Business Central's status has changed since
+                                    this portal last synced. Save your
+                                    selection anyway, or cancel and re-pick a
+                                    status that matches Business Central.
+                                </p>
+                            </div>
+                        ),
+                        okText: "Save my selection anyway",
+                        cancelText: "Cancel",
+                        onOk: () => submitActivity(values, true),
+                    });
+                    return;
+                }
 
                 const errorMessage =
                     error.response?.data?.error || "An error occurred";
@@ -142,12 +177,12 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                 });
             })
             .finally(() => {
-                setCameraImage(null);
-                setImageShow(null);
-                setUploadImage();
-                setCallStatus(!callStatus);
                 setSubmitLoading(false);
             });
+    };
+
+    const handleSubmitForm = (values) => {
+        submitActivity(values, false);
     };
 
     useEffect(() => {

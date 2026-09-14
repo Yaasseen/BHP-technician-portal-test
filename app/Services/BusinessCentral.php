@@ -195,6 +195,34 @@ class BusinessCentral
         return $this->teamList ?? [];
     }
 
+    /**
+     * Returns ['error' => bool, 'found' => bool, 'data' => array|null].
+     * 'error' true means the live check itself failed (network/BC issue) -
+     * callers should fail open in that case, not treat it as "not found".
+     */
+    public function getLiveServiceOrderStatus(string $documentNo): array
+    {
+        try {
+            $client = $this->getHttpClient();
+            $url = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/ServiceLines?\$filter=Document_No eq '{$documentNo}'";
+
+            Log::channel('business_central')->info("Live status check: GET {$url}");
+
+            $response = $client->get($url);
+            $data = json_decode($response->getBody()->getContents(), true);
+            $rows = $data['value'] ?? [];
+
+            return [
+                'error' => false,
+                'found' => !empty($rows),
+                'data' => $rows[0] ?? null,
+            ];
+        } catch (\Exception $e) {
+            Log::channel('business_central')->error("Live status check failed for {$documentNo}: " . $e->getMessage());
+            return ['error' => true, 'found' => false, 'data' => null];
+        }
+    }
+
     public function serviceOrders($maxReplicationCount): array
     {
         try {
