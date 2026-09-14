@@ -256,15 +256,10 @@ class BusinessCentral
 
     public function serviceOrdersToBeDeleted($maxReplicationCount = 100): array
     {
-        // NOTE: The URL in original code used a different instance/company hardcoded?
-        // "/ECOM0923/ODataV4/Company('TBH')/ServiceOrderArchived"
-        // Preserving that behavior if intentional, but using config variables for consistency where possible.
-        // If ECOM0923 is truly hardcoded, it suggests a specific archive environment. 
-        // For professional refactor, we usually stick to the configured instance. 
-        // I will use the configured instance for consistency unless specifically told otherwise,
-        // but note the deviation from original hardcoded 'ECOM0923'.
-        
-        $data = $this->fetchOData("ServiceOrderArchived?\$filter=Replication_Counter gt $maxReplicationCount");
+        // The published web service on this BC instance is "DeletedServiceOrders"
+        // (confirmed via the instance's OData $metadata) - "ServiceOrderArchived"
+        // does not exist and was returning a 404, causing this to silently no-op.
+        $data = $this->fetchOData("DeletedServiceOrders?\$filter=Replication_Counter gt $maxReplicationCount");
         return $data ?? [];
     }
 

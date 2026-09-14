@@ -75,6 +75,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
         brand_code: null,
         team: null,
         status: null,
+        show_posted: false,
     });
 
     const [appliedFilter, setAppliedFilter] = useState({
@@ -88,6 +89,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
         brand_code: null,
         team: null,
         status: null,
+        show_posted: false,
     });
 
     const fetchData = () => {
@@ -199,6 +201,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             brand_code: null,
             team: null,
             portal_status: null,
+            show_posted: false,
         });
 
         // Clear applied filters too
@@ -213,6 +216,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             brand_code: null,
             team: null,
             portal_status: null,
+            show_posted: false,
         });
 
         setFromDate(null);
@@ -401,6 +405,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
         appliedFilter.start,
         appliedFilter.end,
         appliedFilter.specific_date,
+        appliedFilter.show_posted,
     ].filter(Boolean).length;
 
     const exportColumns = [
@@ -1058,6 +1063,22 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                     allowClear
                                     size="middle"
                                 />
+                            </div>
+
+                            {/* Posted Orders */}
+                            <div className="w-full">
+                                <Checkbox
+                                    checked={filter.show_posted}
+                                    onChange={() =>
+                                        setFilter({
+                                            ...filter,
+                                            show_posted: !filter.show_posted,
+                                        })
+                                    }
+                                    className="text-sm text-gray-700"
+                                >
+                                    Show Posted Orders
+                                </Checkbox>
                             </div>
 
                             <p className="text-xs uppercase tracking-wide text-gray-400 font-semibold -mb-4">

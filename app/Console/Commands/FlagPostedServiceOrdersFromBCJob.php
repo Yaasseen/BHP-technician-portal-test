@@ -7,16 +7,16 @@ use Illuminate\Console\Command;
 use App\Models\ServiceOrder;
 use Illuminate\Support\Facades\Log;
 use App\Services\BusinessCentral;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
 
 
-class DeleteServiceOrdersFromBCJob extends Command
+class FlagPostedServiceOrdersFromBCJob extends Command
 {
     // The name and signature of the console command.
-    protected $signature = 'serviceorders:delete';
+    protected $signature = 'serviceorders:flag-posted';
 
     // The console command description.
-    protected $description = 'Delete service orders from external API if found on database';
+    protected $description = 'Flag service orders as posted when Business Central reports them as archived/posted';
 
     protected $service;
     protected $utility;
@@ -24,53 +24,54 @@ class DeleteServiceOrdersFromBCJob extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->service = BusinessCentral::getInstance();  
-		$this->utility = new Utility();		
+        $this->service = BusinessCentral::getInstance();
+		$this->utility = new Utility();
     }
 
     public function handle()
     {
-		Log::info("DeleteServiceOrdersFromBCJob@handle Job Started");
+		Log::info("FlagPostedServiceOrdersFromBCJob@handle Job Started");
         try {
-			
+
 			$maxReplicationCount = $this->utility->getMaxReplicationCount();
 
             $serviceResponse = $this->service->serviceOrdersToBeDeleted($maxReplicationCount);
 
             if (empty($serviceResponse)) {
-                Log::warning('DeleteServiceOrdersFromBCJob@handle No service orders fetched.');
+                Log::warning('FlagPostedServiceOrdersFromBCJob@handle No service orders fetched.');
                 return;
             }
-			
+
 			Log::info("Getting the formatted records");
 			$formattedResponse = $serviceResponse;
-			
+
 			DB::transaction(function() use ($formattedResponse) {
 				$documentNos = collect($formattedResponse)->pluck('No');
-				$deletedCount = 0;
-				
-				$documentNos->chunk(1000)->each(function ($chunk) use (&$deletedCount) {
-					$deletedCount += ServiceOrder::whereIn('document_no', $chunk)->delete();
-				});
-				
-				foreach ($formattedResponse as $item) {
-					$deletedCount += ServiceOrder::where('document_no', $item['No'])->delete();
+				$flaggedCount = 0;
 
+				$documentNos->chunk(1000)->each(function ($chunk) use (&$flaggedCount) {
+					$flaggedCount += ServiceOrder::whereIn('document_no', $chunk)->update([
+						'is_posted' => true,
+						'posted_at' => now(),
+					]);
+				});
+
+				foreach ($formattedResponse as $item) {
 					$newCount = $item['Replication_Counter'];
 					if ($newCount > $maxReplicationCount) {
 						$maxReplicationCount = $newCount;
 					}
 				}
-				 Log::info("DeleteServiceOrdersFromBCJob@handle Service Orders deleted successfully: ", [
-					'count' => $deletedCount,
+				 Log::info("FlagPostedServiceOrdersFromBCJob@handle Service Orders flagged as posted successfully: ", [
+					'count' => $flaggedCount,
 				 ]);
 			});
-			
+
 			$this->utility->updateMaxReplicationCount($maxReplicationCount);
-			Log::info("DeleteServiceOrdersFromBCJob@handle Service orders deleted successfully: Max Replication Counter :{[$maxReplicationCount]}");
+			Log::info("FlagPostedServiceOrdersFromBCJob@handle Service orders flagged as posted successfully: Max Replication Counter :{[$maxReplicationCount]}");
 
         } catch (\Exception $e) {
-            Log::error('DeleteServiceOrdersFromBCJob@handle Error deleting required service orders.', [
+            Log::error('FlagPostedServiceOrdersFromBCJob@handle Error flagging posted service orders.', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
