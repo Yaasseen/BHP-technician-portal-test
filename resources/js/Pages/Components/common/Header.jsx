@@ -277,6 +277,20 @@ const Header = ({
                             </p>
                         </li>
                     )}
+                    {user.Role !== "Technician" && (
+                        <li>
+                            <p
+                                onClick={() => navigateTo("ops")}
+                                className={`flex items-center gap-2 px-4 py-2 rounded transition duration-300 cursor-pointer ${
+                                    activeView === "ops"
+                                        ? "bg-indigo-50 text-indigo-600 font-medium"
+                                        : "text-black hover:bg-gray-200 hover:text-indigo-600"
+                                }`}
+                            >
+                                <BarChartOutlined /> OPS Dashboard
+                            </p>
+                        </li>
+                    )}
                     {user.Role === "Admin" && (
                         <li>
                             <p

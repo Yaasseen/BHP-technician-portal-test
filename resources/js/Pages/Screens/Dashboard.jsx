@@ -9,6 +9,7 @@ import ServiceDetails from "./ServiceDetails";
 import GigoDashboard from "./Gigo/GigoDashboard";
 import AgeingDashboard from "./Ageing/AgeingDashboard";
 import SettingsPanel from "./Settings/SettingsPanel";
+import OpsDashboard from "./Ops/OpsDashboard";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
 
@@ -101,6 +102,8 @@ const Dashboard = ({
                                     <AgeingDashboard user={user} />
                                 ) : activeView === "settings" ? (
                                     <SettingsPanel user={user} />
+                                ) : activeView === "ops" ? (
+                                    <OpsDashboard user={user} />
                                 ) : null}
                             </div>
                         </div>
