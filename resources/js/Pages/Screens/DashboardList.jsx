@@ -3,6 +3,7 @@ import {
     UnorderedListOutlined,
     CalendarOutlined,
     TeamOutlined,
+    ScanOutlined,
 } from "@ant-design/icons";
 import React, { useState } from "react";
 
@@ -11,6 +12,7 @@ function DashboardList({
     ShowList,
     HideShowList,
     ShowTeamRegion,
+    ShowGigo,
     activeView,
 }) {
     console.log("==>", activeView);
@@ -79,6 +81,21 @@ function DashboardList({
                                         }`}
                                     >
                                         Team and Region
+                                    </Button>
+                                )}
+                            </div>
+                            <div className="sm:m-0 mb-1 flex justify-end">
+                                {user.Role !== "Technician" && (
+                                    <Button
+                                        icon={<ScanOutlined />}
+                                        onClick={ShowGigo}
+                                        className={`${
+                                            activeView === "gigo"
+                                                ? "bg-indigo-600 text-white border-indigo-600"
+                                                : "bg-white text-black border-indigo-600"
+                                        }`}
+                                    >
+                                        GIGO
                                     </Button>
                                 )}
                             </div>

@@ -15,6 +15,8 @@ use App\Http\Controllers\SparePartActivityController;
 use App\Http\Controllers\TeamRegionActivityController;
 use App\Http\Controllers\TeamScheduleController;
 use App\Http\Controllers\ServiceOrderFilterController;
+use App\Http\Controllers\GigoLocationController;
+use App\Http\Controllers\GigoMovementController;
 use Inertia\Inertia;
 
 Route::middleware('web')->group(function () {
@@ -46,6 +48,16 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::put('/service-orders/department-region/{document_no}', [AssignServiceOrder::class, 'assignDepartmentRegion']);
     Route::put('/service-orders/assign-technician/{document_no}', [AssignServiceOrder::class, 'assignTechnician']);
     Route::put('/assign-technician-bulk', [AssignServiceOrder::class, 'assignTechnicianBulk']);
+
+    // GIGO location tracking
+    Route::get('/gigo-locations', [GigoLocationController::class, 'index']);
+    Route::post('/gigo-locations', [GigoLocationController::class, 'store']);
+    Route::put('/gigo-locations/{id}', [GigoLocationController::class, 'update']);
+    Route::delete('/gigo-locations/{id}', [GigoLocationController::class, 'destroy']);
+    Route::get('/gigo-locations/{id}/contents', [GigoMovementController::class, 'locationContents']);
+    Route::post('/gigo-movements/scan', [GigoMovementController::class, 'scanSingle']);
+    Route::post('/gigo-movements/scan-bulk', [GigoMovementController::class, 'scanBulk']);
+    Route::get('/gigo-movements/history/{document_no}', [GigoMovementController::class, 'history']);
 
     Route::get('/technician-list', [TechnicianController::class, 'getTechnicianList']);
     Route::get('/technician/{id}', [TechnicianController::class, 'getTechnician']);

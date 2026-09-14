@@ -51,6 +51,9 @@ class ServiceOrder extends Model
         'brand_code',
         'mobile_no',
         'customer_no',
+        'gigo_location_id',
+        'gigo_location_name',
+        'gigo_location_updated_at',
 
     ];
 }

@@ -17,6 +17,8 @@
     "dependencies": {
         "@ant-design/charts": "^2.2.1",
         "@babel/preset-react": "^7.26.3",
+        "@zxing/browser": "^0.2.1",
+        "@zxing/library": "^0.23.0",
         "antd": "^5.22.5",
         "date-fns": "^4.1.0",
         "motion": "^11.15.0",

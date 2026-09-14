@@ -7,6 +7,7 @@ use App\Models\ServiceOrder;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use App\Services\BusinessCentral;
+use App\Services\GigoService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -16,12 +17,14 @@ class AssignServiceOrder extends Controller
     private $businessCentral;
     private $notificationController;
     private $teamRegionActivityController;
+    private $gigoService;
 
-    public function __construct(NotificationController $notificationController, TeamRegionActivityController $teamRegionActivityController) 
+    public function __construct(NotificationController $notificationController, TeamRegionActivityController $teamRegionActivityController, GigoService $gigoService)
     {
         $this->businessCentral = BusinessCentral::getInstance();
         $this->notificationController = $notificationController;
         $this->teamRegionActivityController = $teamRegionActivityController;
+        $this->gigoService = $gigoService;
     }
 
     private function findServiceOrder($document_no)
@@ -144,6 +147,19 @@ class AssignServiceOrder extends Controller
             'notification_type' => 'assignment',
         ]);
 
+        try {
+            $this->gigoService->moveToTechnicianBasket(
+                $serviceOrder->document_no,
+                $validated['technician_id'],
+                $validated['technician_name'],
+                $user->ID,
+                trim($user->First_Name . ' ' . $user->Last_Name)
+            );
+            $serviceOrder->refresh();
+        } catch (\Exception $e) {
+            Log::error('Failed to auto-move service order to technician GIGO basket.', ['error' => $e->getMessage()]);
+        }
+
         return response()->json([
             'message' => 'Technician assigned to service order successfully.',
             'data' => $serviceOrder,
@@ -212,6 +228,18 @@ class AssignServiceOrder extends Controller
         // Bulk insert notifications
         if (!empty($notifications)) {
             Notification::insert($notifications);
+        }
+
+        try {
+            $this->gigoService->bulkMoveToTechnicianBasket(
+                $documentNos,
+                $technicianId,
+                $technicianName,
+                $user->ID,
+                trim($user->First_Name . ' ' . $user->Last_Name)
+            );
+        } catch (\Exception $e) {
+            Log::error('Failed to auto-move service orders to technician GIGO basket (bulk).', ['error' => $e->getMessage()]);
         }
 
         return response()->json([

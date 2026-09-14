@@ -5,9 +5,11 @@ namespace App\Console\Commands;
 use App\Services\Utility;
 use Illuminate\Console\Command;
 use App\Models\ServiceOrder;
+use App\Models\GigoLocation;
 use Illuminate\Support\Facades\Log;
 use App\Services\BusinessCentral;
-use Illuminate\Support\Facades\DB; 
+use App\Services\GigoService;
+use Illuminate\Support\Facades\DB;
 
 
 class SyncServiceOrdersFromBCJob extends Command
@@ -20,12 +22,14 @@ class SyncServiceOrdersFromBCJob extends Command
 
     protected $service;
     protected $utility;
+    protected $gigoService;
 
     public function __construct()
     {
         parent::__construct();
-        $this->service = BusinessCentral::getInstance();      
+        $this->service = BusinessCentral::getInstance();
         $this->utility = new Utility();
+        $this->gigoService = new GigoService();
     }
 
     public function handle()
@@ -41,7 +45,9 @@ class SyncServiceOrdersFromBCJob extends Command
             }
 
 
-            DB::transaction(function () use ($serviceResponse, &$maxReplicationCount) {
+            $defaultGigoLocationId = GigoLocation::where('code', 'GIGO')->value('id');
+
+            DB::transaction(function () use ($serviceResponse, &$maxReplicationCount, $defaultGigoLocationId) {
                 $createdCount = 0;
                 $updatedCount = 0;
 
@@ -87,6 +93,23 @@ class SyncServiceOrdersFromBCJob extends Command
                     $newCount = $item['Replication_Counter'];
                     if ($newCount > $maxReplicationCount) {
                         $maxReplicationCount = $newCount;
+                    }
+
+                    if ($serviceOrder->wasRecentlyCreated && $defaultGigoLocationId) {
+                        try {
+                            $this->gigoService->moveToLocation(
+                                $serviceOrder->document_no,
+                                $defaultGigoLocationId,
+                                'scan',
+                                null,
+                                'System (BC Sync)'
+                            );
+                        } catch (\Exception $e) {
+                            Log::error('Failed to set default GIGO location for new service order.', [
+                                'document_no' => $serviceOrder->document_no,
+                                'error' => $e->getMessage(),
+                            ]);
+                        }
                     }
 
                     $serviceOrder->wasRecentlyCreated ? $createdCount++ : $updatedCount++;

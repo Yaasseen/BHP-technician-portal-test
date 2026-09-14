@@ -6,6 +6,7 @@ import Card from "./Card";
 import TeamSchedulerWeek from "../Screens/TeamScheduler";
 import TeamRegionConfig from "./TeamAndRegion";
 import ServiceDetails from "./ServiceDetails";
+import GigoDashboard from "./Gigo/GigoDashboard";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
 
@@ -66,6 +67,10 @@ const Dashboard = ({
         setActiveView("teamandregion");
     };
 
+    const ShowGigo = () => {
+        setActiveView("gigo");
+    };
+
     return (
         <div className="w-full"> 
             <div>
@@ -90,6 +95,7 @@ const Dashboard = ({
                                 ShowList={ShowList}
                                 HideShowList={HideShowList}
                                 ShowTeamRegion={ShowTeamRegion}
+                                ShowGigo={ShowGigo}
                                 activeView={activeView}
                             />
                             <div>
@@ -112,6 +118,8 @@ const Dashboard = ({
                                         returnWeekView={NavigateWeeklyView}
                                         locationState={locationState}
                                     />
+                                ) : activeView === "gigo" ? (
+                                    <GigoDashboard user={user} />
                                 ) : null}
                             </div>
                         </div>
