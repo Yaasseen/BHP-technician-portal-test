@@ -195,6 +195,7 @@ const Header = ({
             <Drawer
                 placement="left"
                 width={280}
+                style={{ maxWidth: "90vw" }}
                 onClose={closeSidebar}
                 open={openSidebar}
             >

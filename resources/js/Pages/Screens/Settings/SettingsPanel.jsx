@@ -111,6 +111,7 @@ const SettingsPanel = () => {
                     dataSource={tiers}
                     pagination={false}
                     size="small"
+                    scroll={{ x: 500 }}
                     columns={[
                         {
                             title: "Age (days)",

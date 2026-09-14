@@ -338,7 +338,8 @@ const TeamRegionConfig = ({
                 </Card>
 
                 <Modal
-                    width={window.innerWidth < 768 ? "90%" : "50%"}
+                    width="90%"
+                    style={{ maxWidth: 500 }}
                     title="Scheduling: Team and region"
                     open={modalVisible}
                     onCancel={handleModalClose}

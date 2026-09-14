@@ -56,6 +56,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
 
     const webcamRef = React.useRef(null);
     const signRef = useRef();
+    const signatureContainerRef = useRef(null);
 
     const handleClick = () => {
         setShowWebcam(true);
@@ -363,6 +364,28 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
     const ClearSignature = () => {
         signRef.current.clear();
     };
+
+    // react-signature-canvas keeps its own internal drawing-buffer
+    // resolution separate from CSS-scaled display size - without this,
+    // a signature drawn on a narrow phone screen renders blurry/offset
+    // since the canvas pixel buffer doesn't match the rendered width.
+    useEffect(() => {
+        const resizeSignatureCanvas = () => {
+            if (!signRef.current || !signatureContainerRef.current) return;
+            const canvas = signRef.current.getCanvas();
+            const width = signatureContainerRef.current.offsetWidth;
+            const height = signatureContainerRef.current.offsetHeight || 200;
+            if (canvas.width !== width || canvas.height !== height) {
+                canvas.width = width;
+                canvas.height = height;
+                signRef.current.clear();
+            }
+        };
+
+        resizeSignatureCanvas();
+        window.addEventListener("resize", resizeSignatureCanvas);
+        return () => window.removeEventListener("resize", resizeSignatureCanvas);
+    }, []);
 
     const handleSignature = () => {
         if (signRef.current) {
@@ -908,14 +931,17 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
 
                                         <Form.Item label="Signature">
                                             <div className="bg-white  lg:w-[550px] w-11/12 ">
-                                                <div className="border rounded-lg m-2">
+                                                <div
+                                                    ref={signatureContainerRef}
+                                                    className="border rounded-lg m-2 w-full sm:w-[400px] h-[200px]"
+                                                >
                                                     <ReactSignatureCanvas
                                                         ref={signRef}
                                                         penColor="black"
                                                         onEnd={handleSignature}
                                                         canvasProps={{
                                                             className:
-                                                                "signature-canvas w-full sm:w-[400px] sm:h-[200px] h-[200px]",
+                                                                "signature-canvas w-full h-full",
                                                         }}
                                                     />
                                                 </div>
@@ -930,7 +956,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                             </div>
                                         </Form.Item>
 
-                                        <div className="flex justify-end">
+                                        <div className="sticky bottom-0 bg-white border-t p-3 flex justify-end -mx-4 sm:mx-0">
                                             <Button
                                                 type="primary"
                                                 htmlType="submit"

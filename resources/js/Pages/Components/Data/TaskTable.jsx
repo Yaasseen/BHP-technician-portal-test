@@ -1109,14 +1109,14 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                 <label className="text-sm font-medium  text-gray-700">
                                     Scheduled Date Range
                                 </label>
-                                <div className="w-full flex items-center gap-x-3 mt-2">
+                                <div className="w-full flex flex-col sm:flex-row items-center gap-3 mt-2">
                                     <DatePicker
                                         placeholder="From"
                                         value={fromDate}
                                         onChange={(date) =>
                                             handleDateChange(date, "from")
                                         }
-                                        className="w-1/2"
+                                        className="w-full sm:w-1/2"
                                         size="middle"
                                     />
                                     <DatePicker
@@ -1125,7 +1125,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                         onChange={(date) =>
                                             handleDateChange(date, "to")
                                         }
-                                        className="w-1/2"
+                                        className="w-full sm:w-1/2"
                                         size="middle"
                                     />
                                 </div>
