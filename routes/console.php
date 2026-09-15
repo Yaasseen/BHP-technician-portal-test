@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 use App\Console\Commands\SyncServiceOrdersFromBCJob;
 use App\Console\Commands\ServiceOrderPriorityChangeJob;
-use App\Console\Commands\DeleteServiceOrdersFromBCJob;
+use App\Console\Commands\FlagPostedServiceOrdersFromBCJob;
 
 
 Artisan::command('inspire', function () {
@@ -22,4 +22,4 @@ Schedule::command(SyncServiceOrdersFromBCJob::class)->cron($cronExpression);
 // Schedule::command(ServiceOrderPriorityChangeJob::class)->everyFiveSeconds();
 
 Schedule::command(ServiceOrderPriorityChangeJob::class)->daily();
-Schedule::command(DeleteServiceOrdersFromBCJob::class)->everyFiveMinutes();
+Schedule::command(FlagPostedServiceOrdersFromBCJob::class)->everyFiveMinutes();

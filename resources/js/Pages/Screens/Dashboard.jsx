@@ -9,6 +9,7 @@ import ServiceDetails from "./ServiceDetails";
 import Profile from "./Profile";
 import GigoDashboard from "./Gigo/GigoDashboard";
 import MyBasket from "./Gigo/MyBasket";
+import AgeingDashboard from "./Ageing/AgeingDashboard";
 import MobileHeroHeader from "../Components/common/MobileHeroHeader";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
@@ -83,6 +84,10 @@ const Dashboard = ({
         setActiveView("mybasket");
     };
 
+    const ShowAgeing = () => {
+        setActiveView("ageing");
+    };
+
     const pageVariants = {
         initial: { opacity: 0, x: 20 },
         animate: { opacity: 1, x: 0 },
@@ -124,6 +129,7 @@ const Dashboard = ({
                                     ShowTeamRegion={ShowTeamRegion}
                                     ShowGigo={ShowGigo}
                                     ShowMyBasket={ShowMyBasket}
+                                    ShowAgeing={ShowAgeing}
                                     activeView={activeView}
                                 />
                             </div>
@@ -169,6 +175,8 @@ const Dashboard = ({
                                 <GigoDashboard user={user} />
                             ) : activeView === "mybasket" ? (
                                 <MyBasket user={user} />
+                            ) : activeView === "ageing" ? (
+                                <AgeingDashboard user={user} />
                             ) : null}
                         </div>
                     )}

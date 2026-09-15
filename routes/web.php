@@ -17,6 +17,7 @@ use App\Http\Controllers\TeamScheduleController;
 use App\Http\Controllers\ServiceOrderFilterController;
 use App\Http\Controllers\GigoLocationController;
 use App\Http\Controllers\GigoMovementController;
+use App\Http\Controllers\AgeingController;
 use Inertia\Inertia;
 
 Route::middleware('web')->group(function () {
@@ -105,6 +106,8 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/gigo-movements/acknowledge', [GigoMovementController::class, 'acknowledge']);
     Route::post('/gigo-movements/return-to-gigo', [GigoMovementController::class, 'returnToGigo']);
     Route::get('/gigo-my-basket', [GigoMovementController::class, 'myBasket']);
+
+    Route::get('/ageing-summary', [AgeingController::class, 'getSummary']);
 
     // Filter
     Route::get('/repair-status-code', [ServiceOrderFilterController::class, 'getServiceRepairStatusCode']);
