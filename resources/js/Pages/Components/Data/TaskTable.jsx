@@ -15,6 +15,7 @@ import {
     FloatButton,
     Spin,
     Tag,
+    message,
 } from "antd";
 import {
     SearchOutlined,
@@ -24,6 +25,7 @@ import {
     CalendarFilled,
     FilterOutlined,
     UserOutlined,
+    DownloadOutlined,
 } from "@ant-design/icons";
 
 import AssignTeam from "../common/AssignTeam";
@@ -32,6 +34,7 @@ import AssignRegion from "../common/AssignRegion";
 import { title } from "motion/react-client";
 import { set } from "date-fns";
 import SiderDrawer from "../common/SideDrawer";
+import { exportToExcel } from "../../../utils/exportToExcel";
 
 import TaskListItem from "../common/TaskListItem";
 
@@ -63,6 +66,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
     const [toDate, setToDate] = useState(null);
     const [specificDate, setSpecificDate] = useState(null);
     const [siderOpen, setSiderOpen] = useState(false);
+    const [exporting, setExporting] = useState(false);
 
     const [filter, setFilter] = useState({
         scheduled: false,
@@ -75,6 +79,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
         brand_code: null,
         team: null,
         status: null,
+        show_posted: false,
     });
 
     const [appliedFilter, setAppliedFilter] = useState({
@@ -88,6 +93,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
         brand_code: null,
         team: null,
         status: null,
+        show_posted: false,
     });
 
     const fetchData = () => {
@@ -112,14 +118,48 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
-                messageApi.open({
-                    type: "error",
-                    content: "Failed to fetch data. Please try again.",
-                });
+                message.error("Failed to fetch data. Please try again.");
             })
             .finally(() => {
                 setLoading(false);
             });
+    };
+
+    const exportColumns = [
+        { header: "Document No", key: "document_no" },
+        { header: "Order Date", key: "order_date" },
+        { header: "Customer Name", key: "name" },
+        { header: "Service Type", key: "service_order_type" },
+        { header: "Service Repair Status", key: "repair_status_code" },
+        { header: "Service Order Status", key: "status" },
+        { header: "Brand and Device", key: "brand_code" },
+        { header: "Allocated Team", key: "department" },
+        { header: "Technician Name", key: "technician_name" },
+        { header: "Scheduled Date", key: "schedule_date" },
+    ];
+
+    const handleExport = () => {
+        setExporting(true);
+        axios
+            .post("/service-orders", {
+                tableParams,
+                searchText: appliedSearchText,
+                filter: appliedFilter,
+                export: true,
+            })
+            .then((results) => {
+                const rows = results.data.serviceOrders || [];
+                if (rows.length === 0) {
+                    message.info("No service orders match the current filters.");
+                    return;
+                }
+                exportToExcel("service-orders", exportColumns, rows);
+            })
+            .catch((error) => {
+                console.error("Error exporting data:", error);
+                message.error("Failed to export service orders.");
+            })
+            .finally(() => setExporting(false));
     };
 
     useEffect(() => {
@@ -199,6 +239,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             brand_code: null,
             team: null,
             portal_status: null,
+            show_posted: false,
         });
 
         // Clear applied filters too
@@ -213,6 +254,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             brand_code: null,
             team: null,
             portal_status: null,
+            show_posted: false,
         });
 
         setFromDate(null);
@@ -731,7 +773,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
 
     const hasActiveFilters = Object.keys(filter).some(key => {
         if (key === 'period') return filter[key] !== 'all';
-        if (key === 'scheduled' || key === 'not_scheduled') return filter[key] === true;
+        if (key === 'scheduled' || key === 'not_scheduled' || key === 'show_posted') return filter[key] === true;
         return filter[key] !== null;
     });
 
@@ -825,6 +867,15 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                 Clear
                             </Button>
                         )}
+
+                        <Button
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 h-12 px-6 rounded-none border border-slate-200 bg-white text-slate-600 font-bold hover:border-indigo-300 hover:text-indigo-600 transition-all shadow-sm"
+                            icon={<DownloadOutlined />}
+                            loading={exporting}
+                            onClick={handleExport}
+                        >
+                            Export to Excel
+                        </Button>
 
                         <Button
                             disabled={selectedOrders?.length === 0}
@@ -1050,6 +1101,22 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                         <Checkbox checked={filter.not_scheduled} className="custom-checkbox pointer-events-none" />
                                         <span className={`text-sm font-bold ${filter.not_scheduled ? 'text-indigo-700' : 'text-slate-600'}`}>Unscheduled</span>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Posted Orders */}
+                            <div className="w-full">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 block">
+                                    Posted Orders
+                                </label>
+                                <div
+                                    className={`border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.show_posted ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-slate-200 hover:border-indigo-200'}`}
+                                    onClick={() => setFilter({ ...filter, show_posted: !filter.show_posted })}
+                                >
+                                    <Checkbox checked={filter.show_posted} className="custom-checkbox pointer-events-none" />
+                                    <span className={`text-sm font-bold ${filter.show_posted ? 'text-indigo-700' : 'text-slate-600'}`}>
+                                        Show orders already posted in Business Central
+                                    </span>
                                 </div>
                             </div>
 

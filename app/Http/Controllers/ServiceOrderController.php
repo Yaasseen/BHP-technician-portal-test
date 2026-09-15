@@ -72,6 +72,7 @@ class ServiceOrderController extends Controller
             $end = $filter['end'] ?? null;
             $specificDate = $filter['specific_date'] ?? null;
             $portalStatus = $filter['portal_status'] ?? null;
+            $showPosted = $filter['show_posted'] ?? false;
 
             // $search = $request->input('search', null);
             if (trim($user->Technician_Dept) == '' && $user->Technician_Type != 'Technician') {
@@ -85,6 +86,7 @@ class ServiceOrderController extends Controller
 
             // Start query
             $query = ServiceOrder::query();
+            $query->where('is_posted', (bool) $showPosted);
 
             // Condition 1: Technician sees only their orders
             if ($user->Technician_Type == 'Technician') {
@@ -161,6 +163,13 @@ class ServiceOrderController extends Controller
             }
 
             $query->orderBy('order_date', 'desc');
+
+            if ($request->boolean('export')) {
+                return response()->json([
+                    'serviceOrders' => $query->limit(5000)->get(),
+                    'filter' => $filter,
+                ], 200);
+            }
 
             $serviceOrders = $query->paginate($pageSize, ['*'], 'page', $currentPage);
             $sql = $query->toSql();
