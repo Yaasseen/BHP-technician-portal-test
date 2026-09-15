@@ -21,6 +21,7 @@ class BusinessCentral
     protected string $soapUsername;
     protected string $soapPassword;
     protected string $bcInstanceName;
+    protected bool $sslVerify;
 
     // Constants to avoid magic strings
     private const CACHE_TTL_MINUTES = 10;
@@ -43,6 +44,7 @@ class BusinessCentral
         $this->soapUsername = config('services.business_central.soap_username') ?? '';
         $this->soapPassword = config('services.business_central.soap_password') ?? '';
         $this->bcInstanceName = config('services.business_central.instance_name') ?? '';
+        $this->sslVerify = (bool) (config('services.business_central.ssl_verify') ?? true);
     }
 
     /**
@@ -63,6 +65,7 @@ class BusinessCentral
                 'ntlm',
             ],
             'timeout'  => $timeout,
+            'verify' => $this->sslVerify,
         ]);
     }
 
@@ -76,6 +79,7 @@ class BusinessCentral
                 'ntlm',
             ],
             'timeout'  => 30,
+            'verify' => $this->sslVerify,
         ]);
     }
 

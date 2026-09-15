@@ -43,6 +43,7 @@ return [
         'soap_username' => env('SOAP_USER_NAME'),
         'soap_password' => env('SOAP_PASSWORD'),
         'instance_name' => env('BC_INSTANCE_NAME', 'bc270'),
+        'ssl_verify' => env('BC_SSL_VERIFY', true),
     ],
 
 ];
