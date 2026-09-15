@@ -57,7 +57,8 @@ const HomePage = ({ onLoggedOut, user }) => {
         gigo: "GIGO",
         mybasket: "My Basket",
         ageing: "Ageing",
-        settings: "Settings"
+        settings: "Settings",
+        ops: "OPS Dashboard"
     };
 
     return (

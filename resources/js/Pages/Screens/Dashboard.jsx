@@ -11,6 +11,7 @@ import GigoDashboard from "./Gigo/GigoDashboard";
 import MyBasket from "./Gigo/MyBasket";
 import AgeingDashboard from "./Ageing/AgeingDashboard";
 import SettingsPanel from "./Settings/SettingsPanel";
+import OpsDashboard from "./Ops/OpsDashboard";
 import MobileHeroHeader from "../Components/common/MobileHeroHeader";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
@@ -93,6 +94,10 @@ const Dashboard = ({
         setActiveView("settings");
     };
 
+    const ShowOps = () => {
+        setActiveView("ops");
+    };
+
     const pageVariants = {
         initial: { opacity: 0, x: 20 },
         animate: { opacity: 1, x: 0 },
@@ -136,6 +141,7 @@ const Dashboard = ({
                                     ShowMyBasket={ShowMyBasket}
                                     ShowAgeing={ShowAgeing}
                                     ShowSettings={ShowSettings}
+                                    ShowOps={ShowOps}
                                     activeView={activeView}
                                 />
                             </div>
@@ -185,6 +191,8 @@ const Dashboard = ({
                                 <AgeingDashboard user={user} />
                             ) : activeView === "settings" ? (
                                 <SettingsPanel user={user} />
+                            ) : activeView === "ops" ? (
+                                <OpsDashboard user={user} />
                             ) : null}
                         </div>
                     )}

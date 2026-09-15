@@ -19,6 +19,7 @@ function DashboardList({
     ShowMyBasket,
     ShowAgeing,
     ShowSettings,
+    ShowOps,
     activeView,
 }) {
     return (
@@ -113,6 +114,18 @@ function DashboardList({
                         >
                             <BarChartOutlined />
                             <span>Ageing</span>
+                        </button>
+                    )}
+                    {user.Role === "Team Leader" && (
+                        <button
+                            onClick={ShowOps}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-none text-sm font-bold transition-all ${activeView === "ops"
+                                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                                : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                                }`}
+                        >
+                            <BarChartOutlined />
+                            <span>OPS Dashboard</span>
                         </button>
                     )}
                     {user.Role === "Admin" && (

@@ -19,6 +19,7 @@ use App\Http\Controllers\GigoLocationController;
 use App\Http\Controllers\GigoMovementController;
 use App\Http\Controllers\AgeingController;
 use App\Http\Controllers\AppSettingController;
+use App\Http\Controllers\OpsDashboardController;
 use Inertia\Inertia;
 
 Route::middleware('web')->group(function () {
@@ -119,6 +120,12 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/app-settings', [AppSettingController::class, 'index']);
     Route::put('/app-settings', [AppSettingController::class, 'update']);
     Route::put('/app-settings/connection', [AppSettingController::class, 'updateConnection']);
+
+    Route::get('/ops-dashboard/outdoor', [OpsDashboardController::class, 'outdoor']);
+    Route::get('/ops-dashboard/indoor', [OpsDashboardController::class, 'indoor']);
+    Route::get('/ops-dashboard/hhpt', [OpsDashboardController::class, 'hhpt']);
+    Route::get('/ops-dashboard/technician-performance', [OpsDashboardController::class, 'technicianPerformance']);
+    Route::get('/ops-dashboard/payments', [OpsDashboardController::class, 'payments']);
     Route::get('/service-order-portal-status', [ServiceOrderFilterController::class, 'getStatuses']);
 
 });
