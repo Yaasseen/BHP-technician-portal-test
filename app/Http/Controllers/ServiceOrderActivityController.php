@@ -121,7 +121,10 @@ class ServiceOrderActivityController extends Controller
             'image' => 'nullable|string',
             'image_file' => 'nullable|file|mimes:jpeg,png,jpg,webp',
             'signature' => 'nullable|string',
+            'force_override' => 'nullable|boolean',
         ]);
+
+        $forceOverride = $request->boolean('force_override');
 
         $imageBinary = null;
         $imageName = null;
@@ -171,11 +174,15 @@ class ServiceOrderActivityController extends Controller
                     // Sync latest BC data into local DB first
                     $serviceOrder = $this->businessCentral->syncSingleServiceOrderFromBCData($bcData);
 
-                    if ($bcRepairStatus !== null && $localRepairStatus !== null && trim($bcRepairStatus) !== trim($localRepairStatus)) {
+                    if ($bcRepairStatus !== null && $localRepairStatus !== null && trim($bcRepairStatus) !== trim($localRepairStatus) && !$forceOverride) {
                         Log::warning("Status mismatch on activity store for {$validatedData['document_no']}: BC status is '{$bcRepairStatus}', local DB status was '{$localRepairStatus}'");
                         return response()->json([
-                            'error' => 'Status on our portal and BC was not same. Latest order info has been updated from BC, please try again.',
-                            'message' => 'Status on our portal and BC was not same. Latest order info has been updated from BC, please try again.',
+                            'error' => 'Status on our portal and BC was not the same. Latest order info has been updated from BC.',
+                            'message' => 'Status on our portal and BC was not the same. Latest order info has been updated from BC.',
+                            'conflict' => true,
+                            'portal_status' => $localRepairStatus,
+                            'bc_status' => $bcRepairStatus,
+                            'submitted_status' => $validatedData['repair_status_code'],
                             'data' => $serviceOrder,
                         ], 409);
                     }

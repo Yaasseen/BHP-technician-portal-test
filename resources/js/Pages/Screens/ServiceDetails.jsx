@@ -48,6 +48,8 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
     const [serviceData, setServiceData] = useState({});
     const [modelOpen, setModelOpen] = useState(false);
     const [uploadTrigger, setUploadTrigger] = useState(false);
+    const [statusConflict, setStatusConflict] = useState(null);
+    const pendingFormDataRef = useRef(null);
     const [reloadList, setReloadList] = useState(false);
     const [useFrontCamera, setUseFrontCamera] = useState(true);
     const [messageApi, contextHolder] = message.useMessage();
@@ -126,6 +128,70 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
         facingMode: useFrontCamera ? "user" : { exact: "environment" },
     };
 
+    const submitActivity = (formData, forceOverride = false) => {
+        if (forceOverride) {
+            formData.set("force_override", "1");
+        }
+
+        setSubmitLoading(true);
+
+        axios
+            .post("/service-order-activities", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+            .then((response) => {
+                const successMessage = response.data.message;
+                messageApi.open({
+                    type: "success",
+                    content: successMessage,
+                });
+                form.resetFields();
+                ClearSignature();
+                setUploadTrigger(!uploadTrigger);
+                handleResetCam();
+                setStatusConflict(null);
+                pendingFormDataRef.current = null;
+                setCameraImage(null);
+                setImageShow(null);
+                setUploadImage();
+                setCallStatus((prev) => !prev);
+                setSubmitLoading(false);
+            })
+            .catch((error) => {
+                console.log("==> 1", error.response?.data?.error);
+                console.log("==> 2", error.response?.data?.message);
+                console.log("==> 3", error.response?.data);
+
+                if (error.response?.status === 409 && error.response?.data?.conflict) {
+                    setStatusConflict({
+                        portalStatus: error.response.data.portal_status,
+                        bcStatus: error.response.data.bc_status,
+                        submittedStatus: error.response.data.submitted_status,
+                    });
+                    setCallStatus((prev) => !prev);
+                    setSubmitLoading(false);
+                    return;
+                }
+
+                const errorMessage =
+                    error.response?.data?.error || error.response?.data?.message || "An error occurred";
+                messageApi.open({
+                    type: "error",
+                    content: errorMessage,
+                    duration: 6,
+                });
+                if (error.response?.status === 409) {
+                    setCallStatus((prev) => !prev);
+                }
+                setCameraImage(null);
+                setImageShow(null);
+                setUploadImage();
+                setSubmitLoading(false);
+            });
+    };
+
     const handleSubmitForm = (values) => {
         const formData = new FormData();
         formData.append("repair_status_code", values.repair_status_code);
@@ -148,49 +214,13 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
             formData.append("image_file", imageShow);
         }
 
-        setSubmitLoading(true);
+        pendingFormDataRef.current = formData;
+        submitActivity(formData);
+    };
 
-        axios
-            .post("/service-order-activities", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            })
-            .then((response) => {
-                const successMessage = response.data.message;
-                messageApi.open({
-                    type: "success",
-                    content: successMessage,
-                });
-                form.resetFields();
-                ClearSignature();
-                setUploadTrigger(!uploadTrigger);
-                handleResetCam();
-                setSubmitLoading(false);
-            })
-            .catch((error) => {
-                console.log("==> 1", error.response?.data?.error);
-                console.log("==> 2", error.response?.data?.message);
-                console.log("==> 3", error.response?.data);
-
-                const errorMessage =
-                    error.response?.data?.error || error.response?.data?.message || "An error occurred";
-                messageApi.open({
-                    type: "error",
-                    content: errorMessage,
-                    duration: 6,
-                });
-                if (error.response?.status === 409) {
-                    setCallStatus((prev) => !prev);
-                }
-            })
-            .finally(() => {
-                setCameraImage(null);
-                setImageShow(null);
-                setUploadImage();
-                setCallStatus(!callStatus);
-                setSubmitLoading(false);
-            });
+    const handleSaveAnyway = () => {
+        if (!pendingFormDataRef.current) return;
+        submitActivity(pendingFormDataRef.current, true);
     };
 
     useEffect(() => {
@@ -872,6 +902,38 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                     reloadList={() => triggerReload()}
                     handleSparePart={handleSparePart}
                 />
+            </Modal>
+
+            <Modal
+                open={!!statusConflict}
+                title="Status has changed in Business Central"
+                onCancel={() => setStatusConflict(null)}
+                centered
+                okText="Save Anyway"
+                cancelText="Cancel"
+                onOk={handleSaveAnyway}
+                confirmLoading={submitLoading}
+            >
+                <p>
+                    The repair status in Business Central has changed since this
+                    page was loaded, so saving now would overwrite that change.
+                </p>
+                <Descriptions bordered size="small" column={1} className="mt-4">
+                    <Descriptions.Item label="Portal status (when page loaded)">
+                        {statusConflict?.portalStatus || "-"}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Current status in Business Central">
+                        {statusConflict?.bcStatus || "-"}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Status you're trying to save">
+                        {statusConflict?.submittedStatus || "-"}
+                    </Descriptions.Item>
+                </Descriptions>
+                <p className="mt-4 text-gray-500 text-sm">
+                    "Save Anyway" will overwrite Business Central's status with
+                    the one you selected. Cancel to keep Business Central's
+                    current status instead.
+                </p>
             </Modal>
         </div >
     );
