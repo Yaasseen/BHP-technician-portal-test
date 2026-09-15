@@ -5,6 +5,7 @@ import {
     TeamOutlined,
     ScanOutlined,
     BarChartOutlined,
+    SettingOutlined,
 } from "@ant-design/icons";
 import React from "react";
 import { motion } from "framer-motion";
@@ -17,6 +18,7 @@ function DashboardList({
     ShowGigo,
     ShowMyBasket,
     ShowAgeing,
+    ShowSettings,
     activeView,
 }) {
     return (
@@ -111,6 +113,18 @@ function DashboardList({
                         >
                             <BarChartOutlined />
                             <span>Ageing</span>
+                        </button>
+                    )}
+                    {user.Role === "Admin" && (
+                        <button
+                            onClick={ShowSettings}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-none text-sm font-bold transition-all ${activeView === "settings"
+                                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                                : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                                }`}
+                        >
+                            <SettingOutlined />
+                            <span>Settings</span>
                         </button>
                     )}
                 </div>

@@ -18,6 +18,7 @@ use App\Http\Controllers\ServiceOrderFilterController;
 use App\Http\Controllers\GigoLocationController;
 use App\Http\Controllers\GigoMovementController;
 use App\Http\Controllers\AgeingController;
+use App\Http\Controllers\AppSettingController;
 use Inertia\Inertia;
 
 Route::middleware('web')->group(function () {
@@ -113,6 +114,11 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/repair-status-code', [ServiceOrderFilterController::class, 'getServiceRepairStatusCode']);
     Route::get('/brand-code', [ServiceOrderFilterController::class, 'getBrandCode']);
     Route::get('/allocated-teams', [ServiceOrderFilterController::class, 'fetchTeams']);
+    Route::post('/allocated-teams/sync', [ServiceOrderFilterController::class, 'syncTeams']);
+
+    Route::get('/app-settings', [AppSettingController::class, 'index']);
+    Route::put('/app-settings', [AppSettingController::class, 'update']);
+    Route::put('/app-settings/connection', [AppSettingController::class, 'updateConnection']);
     Route::get('/service-order-portal-status', [ServiceOrderFilterController::class, 'getStatuses']);
 
 });

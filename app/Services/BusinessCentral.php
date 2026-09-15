@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Exception\RequestException;
 use App\Models\ServiceOrder;
 use App\Models\ServiceOrderFilter;
+use App\Models\AppSetting;
 
 class BusinessCentral
 {
@@ -37,13 +38,24 @@ class BusinessCentral
     {
         $this->utility = $utility;
 
-        $this->oDataBaseUrl = config('services.business_central.odata_base_url') ?? '';
+        // Admin-configurable overrides (Settings > Business Central Connection) take
+        // precedence over .env so the connection can be repointed without a deploy.
+        // Fails silently to the .env/config values if the table isn't reachable yet
+        // (e.g. before migrations run) - this must never be what breaks login.
+        $overrides = null;
+        try {
+            $overrides = AppSetting::query()->first();
+        } catch (\Throwable $e) {
+            $overrides = null;
+        }
+
+        $this->oDataBaseUrl = $overrides->bc_odata_base_url ?? config('services.business_central.odata_base_url') ?? '';
         $this->oDataUsername = config('services.business_central.odata_username') ?? '';
         $this->oDataPassword = config('services.business_central.odata_password') ?? '';
-        $this->soapBaseUrl = config('services.business_central.soap_base_url') ?? '';
+        $this->soapBaseUrl = $overrides->bc_soap_base_url ?? config('services.business_central.soap_base_url') ?? '';
         $this->soapUsername = config('services.business_central.soap_username') ?? '';
         $this->soapPassword = config('services.business_central.soap_password') ?? '';
-        $this->bcInstanceName = config('services.business_central.instance_name') ?? '';
+        $this->bcInstanceName = $overrides->bc_instance_name ?? config('services.business_central.instance_name') ?? '';
         $this->sslVerify = (bool) (config('services.business_central.ssl_verify') ?? true);
     }
 
@@ -481,5 +493,12 @@ class BusinessCentral
         return Cache::remember(self::CACHE_KEY_TEAMS, now()->addMinutes(self::CACHE_TTL_MINUTES), function () {
             return $this->fetchOData("TeamRegion") ?? [];
         });
+    }
+
+    public function refreshTeamsCache(): array
+    {
+        Cache::forget(self::CACHE_KEY_TEAMS);
+
+        return $this->getAllTeams();
     }
 }

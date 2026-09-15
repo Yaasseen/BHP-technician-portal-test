@@ -56,7 +56,8 @@ const HomePage = ({ onLoggedOut, user }) => {
         profile: "My Profile",
         gigo: "GIGO",
         mybasket: "My Basket",
-        ageing: "Ageing"
+        ageing: "Ageing",
+        settings: "Settings"
     };
 
     return (
