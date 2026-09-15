@@ -3,6 +3,7 @@ import {
     UnorderedListOutlined,
     CalendarOutlined,
     TeamOutlined,
+    ScanOutlined,
 } from "@ant-design/icons";
 import React from "react";
 import { motion } from "framer-motion";
@@ -12,6 +13,8 @@ function DashboardList({
     ShowList,
     HideShowList,
     ShowTeamRegion,
+    ShowGigo,
+    ShowMyBasket,
     activeView,
 }) {
     return (
@@ -72,6 +75,28 @@ function DashboardList({
                         >
                             <TeamOutlined />
                             <span>Config</span>
+                        </button>
+                    )}
+                    <button
+                        onClick={ShowMyBasket}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-none text-sm font-bold transition-all ${activeView === "mybasket"
+                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                            : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                            }`}
+                    >
+                        <ScanOutlined />
+                        <span>My Basket</span>
+                    </button>
+                    {user.Role === "Team Leader" && (
+                        <button
+                            onClick={ShowGigo}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-none text-sm font-bold transition-all ${activeView === "gigo"
+                                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-100"
+                                : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                                }`}
+                        >
+                            <ScanOutlined />
+                            <span>GIGO</span>
                         </button>
                     )}
                 </div>

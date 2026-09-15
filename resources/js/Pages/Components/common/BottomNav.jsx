@@ -3,7 +3,8 @@ import {
     HomeOutlined,
     CalendarOutlined,
     UnorderedListOutlined,
-    UserOutlined
+    UserOutlined,
+    ScanOutlined
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
 
@@ -11,6 +12,7 @@ const BottomNav = ({ activeView, setActiveView }) => {
     const navItems = [
         { key: "list", label: "Tasks", icon: <UnorderedListOutlined /> },
         { key: "weekly", label: "Schedule", icon: <CalendarOutlined /> },
+        { key: "mybasket", label: "My Basket", icon: <ScanOutlined /> },
         { key: "profile", label: "Profile", icon: <UserOutlined /> },
     ];
 

@@ -7,6 +7,8 @@ import TeamSchedulerWeek from "../Screens/TeamScheduler";
 import TeamRegionConfig from "./TeamAndRegion";
 import ServiceDetails from "./ServiceDetails";
 import Profile from "./Profile";
+import GigoDashboard from "./Gigo/GigoDashboard";
+import MyBasket from "./Gigo/MyBasket";
 import MobileHeroHeader from "../Components/common/MobileHeroHeader";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useSchedule } from "../../context/ScheduleContext";
@@ -73,6 +75,14 @@ const Dashboard = ({
         setActiveView("teamandregion");
     };
 
+    const ShowGigo = () => {
+        setActiveView("gigo");
+    };
+
+    const ShowMyBasket = () => {
+        setActiveView("mybasket");
+    };
+
     const pageVariants = {
         initial: { opacity: 0, x: 20 },
         animate: { opacity: 1, x: 0 },
@@ -112,6 +122,8 @@ const Dashboard = ({
                                     ShowList={ShowList}
                                     HideShowList={HideShowList}
                                     ShowTeamRegion={ShowTeamRegion}
+                                    ShowGigo={ShowGigo}
+                                    ShowMyBasket={ShowMyBasket}
                                     activeView={activeView}
                                 />
                             </div>
@@ -153,6 +165,10 @@ const Dashboard = ({
                                     onLogout={onLogout}
                                     onBack={() => setActiveView("list")}
                                 />
+                            ) : activeView === "gigo" ? (
+                                <GigoDashboard user={user} />
+                            ) : activeView === "mybasket" ? (
+                                <MyBasket user={user} />
                             ) : null}
                         </div>
                     )}

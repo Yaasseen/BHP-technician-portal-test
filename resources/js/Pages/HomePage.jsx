@@ -53,7 +53,9 @@ const HomePage = ({ onLoggedOut, user }) => {
         weekly: "Schedule",
         viewDetails: "Service Details",
         teamandregion: "Configuration",
-        profile: "My Profile"
+        profile: "My Profile",
+        gigo: "GIGO",
+        mybasket: "My Basket"
     };
 
     return (
