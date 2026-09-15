@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Services\BusinessCentral;
+use App\Models\AppSetting;
 
 
 
@@ -24,6 +25,8 @@ class TaskStatisticsController extends Controller
     public function getServiceOrderCounts()
     {
         $user = Auth::guard('in-memory')->user();
+        $allStatuses = array_keys(config('portal.statuses'));
+        $overdueThresholdDate = now()->subDays(AppSetting::current()->overdue_days_threshold);
 
         if ($user->Technician_Dept == ' ' && !in_array($user->Technician_Type, ['Technician', 'CSC', 'Team Leader', 'Admin'])) {
             return response()->json([
@@ -42,12 +45,12 @@ class TaskStatisticsController extends Controller
             (in_array($user->Technician_Type, $allowedTechnicianTypes) && trim($user->Technician_Dept) === '')
         ) {
             // $totalTasks = ServiceOrder::where('status', 'PENDING')->count();
-            $totalTasks = ServiceOrder::whereIn('status', ['PENDING', 'TECH-ASSN', 'RESCH-UNAVAI', 'RESCH-COMP', 'INPROGRESS', 'COMPLETED'])->count();
+            $totalTasks = ServiceOrder::whereIn('status', $allStatuses)->count();
             $inProcessTasks = ServiceOrder::whereIn('status', ['TECH-ASSN', 'INPROGRESS'])->count();
             $finishedTasks = ServiceOrder::where('status', 'COMPLETED')->count();
             $reScheduleTasks = ServiceOrder::whereIn('status', ['RESCH-UNAVAI', 'RESCH-COMP'])->count();
             $overdueTasks = ServiceOrder::where('status', 'TECH-ASSN')
-            ->whereDate('allocation_date', '<', now()->subMonth())  // Check if allocation_date is older than 1 month
+            ->whereDate('allocation_date', '<', $overdueThresholdDate)  // Configurable via Settings > overdue_days_threshold
             ->count();
 
             return response()->json([
@@ -61,7 +64,7 @@ class TaskStatisticsController extends Controller
         $allowedTechnicianTypes = ['CSC', 'Read Only', 'Team Leader'];
         if (in_array($user->Technician_Type, $allowedTechnicianTypes)) {
 
-            $baseQuery = ServiceOrder::whereIn('status', ['PENDING', 'TECH-ASSN', 'RESCH-UNAVAI', 'RESCH-COMP', 'INPROGRESS', 'COMPLETED']);
+            $baseQuery = ServiceOrder::whereIn('status', $allStatuses);
 
             if ($user->Technician_Dept) {
                 $baseQuery = $baseQuery->where('service_order_type', 'like', $user->Technician_Dept . '%');
@@ -82,7 +85,7 @@ class TaskStatisticsController extends Controller
             // Count for Overdue Tasks
             $overdueTasks = (clone $baseQuery)
                 ->where('status', 'TECH-ASSN')
-                ->whereDate('allocation_date', '<', now()->subMonth())
+                ->whereDate('allocation_date', '<', $overdueThresholdDate)
                 ->count();
 
             return response()->json([
@@ -126,7 +129,7 @@ class TaskStatisticsController extends Controller
             // Overdue tasks
             $overdueTasks = (clone $baseQuery)
                 ->where('status', 'TECH-ASSN')
-                ->whereDate('allocation_date', '<', now()->subMonth())
+                ->whereDate('allocation_date', '<', $overdueThresholdDate)
                 ->count();
 
             // Optional debug logs (for testing issues)

@@ -349,10 +349,11 @@ class AssignServiceOrder extends Controller
             ->where('region', $region)
             ->whereDate('schedule_date', $schedule_date)
             ->count();
-        // Check if adding new orders exceeds the 12-order limit
-        if (($existingOrderCount + $orderCount) > 12) {
+        // Check if adding new orders exceeds the configurable daily cap
+        $dailyCap = \App\Models\AppSetting::current()->outdoor_daily_order_cap;
+        if (($existingOrderCount + $orderCount) > $dailyCap) {
             return response()->json([
-                'error' => 'Cannot assign more than 12 service orders to the same team and region on the same day.',
+                'error' => "Cannot assign more than {$dailyCap} service orders to the same team and region on the same day.",
                 'existing_count' => $existingOrderCount,
                 'new_orders_attempted' => $orderCount,
             ], 400);

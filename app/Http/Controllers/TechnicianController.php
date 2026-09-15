@@ -80,11 +80,10 @@ class TechnicianController extends Controller
 
     public function getStatuses(): JsonResponse
     {
-        return response()->json([
-            ['code' => 'RESCH-UNAVAI', 'desc' => 'Reschedule due to client unavailability'],
-            ['code' => 'RESCH-COMP', 'desc' => 'Reschedule due to client complaint'],
-            ['code' => 'INPROGRESS', 'desc' => 'Task is currently in Progress'],
-            ['code' => 'COMPLETED', 'desc' => 'Task Completed'],
-        ]);
+        $statuses = collect(config('portal.technician_selectable_statuses'))
+            ->map(fn ($desc, $code) => ['code' => $code, 'desc' => $desc])
+            ->values();
+
+        return response()->json($statuses);
     }
 }

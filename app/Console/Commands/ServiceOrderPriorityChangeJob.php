@@ -5,9 +5,10 @@ namespace App\Console\Commands;
 use App\Services\Utility;
 use Illuminate\Console\Command;
 use App\Models\ServiceOrder;
+use App\Models\AppSetting;
 use Illuminate\Support\Facades\Log;
 use App\Services\BusinessCentral;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 
@@ -30,18 +31,14 @@ class ServiceOrderPriorityChangeJob extends Command
 
     public function handle()
     {
-        $_0 = Carbon::now();
-        $_7 = Carbon::now()->subDays(7);
-        $_8 = Carbon::now()->subDays(8);
-        $_14 = Carbon::now()->subDays(14);
-        $_15 = Carbon::now()->subDays(15);
-        $_21 = Carbon::now()->subDays(21);
-        $_22 = Carbon::now()->subDays(22);
-        $_30 = Carbon::now()->subDays(30);
-        $_31 = Carbon::now()->subDays(31);
-        $_60 = Carbon::now()->subDays(60);
-        $_61 = Carbon::now()->subDays(61);
-      
+        // Tiers are ordered by max_days ascending, with a final tier of
+        // max_days=null meaning "older than every other tier". Configurable
+        // via the Settings panel (AppSetting::current()->priority_tiers).
+        $tiers = collect(AppSetting::current()->priority_tiers)
+            ->sortBy(fn ($tier) => $tier['max_days'] ?? PHP_INT_MAX)
+            ->values()
+            ->all();
+
         try {
             Log::info("Starting priority update batch job");
 
@@ -57,28 +54,15 @@ class ServiceOrderPriorityChangeJob extends Command
 
             $priorityUpdateSuccessCounter = 0;
             $priorityUpdateFailureCounter = 0;
-            
-            foreach ($serviceOrders as $serviceOrder) {
 
-                if ($serviceOrder->created_at >= $_0 &&  $serviceOrder->created_at <= $_7) {    
-                    $serviceOrder->priority_weight = 1;
-                    $serviceOrder->priority = 'LOW';
-                } else if ($serviceOrder->created_at > $_7 &&  $serviceOrder->created_at <= $_14) {
-                    $serviceOrder->priority_weight = 2;
-                    $serviceOrder->priority  = 'LOW';
-                } else if ($serviceOrder->created_at > $_14 &&  $serviceOrder->created_at <= $_21) {
-                    $serviceOrder->priority_weight = 3;
-                    $serviceOrder->priority = 'MEDIUM';
-                } else if ($serviceOrder->created_at > $_21 &&  $serviceOrder->created_at <= $_30) {
-                    $serviceOrder->priority_weight = 4;
-                    $serviceOrder->priority = 'MEDIUM';
-                } else if ($serviceOrder->created_at > $_30 &&  $serviceOrder->created_at <= $_60) {
-                    $serviceOrder->priority_weight = 5;
-                   $serviceOrder->priority = 'HIGH';
-                } else {
-                    $serviceOrder->priority_weight = 6;
-                    $serviceOrder->priority = 'HIGH';
-                }
+            foreach ($serviceOrders as $serviceOrder) {
+                $ageDays = $serviceOrder->created_at->diffInDays(Carbon::now());
+
+                $matchedTier = collect($tiers)->first(fn ($tier) => $tier['max_days'] === null || $ageDays <= $tier['max_days'])
+                    ?? end($tiers);
+
+                $serviceOrder->priority_weight = $matchedTier['weight'];
+                $serviceOrder->priority = $matchedTier['priority'];
 
                 try {
                     $serviceOrder->save();
