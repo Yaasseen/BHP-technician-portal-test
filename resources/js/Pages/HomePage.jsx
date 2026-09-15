@@ -4,7 +4,13 @@ import MobileHeader from "./Components/common/MobileHeader";
 import BottomNav from "./Components/common/BottomNav";
 import "../../css/Dashboard.css";
 import Dashboard from "./Screens/Dashboard";
-import { Spin } from "antd";
+import { Spin, Drawer } from "antd";
+import {
+    TeamOutlined,
+    ScanOutlined,
+    BarChartOutlined,
+    SettingOutlined,
+} from "@ant-design/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
@@ -14,6 +20,7 @@ const HomePage = ({ onLoggedOut, user }) => {
     const [activeView, setActiveView] = useState("list");
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [moreOpen, setMoreOpen] = useState(false);
 
     const handleUserLoggedOut = () => {
         onLoggedOut();
@@ -46,6 +53,19 @@ const HomePage = ({ onLoggedOut, user }) => {
     const handleHomeScreen = () => {
         setHandleHome((prev) => !prev);
         setActiveView("list");
+    };
+
+    const moreMenuItems = [
+        { key: "teamandregion", label: "Team and Region", icon: <TeamOutlined />, show: user.Role !== "Technician" },
+        { key: "gigo", label: "GIGO", icon: <ScanOutlined />, show: user.Role === "Team Leader" },
+        { key: "ageing", label: "Ageing", icon: <BarChartOutlined />, show: user.Role === "Team Leader" },
+        { key: "ops", label: "OPS Dashboard", icon: <BarChartOutlined />, show: user.Role === "Team Leader" },
+        { key: "settings", label: "Settings", icon: <SettingOutlined />, show: user.Role === "Admin" },
+    ].filter((item) => item.show);
+
+    const handleMoreSelect = (key) => {
+        setActiveView(key);
+        setMoreOpen(false);
     };
 
     const viewTitles = {
@@ -108,7 +128,34 @@ const HomePage = ({ onLoggedOut, user }) => {
             <BottomNav
                 activeView={activeView}
                 setActiveView={setActiveView}
+                user={user}
+                onMoreClick={() => setMoreOpen(true)}
             />
+
+            <Drawer
+                title="More"
+                placement="bottom"
+                open={moreOpen}
+                onClose={() => setMoreOpen(false)}
+                height="auto"
+                className="sm:hidden"
+            >
+                <div className="flex flex-col gap-1 pb-4">
+                    {moreMenuItems.map((item) => (
+                        <button
+                            key={item.key}
+                            onClick={() => handleMoreSelect(item.key)}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-none text-sm font-bold transition-all text-left ${activeView === item.key
+                                ? "bg-indigo-50 text-indigo-600"
+                                : "text-slate-600 hover:bg-slate-50"
+                                }`}
+                        >
+                            <span className="text-lg">{item.icon}</span>
+                            <span>{item.label}</span>
+                        </button>
+                    ))}
+                </div>
+            </Drawer>
         </div>
     );
 };
