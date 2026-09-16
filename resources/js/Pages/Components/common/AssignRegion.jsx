@@ -209,7 +209,7 @@ const AssignRegion = ({ taskId, formResponse }) => {
                             <Button
                                 type="primary"
                                 htmlType="submit"
-                                className="bg-indigo-600 border-none hover:bg-indigo-700 h-10 font-bold shadow-md shadow-indigo-100"
+                                className="bg-red-600 border-none hover:bg-red-700 h-10 font-bold shadow-md shadow-red-100"
                             >
                                 {submitLoading ? (
                                     <div className="px-3 py-2">

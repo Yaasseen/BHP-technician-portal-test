@@ -40,7 +40,7 @@ const TechnicianBaskets = () => {
                     renderItem={(basket) => (
                         <List.Item
                             className={`cursor-pointer ${
-                                selected === basket.id ? "bg-indigo-50" : ""
+                                selected === basket.id ? "bg-red-50" : ""
                             }`}
                             onClick={() => setSelected(basket.id)}
                         >

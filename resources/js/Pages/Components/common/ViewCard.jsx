@@ -18,9 +18,9 @@ function ViewCard({ name, taskNo, teams }) {
             bg: "bg-orange-50",
         },
         Free: {
-            text: "text-indigo-500",
-            border: "border-indigo-400",
-            bg: "bg-indigo-50",
+            text: "text-red-500",
+            border: "border-red-400",
+            bg: "bg-red-50",
         },
     };
 

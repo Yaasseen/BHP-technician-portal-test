@@ -41,17 +41,17 @@ const Login = ({ onLoggedIn }) => {
         <div className="min-h-screen flex flex-col lg:flex-row bg-white">
             {/* Left Column: Brand & Visuals (Desktop only) */}
             <div className="hidden lg:flex lg:w-1/2 bg-slate-50 flex-col items-center justify-center p-20 relative overflow-hidden border-r border-slate-100">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/5 blur-[120px]"></div>
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-red-500/5 blur-[120px]"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px]"></div>
 
                 <div className="relative z-10 space-y-12 max-w-[480px]">
                     <div className="space-y-6">
-                        <div className="w-16 h-16 bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-100 rounded-none">
+                        <div className="w-16 h-16 bg-red-600 flex items-center justify-center shadow-lg shadow-red-100 rounded-none">
                             <span className="text-white font-black text-3xl italic">B</span>
                         </div>
                         <div className="space-y-1">
                             <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">The Brand House</h1>
-                            <p className="text-sm font-bold text-indigo-600 uppercase tracking-[0.3em]">Technician Portal</p>
+                            <p className="text-sm font-bold text-red-600 uppercase tracking-[0.3em]">Technician Portal</p>
                         </div>
                     </div>
 
@@ -70,12 +70,12 @@ const Login = ({ onLoggedIn }) => {
             <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 lg:p-24 bg-white relative">
                 {/* Mobile Branding (Visible only on small screens) */}
                 <div className="lg:hidden text-center mb-12 space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 shadow-lg shadow-indigo-100 rounded-none">
+                    <div className="inline-flex items-center justify-center w-14 h-14 bg-red-600 shadow-lg shadow-red-100 rounded-none">
                         <span className="text-white font-black text-2xl italic">B</span>
                     </div>
                     <div>
                         <h2 className="text-lg font-black text-slate-900 tracking-tight uppercase">The Brand House</h2>
-                        <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-[0.2em] mt-1">Technician Portal</p>
+                        <p className="text-[10px] font-bold text-red-500 uppercase tracking-[0.2em] mt-1">Technician Portal</p>
                     </div>
                 </div>
 
@@ -104,7 +104,7 @@ const Login = ({ onLoggedIn }) => {
                                     placeholder="Username"
                                     prefix={<UserOutlined className="text-slate-300 mr-2" />}
                                     size="large"
-                                    className="h-[52px] w-full rounded-none bg-white border-slate-200 hover:border-indigo-300 focus:border-indigo-500 focus:shadow-none px-4 text-sm font-medium transition-all"
+                                    className="h-[52px] w-full rounded-none bg-white border-slate-200 hover:border-red-300 focus:border-red-500 focus:shadow-none px-4 text-sm font-medium transition-all"
                                 />
                             </Form.Item>
 
@@ -121,7 +121,7 @@ const Login = ({ onLoggedIn }) => {
                                         iconRender: (visible) => (visible ? <EyeOutlined className="text-slate-300" /> : <EyeInvisibleOutlined className="text-slate-300" />),
                                     }}
                                     size="large"
-                                    className="h-[52px] w-full rounded-none bg-white border-slate-200 hover:border-indigo-300 focus:border-indigo-500 focus:shadow-none px-4 text-sm font-medium transition-all"
+                                    className="h-[52px] w-full rounded-none bg-white border-slate-200 hover:border-red-300 focus:border-red-500 focus:shadow-none px-4 text-sm font-medium transition-all"
                                 />
                             </Form.Item>
                         </div>
@@ -130,7 +130,7 @@ const Login = ({ onLoggedIn }) => {
                             <Checkbox className="modern-checkbox">
                                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Remember me</span>
                             </Checkbox>
-                            <span className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 cursor-pointer uppercase tracking-wider">Forgot password?</span>
+                            <span className="text-[11px] font-bold text-red-600 hover:text-red-700 cursor-pointer uppercase tracking-wider">Forgot password?</span>
                         </div>
 
                         <div className="space-y-6">
@@ -139,7 +139,7 @@ const Login = ({ onLoggedIn }) => {
                                 size="large"
                                 htmlType="submit"
                                 className={`w-full h-[52px] rounded-none font-bold text-sm uppercase tracking-widest transition-all duration-300 border-none flex items-center justify-center gap-2 ${buttonEnabled
-                                    ? "bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-50"
+                                    ? "bg-red-600 hover:bg-red-700 shadow-xl shadow-red-50"
                                     : "bg-slate-100 text-slate-300 shadow-none hover:bg-slate-100"
                                     }`}
                                 disabled={!buttonEnabled || loading}
@@ -152,7 +152,7 @@ const Login = ({ onLoggedIn }) => {
                             </Button>
 
                             <p className="text-center text-[11px] font-bold text-slate-400">
-                                Forgot your password? <span className="text-indigo-600 hover:text-indigo-700 cursor-pointer">Reset now</span>
+                                Forgot your password? <span className="text-red-600 hover:text-red-700 cursor-pointer">Reset now</span>
                             </p>
                         </div>
                     </Form>

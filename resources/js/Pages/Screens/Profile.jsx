@@ -36,7 +36,7 @@ const Profile = ({ user, onLogout, onBack }) => {
             className="flex items-center justify-between p-4 bg-white rounded-none border border-gray-50 shadow-sm hover:shadow-md transition-all group"
         >
             <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
+                <div className="w-10 h-10 rounded-none bg-slate-50 flex items-center justify-center text-slate-500 group-hover:bg-red-50 group-hover:text-red-500 transition-colors">
                     {icon}
                 </div>
                 <div>
@@ -48,7 +48,7 @@ const Profile = ({ user, onLogout, onBack }) => {
                 {type === "switch" ? (
                     <Switch size="small" defaultChecked className="bg-slate-200" />
                 ) : (
-                    <Button type="text" className="text-slate-300 group-hover:text-indigo-500">
+                    <Button type="text" className="text-slate-300 group-hover:text-red-500">
                         <RightOutlined />
                     </Button>
                 )}
@@ -83,7 +83,7 @@ const Profile = ({ user, onLogout, onBack }) => {
                                     shape="square"
                                     size="middle"
                                     icon={<EditOutlined />}
-                                    className="shadow-xl border-none bg-white text-indigo-600 flex items-center justify-center hover:scale-110 transition-transform rounded-none"
+                                    className="shadow-xl border-none bg-white text-red-600 flex items-center justify-center hover:scale-110 transition-transform rounded-none"
                                 />
                             </div>
                         </div>
@@ -103,7 +103,7 @@ const Profile = ({ user, onLogout, onBack }) => {
                             <div>
                                 <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">{user?.Name || "User Name"}</h2>
                                 <div className="flex items-center gap-2 mt-3">
-                                    <Tag color="indigo" className="m-0 rounded-none border-none font-bold text-[10px] px-2 py-0.5 uppercase tracking-widest">
+                                    <Tag color="red" className="m-0 rounded-none border-none font-bold text-[10px] px-2 py-0.5 uppercase tracking-widest">
                                         {user?.Role || "Technician"}
                                     </Tag>
                                     <span className="w-1 h-1 rounded-none bg-slate-200"></span>
@@ -145,7 +145,7 @@ const Profile = ({ user, onLogout, onBack }) => {
             <div className="space-y-6">
                 <div>
                     <h3 className="text-lg font-black text-slate-900 tracking-tight px-1 mb-4 flex items-center gap-2">
-                        <SafetyCertificateOutlined className="text-indigo-500" />
+                        <SafetyCertificateOutlined className="text-red-500" />
                         Account & Security
                     </h3>
                     <div className="space-y-3">

@@ -235,7 +235,7 @@ const ServiceOrderSelection = ({
                             Cancel
                         </Button>
                         <Button
-                            className="bg-indigo-600 text-white hover:bg-indigo-700 border-none h-10 font-bold px-6 shadow-md shadow-indigo-100"
+                            className="bg-red-600 text-white hover:bg-red-700 border-none h-10 font-bold px-6 shadow-md shadow-red-100"
                             onClick={handleConfirm}
                             disabled={selectedOrders.length === 0}
                         >

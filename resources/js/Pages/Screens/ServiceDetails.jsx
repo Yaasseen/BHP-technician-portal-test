@@ -567,15 +567,15 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
         return (
             <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
                 <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 flex flex-col items-center max-w-sm w-full text-center space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center relative">
-                        <Spin indicator={<LoadingOutlined className="text-3xl text-indigo-600" spin />} />
+                    <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center relative">
+                        <Spin indicator={<LoadingOutlined className="text-3xl text-red-600" spin />} />
                     </div>
                     <div className="space-y-1">
                         <h3 className="text-base font-black text-slate-900 tracking-tight m-0">Syncing Service Details</h3>
                         <p className="text-xs font-semibold text-slate-500 m-0">Fetching live data directly from Business Central...</p>
                     </div>
                     <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden relative">
-                        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 h-full w-2/3 animate-pulse rounded-full"></div>
+                        <div className="bg-gradient-to-r from-red-500 to-purple-600 h-full w-2/3 animate-pulse rounded-full"></div>
                     </div>
                 </div>
             </div>
@@ -626,7 +626,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                             <div className="space-y-5">
                                 {descriptions.map((item, index) => (
                                     <div key={index} className="flex items-start gap-4 group">
-                                        <div className="mt-1 text-slate-400 text-lg group-hover:text-indigo-600 transition-colors duration-300">
+                                        <div className="mt-1 text-slate-400 text-lg group-hover:text-red-600 transition-colors duration-300">
                                             {item.icon}
                                         </div>
                                         <div className="flex-1">
@@ -649,7 +649,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                 {user.Role !== "Read Only" && (
                                     <Button
                                         onClick={() => setModelOpen(true)}
-                                        className="bg-indigo-600 text-white font-bold h-9 px-4 rounded-lg border-none shadow-sm hover:bg-indigo-700 transition-colors"
+                                        className="bg-red-600 text-white font-bold h-9 px-4 rounded-lg border-none shadow-sm hover:bg-red-700 transition-colors"
                                     >
                                         Request SparePart
                                     </Button>
@@ -769,7 +769,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                             <Form.Item name="description" className="mb-0">
                                                 <Input.TextArea
                                                     rows={3}
-                                                    className="rounded-lg border-slate-200 focus:border-indigo-500 focus:shadow-indigo-100"
+                                                    className="rounded-lg border-slate-200 focus:border-red-500 focus:shadow-red-100"
                                                     placeholder="Enter description..."
                                                 />
                                             </Form.Item>
@@ -777,18 +777,18 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
 
                                         <div>
                                             <p className="text-slate-900 font-bold text-sm mb-2">Upload Image</p>
-                                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-center transition-colors hover:border-indigo-200">
+                                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-center transition-colors hover:border-red-200">
                                                 {!showWebcam && !cameraImage && !imageShow ? (
                                                     <div className="space-y-3">
                                                         <CameraOutlined className="text-3xl text-slate-300" />
                                                         <div className="flex items-center justify-center gap-2">
-                                                            <Button type="text" onClick={handleClick} className="text-indigo-600 font-bold hover:bg-indigo-50 px-3 h-8">Capture</Button>
+                                                            <Button type="text" onClick={handleClick} className="text-red-600 font-bold hover:bg-red-50 px-3 h-8">Capture</Button>
                                                             <span className="text-slate-400 text-xs">or</span>
                                                             <Dropzone onDrop={handleUpload}>
                                                                 {({ getRootProps, getInputProps }) => (
                                                                     <div {...getRootProps()} className="inline-block cursor-pointer">
                                                                         <input {...getInputProps()} />
-                                                                        <span className="text-indigo-600 font-bold hover:underline text-sm px-2">browse files</span>
+                                                                        <span className="text-red-600 font-bold hover:underline text-sm px-2">browse files</span>
                                                                     </div>
                                                                 )}
                                                             </Dropzone>
@@ -809,7 +809,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                                                     />
                                                                 </div>
                                                                 <div className="flex gap-3">
-                                                                    <Button type="primary" onClick={captureImage} className="flex-1 bg-indigo-600 h-10 rounded-lg font-bold">Capture Photo</Button>
+                                                                    <Button type="primary" onClick={captureImage} className="flex-1 bg-red-600 h-10 rounded-lg font-bold">Capture Photo</Button>
                                                                     <Button onClick={handleResetCam} className="flex-1 h-10 rounded-lg font-bold">Cancel</Button>
                                                                 </div>
                                                             </div>
@@ -856,7 +856,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                                         <Button
                                             type="primary"
                                             htmlType="submit"
-                                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm h-10 px-8 shadow-sm shadow-indigo-200 border-none transition-all flex items-center justify-center gap-2"
+                                            className="bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold text-sm h-10 px-8 shadow-sm shadow-red-200 border-none transition-all flex items-center justify-center gap-2"
                                             loading={submitLoading}
                                             disabled={submitLoading}
                                         >

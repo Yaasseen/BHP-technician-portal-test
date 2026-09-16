@@ -18,26 +18,26 @@ const ServiceOrderCardItem = ({ serviceOrder, className, statusDescription }) =>
         >
             <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                    <p className="font-bold text-lg text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    <p className="font-bold text-lg text-slate-900 group-hover:text-red-600 transition-colors">
                         {serviceOrder.document_no}
                     </p>
-                    <div className="flex items-center gap-2 text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-none w-fit">
+                    <div className="flex items-center gap-2 text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-none w-fit">
                         <ClockCircleOutlined />
                         {serviceOrder.schedule_date}
                     </div>
                     {statusDescription && (
-                        <div className="bg-indigo-50/50 border border-indigo-100 p-3 rounded-none flex gap-3 items-start mt-2"> {/* Added mt-2 for spacing */}
-                            <InfoCircleOutlined className="text-indigo-500 mt-0.5" />
+                        <div className="bg-red-50/50 border border-red-100 p-3 rounded-none flex gap-3 items-start mt-2"> {/* Added mt-2 for spacing */}
+                            <InfoCircleOutlined className="text-red-500 mt-0.5" />
                             <div className="space-y-0.5">
-                                <p className="text-[10px] uppercase tracking-widest font-bold text-indigo-400">Current Status</p>
-                                <p className="text-sm font-semibold text-indigo-700 leading-tight">
+                                <p className="text-[10px] uppercase tracking-widest font-bold text-red-400">Current Status</p>
+                                <p className="text-sm font-semibold text-red-700 leading-tight">
                                     {statusDescription}
                                 </p>
                             </div>
                         </div>
                     )}
                 </div>
-                <div className="text-slate-300 group-hover:text-indigo-600 transition-colors">
+                <div className="text-slate-300 group-hover:text-red-600 transition-colors">
                     <RightOutlined className="text-lg" />
                 </div>
             </div>

@@ -38,7 +38,7 @@ function TaskCard({ team }) {
                             <div
                                 className={`flex items-center text-xs px-3 py-1 rounded-none space-x-2 border ${
                                     subTeam.taskStatus === "Free"
-                                        ? "bg-indigo-50 border-indigo-400 text-indigo-600"
+                                        ? "bg-red-50 border-red-400 text-red-600"
                                         : "bg-red-50 border-red-400 text-red-600"
                                 }`}
                             >
@@ -63,7 +63,7 @@ function TaskCard({ team }) {
                                                     : job.status === "Delayed"
                                                     ? "bg-red-400"
                                                     : job.status === "Completed"
-                                                    ? "bg-indigo-400"
+                                                    ? "bg-red-400"
                                                     : "bg-blue-400"
                                             }`}
                                         />
@@ -74,7 +74,7 @@ function TaskCard({ team }) {
                                                     : job.status === "Delayed"
                                                     ? "text-red-400"
                                                     : job.status === "Completed"
-                                                    ? "text-indigo-500"
+                                                    ? "text-red-500"
                                                     : "text-blue-400"
                                             }`}
                                         >

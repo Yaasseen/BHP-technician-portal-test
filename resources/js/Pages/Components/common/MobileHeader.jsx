@@ -39,7 +39,7 @@ const MobileHeader = ({ title, user, unreadCount, onNotificationClick, onLogout 
     return (
         <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-b border-gray-100 h-16 flex items-center justify-between px-4 z-50 sm:hidden">
             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-600 rounded-none flex items-center justify-center shadow-lg shadow-indigo-200">
+                <div className="w-10 h-10 bg-red-600 rounded-none flex items-center justify-center shadow-lg shadow-red-200">
                     <span className="text-white font-bold text-xl italic">B</span>
                 </div>
                 <h1 className="text-lg font-black text-slate-900 tracking-tight">
@@ -50,7 +50,7 @@ const MobileHeader = ({ title, user, unreadCount, onNotificationClick, onLogout 
             <div className="flex items-center gap-4">
                 <button
                     onClick={onNotificationClick}
-                    className="relative p-2 text-slate-500 hover:text-indigo-600 transition-colors"
+                    className="relative p-2 text-slate-500 hover:text-red-600 transition-colors"
                 >
                     <BellOutlined className="text-xl" />
                     {unreadCount > 0 && (

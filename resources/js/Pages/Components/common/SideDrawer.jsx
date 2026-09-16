@@ -41,7 +41,7 @@ export default function SiderDrawer({
                         <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none">{heading || "Filters"}</h2>
                         {headingBody && (
                             <p
-                                className="text-xs font-bold text-indigo-500 uppercase tracking-widest mt-1 cursor-pointer hover:text-indigo-700 transition-colors"
+                                className="text-xs font-bold text-red-500 uppercase tracking-widest mt-1 cursor-pointer hover:text-red-700 transition-colors"
                                 onClick={onClickHeading}
                             >
                                 {headingBody}
@@ -78,7 +78,7 @@ export default function SiderDrawer({
                         {onSaveButtonClick && (
                             <Button
                                 type="primary"
-                                className="flex-1 h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-bold border-none rounded-none shadow-md shadow-indigo-100"
+                                className="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white font-bold border-none rounded-none shadow-md shadow-red-100"
                                 onClick={onSaveButtonClick}
                             >
                                 {saveButton || "Apply"}

@@ -248,16 +248,16 @@ const TeamRegionConfig = ({
                     <div className="flex items-center gap-3">
                         <Button
                             onClick={returnWeekView}
-                            className="w-10 h-10 rounded-none bg-white border-slate-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
+                            className="w-10 h-10 rounded-none bg-white border-slate-200 flex items-center justify-center text-slate-500 hover:text-red-600 hover:border-red-200 transition-all shadow-sm"
                         >
                             <ArrowLeftOutlined className="text-lg" />
                         </Button>
-                        <div className="w-12 h-12 rounded-none bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-100">
+                        <div className="w-12 h-12 rounded-none bg-red-600 flex items-center justify-center shadow-lg shadow-red-100">
                             <CalendarOutlined className="text-white text-2xl" />
                         </div>
                         <div>
                             <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight leading-none">Configuration</h2>
-                            <p className="text-xs font-bold text-indigo-500 uppercase tracking-widest mt-1.5 flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-red-500 uppercase tracking-widest mt-1.5 flex items-center gap-1.5">
                                 <TeamOutlined className="text-[10px]" /> Team & Region Scheduling
                             </p>
                         </div>
@@ -269,7 +269,7 @@ const TeamRegionConfig = ({
                         <div key={date} className="app-card overflow-hidden">
                             <div className="bg-white px-6 py-4 border-b border-gray-50 flex justify-between items-center">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-none bg-indigo-50 flex items-center justify-center text-indigo-500">
+                                    <div className="w-8 h-8 rounded-none bg-red-50 flex items-center justify-center text-red-500">
                                         <CalendarOutlined />
                                     </div>
                                     <div>
@@ -316,12 +316,12 @@ const TeamRegionConfig = ({
 
                                                 return (
                                                     <div
-                                                        className={`group relative flex items-center justify-center p-3 transition-all cursor-pointer min-h-[60px] ${isFull ? 'bg-red-50/30' : 'hover:bg-indigo-50/30'}`}
+                                                        className={`group relative flex items-center justify-center p-3 transition-all cursor-pointer min-h-[60px] ${isFull ? 'bg-red-50/30' : 'hover:bg-red-50/30'}`}
                                                         onClick={() => !isFull && toggleRegion(date, record.team, region)}
                                                     >
                                                         {(regionData.enabled || count > 0) ? (
                                                             <div className="flex flex-col items-center gap-1">
-                                                                <div className={`w-10 h-10 rounded-none flex items-center justify-center transition-all ${count > 0 ? (isFull ? 'bg-red-500 text-white shadow-sm' : 'bg-indigo-500 text-white shadow-sm') : 'bg-slate-100 text-slate-400 group-hover:bg-white group-hover:shadow-sm'
+                                                                <div className={`w-10 h-10 rounded-none flex items-center justify-center transition-all ${count > 0 ? (isFull ? 'bg-red-500 text-white shadow-sm' : 'bg-red-500 text-white shadow-sm') : 'bg-slate-100 text-slate-400 group-hover:bg-white group-hover:shadow-sm'
                                                                     }`}>
                                                                     {count > 0 ? (
                                                                         <span className="text-xs font-black">{count}</span>
@@ -364,7 +364,7 @@ const TeamRegionConfig = ({
                         <div className="p-1">
                             <div className="flex justify-between items-center mb-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-none bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                    <div className="w-10 h-10 rounded-none bg-red-50 flex items-center justify-center text-red-600">
                                         <PlusCircleOutlined className="text-xl" />
                                     </div>
                                     <div>
@@ -372,7 +372,7 @@ const TeamRegionConfig = ({
                                         <div className="flex items-center gap-2 mt-1.5">
                                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{selectedCheckbox.day}, {selectedCheckbox.date}</span>
                                             <span className="w-1 h-1 rounded-none bg-gray-300"></span>
-                                            <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">{selectedCheckbox.team}</span>
+                                            <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">{selectedCheckbox.team}</span>
                                             <span className="w-1 h-1 rounded-none bg-gray-300"></span>
                                             <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">{selectedCheckbox.region}</span>
                                         </div>
@@ -386,17 +386,17 @@ const TeamRegionConfig = ({
                                 </button>
                             </div>
 
-                            <div className="bg-indigo-50/50 rounded-none p-4 mb-6 flex justify-between items-center">
+                            <div className="bg-red-50/50 rounded-none p-4 mb-6 flex justify-between items-center">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-none bg-indigo-500"></div>
-                                    <span className="text-sm font-bold text-indigo-700">Team Utilization</span>
+                                    <div className="w-2 h-2 rounded-none bg-red-500"></div>
+                                    <span className="text-sm font-bold text-red-700">Team Utilization</span>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <div className="flex flex-col items-end">
-                                        <span className="text-xs font-extrabold text-indigo-900">{selectedCheckbox.count}/12 Slots Used</span>
-                                        <div className="w-32 h-1.5 bg-indigo-100 rounded-none mt-1 overflow-hidden">
+                                        <span className="text-xs font-extrabold text-red-900">{selectedCheckbox.count}/12 Slots Used</span>
+                                        <div className="w-32 h-1.5 bg-red-100 rounded-none mt-1 overflow-hidden">
                                             <div
-                                                className="h-full bg-indigo-500 rounded-none transition-all duration-500"
+                                                className="h-full bg-red-500 rounded-none transition-all duration-500"
                                                 style={{ width: `${(selectedCheckbox.count / 12) * 100}%` }}
                                             ></div>
                                         </div>

@@ -40,7 +40,7 @@ const BottomNav = ({ activeView, setActiveView, user, onMoreClick }) => {
                     <button
                         key={item.key}
                         onClick={() => handleClick(item)}
-                        className={`flex flex-col items-center justify-center w-full h-full transition-colors relative ${isActive(item) ? "text-indigo-600" : "text-slate-400"
+                        className={`flex flex-col items-center justify-center w-full h-full transition-colors relative ${isActive(item) ? "text-red-600" : "text-slate-400"
                             }`}
                     >
                         <span className="text-xl mb-1">{item.icon}</span>
@@ -50,7 +50,7 @@ const BottomNav = ({ activeView, setActiveView, user, onMoreClick }) => {
                         {isActive(item) && (
                             <motion.div
                                 layoutId="activeNav"
-                                className="absolute -top-px left-1/2 -translate-x-1/2 w-12 h-0.5 bg-indigo-600 rounded-none"
+                                className="absolute -top-px left-1/2 -translate-x-1/2 w-12 h-0.5 bg-red-600 rounded-none"
                             />
                         )}
                     </button>

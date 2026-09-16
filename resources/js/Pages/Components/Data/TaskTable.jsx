@@ -429,7 +429,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             width: 140,
             render: (text, record) => (
                 <span
-                    className="font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer transition-colors"
+                    className="font-bold text-red-600 hover:text-red-800 cursor-pointer transition-colors"
                     onClick={() => handleShowService(record.document_no)}
                 >
                     {text}
@@ -486,7 +486,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             width: 130,
             render: (status) => (
                 <Tag
-                    className={`rounded-none px-3 border-none font-bold text-[10px] uppercase ${status === 'PENDING' ? 'bg-orange-100 text-orange-600' : 'bg-indigo-100 text-indigo-600'
+                    className={`rounded-none px-3 border-none font-bold text-[10px] uppercase ${status === 'PENDING' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
                         }`}
                 >
                     {status}
@@ -531,7 +531,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                 const date = new Date(record.schedule_date);
                 const formattedDate = `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
 
-                return <span className="text-indigo-600 font-bold text-xs">{formattedDate}</span>;
+                return <span className="text-red-600 font-bold text-xs">{formattedDate}</span>;
             },
         },
         {
@@ -785,7 +785,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     <Input
                         placeholder="Search by job number, company..."
                         prefix={<SearchOutlined className="text-slate-400 text-lg" />}
-                        className="bg-white border border-slate-200 rounded-none h-12 px-5 text-sm font-medium shadow-sm focus:border-indigo-500"
+                        className="bg-white border border-slate-200 rounded-none h-12 px-5 text-sm font-medium shadow-sm focus:border-red-500"
                         value={searchText}
                         onChange={(e) => handleSearch(e.target.value)}
                     />
@@ -795,7 +795,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                             <button
                                 onClick={() => setSiderOpen(true)}
                                 className={`min-w-[48px] h-12 border rounded-none flex items-center justify-center shadow-sm active:bg-slate-50 transition-all ${hasActiveFilters
-                                    ? 'bg-indigo-50 border-indigo-200 text-indigo-600'
+                                    ? 'bg-red-50 border-red-200 text-red-600'
                                     : 'bg-white border-slate-200 text-slate-500'
                                     }`}
                             >
@@ -803,8 +803,8 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                             </button>
                             {hasActiveFilters && (
                                 <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                                 </span>
                             )}
                         </div>
@@ -821,7 +821,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                         <Button
                             disabled={selectedOrders?.length === 0}
                             className={`h-12 px-5 rounded-none border-none font-black text-xs uppercase tracking-wider transition-all ${selectedOrders?.length > 0
-                                ? 'bg-indigo-500 text-white shadow-md shadow-indigo-100'
+                                ? 'bg-red-500 text-white shadow-md shadow-red-100'
                                 : 'bg-slate-100 text-slate-300'
                                 }`}
                             onClick={handleBulkOrderAssign}
@@ -847,15 +847,15 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     <div className="hidden sm:flex items-center gap-3 w-full sm:w-auto">
                         <Button
                             className={`flex-1 sm:flex-none flex items-center justify-center gap-3 h-12 px-8 rounded-none border font-bold transition-all shadow-sm ${hasActiveFilters
-                                ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
-                                : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-indigo-600'
+                                ? 'border-red-200 bg-red-50 text-red-600'
+                                : 'border-slate-200 bg-white text-slate-600 hover:border-red-300 hover:text-red-600'
                                 }`}
                             onClick={() => setSiderOpen(true)}
                         >
                             <FilterOutlined />
                             <span>Filters</span>
                             {hasActiveFilters && (
-                                <span className="ml-1 w-2 h-2 rounded-full bg-indigo-500"></span>
+                                <span className="ml-1 w-2 h-2 rounded-full bg-red-500"></span>
                             )}
                         </Button>
 
@@ -869,7 +869,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                         )}
 
                         <Button
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 h-12 px-6 rounded-none border border-slate-200 bg-white text-slate-600 font-bold hover:border-indigo-300 hover:text-indigo-600 transition-all shadow-sm"
+                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 h-12 px-6 rounded-none border border-slate-200 bg-white text-slate-600 font-bold hover:border-red-300 hover:text-red-600 transition-all shadow-sm"
                             icon={<DownloadOutlined />}
                             loading={exporting}
                             onClick={handleExport}
@@ -880,7 +880,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                         <Button
                             disabled={selectedOrders?.length === 0}
                             className={`flex-1 sm:flex-none h-12 px-8 rounded-none font-black transition-all border-none ${selectedOrders?.length > 0
-                                ? 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-md shadow-indigo-100'
+                                ? 'bg-red-500 text-white hover:bg-red-600 shadow-md shadow-red-100'
                                 : 'bg-slate-100 text-slate-300'
                                 }`}
                             onClick={handleBulkOrderAssign}
@@ -900,9 +900,9 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                         </p>
                     </div>
                     {selectedOrders.length > 0 && (
-                        <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-none border border-indigo-100">
-                            <span className="w-2 h-2 rounded-none bg-indigo-500 animate-pulse" />
-                            <span className="text-xs font-black text-indigo-700 uppercase tracking-wider">
+                        <div className="flex items-center gap-2 bg-red-50 px-4 py-2 rounded-none border border-red-100">
+                            <span className="w-2 h-2 rounded-none bg-red-500 animate-pulse" />
+                            <span className="text-xs font-black text-red-700 uppercase tracking-wider">
                                 {selectedOrders.length} selected
                             </span>
                         </div>
@@ -972,7 +972,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             {/* Mobile Bulk Assignment Sticky Bar */}
             {selectedOrders.length > 0 && (
                 <div className="fixed bottom-20 left-0 right-0 z-40 sm:hidden px-4 pb-2">
-                    <div className="bg-indigo-600 rounded-xl shadow-2xl shadow-indigo-300/50 p-3 flex items-center justify-between gap-3 border border-indigo-500">
+                    <div className="bg-red-600 rounded-xl shadow-2xl shadow-red-300/50 p-3 flex items-center justify-between gap-3 border border-red-500">
                         <div className="flex items-center gap-2 text-white">
                             <span className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center text-sm font-black">
                                 {selectedOrders.length}
@@ -990,7 +990,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                             <Button
                                 type="primary"
                                 size="small"
-                                className="h-9 px-5 rounded-lg bg-white text-indigo-700 border-0 font-black text-xs shadow-lg hover:bg-indigo-50"
+                                className="h-9 px-5 rounded-lg bg-white text-red-700 border-0 font-black text-xs shadow-lg hover:bg-red-50"
                                 onClick={handleBulkOrderAssign}
                             >
                                 Assign Team
@@ -1071,7 +1071,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                         <Radio.Button
                                             key={period}
                                             value={period}
-                                            className={`text-center flex items-center justify-center h-10 text-xs font-bold border-slate-200 transition-all ${filter.period === period ? '!bg-indigo-600 !border-indigo-600 !text-white z-10' : 'bg-slate-50 text-slate-500 hover:text-indigo-600'
+                                            className={`text-center flex items-center justify-center h-10 text-xs font-bold border-slate-200 transition-all ${filter.period === period ? '!bg-red-600 !border-red-600 !text-white z-10' : 'bg-slate-50 text-slate-500 hover:text-red-600'
                                                 }`}
                                         >
                                             {period === '24h' ? '24H' : period === '7d' ? '7 Days' : period === '30d' ? '30 Days' : '1 Year'}
@@ -1087,19 +1087,19 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                 </label>
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className={`flex-1 border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.scheduled ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-slate-200 hover:border-indigo-200'}`}
+                                        className={`flex-1 border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.scheduled ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200 hover:border-red-200'}`}
                                         onClick={() => setFilter({ ...filter, scheduled: !filter.scheduled, not_scheduled: false })}
                                     >
                                         <Checkbox checked={filter.scheduled} className="custom-checkbox pointer-events-none" />
-                                        <span className={`text-sm font-bold ${filter.scheduled ? 'text-indigo-700' : 'text-slate-600'}`}>Scheduled</span>
+                                        <span className={`text-sm font-bold ${filter.scheduled ? 'text-red-700' : 'text-slate-600'}`}>Scheduled</span>
                                     </div>
 
                                     <div
-                                        className={`flex-1 border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.not_scheduled ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-slate-200 hover:border-indigo-200'}`}
+                                        className={`flex-1 border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.not_scheduled ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200 hover:border-red-200'}`}
                                         onClick={() => setFilter({ ...filter, not_scheduled: !filter.not_scheduled, scheduled: false })}
                                     >
                                         <Checkbox checked={filter.not_scheduled} className="custom-checkbox pointer-events-none" />
-                                        <span className={`text-sm font-bold ${filter.not_scheduled ? 'text-indigo-700' : 'text-slate-600'}`}>Unscheduled</span>
+                                        <span className={`text-sm font-bold ${filter.not_scheduled ? 'text-red-700' : 'text-slate-600'}`}>Unscheduled</span>
                                     </div>
                                 </div>
                             </div>
@@ -1110,11 +1110,11 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                                     Posted Orders
                                 </label>
                                 <div
-                                    className={`border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.show_posted ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-slate-200 hover:border-indigo-200'}`}
+                                    className={`border p-3 cursor-pointer transition-all flex items-center gap-3 ${filter.show_posted ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200 hover:border-red-200'}`}
                                     onClick={() => setFilter({ ...filter, show_posted: !filter.show_posted })}
                                 >
                                     <Checkbox checked={filter.show_posted} className="custom-checkbox pointer-events-none" />
-                                    <span className={`text-sm font-bold ${filter.show_posted ? 'text-indigo-700' : 'text-slate-600'}`}>
+                                    <span className={`text-sm font-bold ${filter.show_posted ? 'text-red-700' : 'text-slate-600'}`}>
                                         Show orders already posted in Business Central
                                     </span>
                                 </div>
@@ -1257,7 +1257,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             <div>
                 {!siderOpen && (
                     <FloatButton
-                        //className="bg-indigo-600 text-white"
+                        //className="bg-red-600 text-white"
                         style={{ backgroundColor: "#3F51B5", color: "white" }}
                         icon={<FilterOutlined className="hover:text-white" />}
                         onClick={() => setSiderOpen(true)}

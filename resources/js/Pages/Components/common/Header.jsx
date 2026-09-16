@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, Menu, Avatar, Drawer, Spin } from "antd";
+import { Dropdown, Menu, Avatar, Spin } from "antd";
 import {
     ArrowLeftOutlined,
-    MenuOutlined,
     UserOutlined,
 } from "@ant-design/icons";
 import NotificationBell from "./Notification";
@@ -20,21 +19,13 @@ const Header = ({
     activeView,
     setActiveView,
 }) => {
-    const [openSidebar, setOpenSidebar] = useState(false);
     const [openNotification, setOpenNotification] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
 
-    const showSidebar = () => setOpenSidebar(true);
-    const closeSidebar = () => setOpenSidebar(false);
-
     const [homeClicked, setHomeClicked] = useState(false);
 
-
-    const ListView = () => {
-        handleLitView();
-    };
     const handleLogout = () => {
         userLogout();
     };
@@ -42,10 +33,6 @@ const Header = ({
         setActiveView("list");
         setHomeClicked((prev) => !prev);
     };
-
-    useEffect(() => {
-        setOpenSidebar(false);
-    }, [handleView, handleHome]);
 
     const handleNotificationOpen = () => setOpenNotification(true);
     const handleNotificationClose = () => setOpenNotification(false);
@@ -122,13 +109,6 @@ const Header = ({
         <div className="sticky">
             <header className="top-0 flex justify-between items-center px-4 sm:px-12 py-3 bg-white shadow-sm border-b border-gray-300">
                 <div className="flex gap-x-10 items-center">
-                    <div className="flex items-center rounded-none border border-gray-400 p-3">
-                        <MenuOutlined
-                            className="text-xl cursor-pointer"
-                            onClick={showSidebar}
-                        />
-                    </div>
-
                     <div className="flex items-center justify-center  ">
                         {activeView !== "list" && (
                             <button
@@ -163,23 +143,6 @@ const Header = ({
                     </Dropdown>
                 </div>
             </header>
-            <Drawer
-                placement="left"
-                width={280}
-                onClose={closeSidebar}
-                open={openSidebar}
-            >
-                <ul className="space-y-4">
-                    <li className="text-lg">
-                        <p
-                            onClick={handleViewScreen}
-                            className="block px-4 py-2 text-black hover:bg-gray-200 hover:text-blue-700 rounded transition duration-300"
-                        >
-                            Home
-                        </p>
-                    </li>
-                </ul>
-            </Drawer>
             <div className="fixed top-20 right-1  sm:top-20 sm:right-10 ">
                 {openNotification && (
                     <motion.div

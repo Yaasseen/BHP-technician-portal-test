@@ -20,7 +20,7 @@ const TaskListItem = ({
 }) => {
     const getStatusTheme = (status) => {
         switch (status?.toLowerCase()) {
-            case 'completed': return { color: '#10b981', bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-500' };
+            case 'completed': return { color: '#10b981', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-500' };
             case 'pending': return { color: '#f59e0b', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-500' };
             case 'cancelled': return { color: '#ef4444', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-500' };
             default: return { color: '#475569', bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-500' };
@@ -33,7 +33,7 @@ const TaskListItem = ({
         <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`bg-white rounded-xl p-4 mb-3 shadow-sm border border-slate-100 relative overflow-hidden group ${isSelected ? 'ring-2 ring-indigo-50 bg-indigo-50/10' : ''}`}
+            className={`bg-white rounded-xl p-4 mb-3 shadow-sm border border-slate-100 relative overflow-hidden group ${isSelected ? 'ring-2 ring-red-50 bg-red-50/10' : ''}`}
         >
             {/* Left Border Indicator */}
             <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${statusTheme.bg.replace('bg-', 'bg-') || 'bg-slate-200'}`}></div>
@@ -59,7 +59,7 @@ const TaskListItem = ({
                             placement="bottomRight"
                             arrow={false}
                         >
-                            <button className="text-slate-300 hover:text-indigo-600 transition-colors p-1">
+                            <button className="text-slate-300 hover:text-red-600 transition-colors p-1">
                                 <MoreOutlined />
                             </button>
                         </Popover>
@@ -112,7 +112,7 @@ const TaskListItem = ({
                     </span>
                     <button
                         onClick={() => onViewDetails(task.document_no)}
-                        className="text-indigo-600 text-xs font-bold flex items-center gap-1 hover:gap-2 transition-all"
+                        className="text-red-600 text-xs font-bold flex items-center gap-1 hover:gap-2 transition-all"
                     >
                         Details <RightOutlined className="text-[10px]" />
                     </button>

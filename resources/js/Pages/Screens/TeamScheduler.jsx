@@ -185,17 +185,17 @@ const TeamScheduler = ({
         let statusColor = "bg-gray-100";
         if (utilization >= 100) statusColor = "bg-red-50 border-red-200 border";
         else if (utilization >= 75) statusColor = "bg-orange-50 border-orange-200 border";
-        else if (utilization > 0) statusColor = "bg-indigo-50 border-indigo-200 border";
+        else if (utilization > 0) statusColor = "bg-red-50 border-red-200 border";
 
         return (
             <div
-                className={`mb-3 cursor-pointer rounded-none overflow-hidden transition-all duration-300 ${statusColor} ${isOpen ? 'ring-2 ring-indigo-500/20' : ''}`}
+                className={`mb-3 cursor-pointer rounded-none overflow-hidden transition-all duration-300 ${statusColor} ${isOpen ? 'ring-2 ring-red-500/20' : ''}`}
                 onClick={() => toggleSchedule(day, team, data.region || "no-region")}
             >
                 <div className="flex items-center justify-between p-3">
                     <div className="flex flex-col flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                            {isOpen ? <DownOutlined className="text-xs text-indigo-500" /> : <RightOutlined className="text-xs text-slate-400" />}
+                            {isOpen ? <DownOutlined className="text-xs text-red-500" /> : <RightOutlined className="text-xs text-slate-400" />}
                             <span className="font-bold text-slate-900 truncate">{team}</span>
                         </div>
                         <span className="text-[10px] uppercase tracking-wider text-gray-500 font-bold ml-5">
@@ -205,7 +205,7 @@ const TeamScheduler = ({
                     <div className="flex flex-col items-end">
                         <span className={`text-xs font-extrabold px-2 py-1 rounded-none ${utilization >= 100 ? 'bg-red-500 text-white' :
                             utilization >= 75 ? 'bg-orange-500 text-white' :
-                                utilization > 0 ? 'bg-indigo-500 text-white' : 'bg-gray-200 text-gray-500'
+                                utilization > 0 ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-500'
                             }`}>
                             {data.count}
                         </span>
@@ -242,7 +242,7 @@ const TeamScheduler = ({
                                             >
                                                 <List.Item.Meta
                                                     avatar={
-                                                        <div className="w-10 h-10 rounded-none bg-indigo-50 flex items-center justify-center text-indigo-500">
+                                                        <div className="w-10 h-10 rounded-none bg-red-50 flex items-center justify-center text-red-500">
                                                             <FileTextOutlined className="text-lg" />
                                                         </div>
                                                     }
@@ -253,7 +253,7 @@ const TeamScheduler = ({
                                                                     e.stopPropagation();
                                                                     handleShowService(ticket.document_no);
                                                                 }}
-                                                                className="font-extrabold text-indigo-600 hover:text-indigo-800 transition-colors"
+                                                                className="font-extrabold text-red-600 hover:text-red-800 transition-colors"
                                                             >
                                                                 {ticket.document_no}
                                                             </span>
@@ -392,13 +392,13 @@ const TeamScheduler = ({
                 <div className="flex items-center gap-3">
                     <Button
                         onClick={handleScreen}
-                        className="w-10 h-10 rounded-none bg-white border-slate-200 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm"
+                        className="w-10 h-10 rounded-none bg-white border-slate-200 flex items-center justify-center text-slate-500 hover:text-red-600 hover:border-red-200 transition-all shadow-sm"
                     >
                         <ArrowLeftOutlined className="text-lg" />
                     </Button>
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-none bg-slate-50 border border-slate-100 flex items-center justify-center">
-                            <CalendarOutlined className="text-indigo-500 text-xl" />
+                            <CalendarOutlined className="text-red-500 text-xl" />
                         </div>
                         <div>
                             <h2 className="text-2xl font-[900] text-slate-900 tracking-tight leading-none">Team Schedule</h2>
@@ -416,7 +416,7 @@ const TeamScheduler = ({
                                 setStartDate(null);
                                 setWeekOffset((prev) => prev - 1);
                             }}
-                            className="flex-1 sm:flex-none h-9 border-none bg-transparent hover:bg-white hover:text-indigo-600 font-bold transition-all rounded-none shadow-none"
+                            className="flex-1 sm:flex-none h-9 border-none bg-transparent hover:bg-white hover:text-red-600 font-bold transition-all rounded-none shadow-none"
                         >
                             Prev
                         </Button>
@@ -425,7 +425,7 @@ const TeamScheduler = ({
                                 setStartDate(null);
                                 setWeekOffset(0);
                             }}
-                            className={`flex-1 sm:flex-none h-9 border-none font-bold transition-all rounded-none shadow-sm ${weekOffset === 0 ? 'bg-white text-indigo-600 shadow-sm' : 'bg-transparent text-slate-500'}`}
+                            className={`flex-1 sm:flex-none h-9 border-none font-bold transition-all rounded-none shadow-sm ${weekOffset === 0 ? 'bg-white text-red-600 shadow-sm' : 'bg-transparent text-slate-500'}`}
                         >
                             Current
                         </Button>
@@ -434,7 +434,7 @@ const TeamScheduler = ({
                                 setStartDate(null);
                                 setWeekOffset((prev) => prev + 1);
                             }}
-                            className="flex-1 sm:flex-none h-9 border-none bg-transparent hover:bg-white hover:text-indigo-600 font-bold transition-all rounded-none shadow-none"
+                            className="flex-1 sm:flex-none h-9 border-none bg-transparent hover:bg-white hover:text-red-600 font-bold transition-all rounded-none shadow-none"
                         >
                             Next
                         </Button>
@@ -463,11 +463,11 @@ const TeamScheduler = ({
                                     {generateWeeks().map((week) => (
                                         <div
                                             key={week.value}
-                                            className="group cursor-pointer p-3 hover:bg-indigo-50 rounded-none transition-all border border-transparent hover:border-indigo-100 flex items-center justify-between"
+                                            className="group cursor-pointer p-3 hover:bg-red-50 rounded-none transition-all border border-transparent hover:border-red-100 flex items-center justify-between"
                                             onClick={() => handleWeekSelect(week.value)}
                                         >
-                                            <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-600">{week.label}</span>
-                                            <CaretRightOutlined className="text-xs text-slate-300 group-hover:text-indigo-400" />
+                                            <span className="text-sm font-bold text-slate-700 group-hover:text-red-600">{week.label}</span>
+                                            <CaretRightOutlined className="text-xs text-slate-300 group-hover:text-red-400" />
                                         </div>
                                     ))}
                                 </div>
@@ -477,7 +477,7 @@ const TeamScheduler = ({
                         open={isPopoverOpen}
                         onOpenChange={setIsPopoverOpen}
                     >
-                        <Button className="h-10 px-6 rounded-none border-slate-200 hover:border-indigo-400 hover:text-indigo-600 font-bold transition-all flex items-center gap-2">
+                        <Button className="h-10 px-6 rounded-none border-slate-200 hover:border-red-400 hover:text-red-600 font-bold transition-all flex items-center gap-2">
                             <CalendarOutlined />
                             <span>Select Week</span>
                         </Button>
@@ -493,7 +493,7 @@ const TeamScheduler = ({
                                 <h4 className="text-lg font-extrabold text-slate-900 leading-none">{day}</h4>
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 block">{date}</span>
                             </div>
-                            <Tag color="indigo" className="m-0 rounded-none border-none font-extrabold text-xs px-2 py-0.5">
+                            <Tag color="red" className="m-0 rounded-none border-none font-extrabold text-xs px-2 py-0.5">
                                 {scheduleData.schedule?.[day]?.slots_used || 0} Slots
                             </Tag>
                         </div>
@@ -528,7 +528,7 @@ const TeamScheduler = ({
 
                             <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between">
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-none bg-indigo-500"></div>
+                                    <div className="w-2 h-2 rounded-none bg-red-500"></div>
                                     {scheduleData.schedule?.[day]?.active_teams || 0} Teams Active
                                 </span>
                             </div>

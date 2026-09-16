@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "./Components/common/Header";
+import Sidebar from "./Components/common/Sidebar";
 import MobileHeader from "./Components/common/MobileHeader";
 import BottomNav from "./Components/common/BottomNav";
 import "../../css/Dashboard.css";
@@ -83,8 +84,11 @@ const HomePage = ({ onLoggedOut, user }) => {
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20 sm:pb-0">
+            {/* Desktop Sidebar */}
+            <Sidebar user={user} activeView={activeView} setActiveView={setActiveView} />
+
             {/* Desktop Header */}
-            <div className="hidden sm:block sticky top-0 z-50">
+            <div className="hidden sm:block sticky top-0 z-30 sm:pl-60">
                 <Header
                     userLogout={() => handleGlobalLogout()}
                     user={user}
@@ -109,7 +113,7 @@ const HomePage = ({ onLoggedOut, user }) => {
             <motion.main
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`${activeView === "list" ? "pt-0 px-0" : "pt-20 px-4"} sm:pt-6 sm:px-6 lg:px-8 max-w-7xl mx-auto`}
+                className={`${activeView === "list" ? "pt-0 pl-0 pr-0" : "pt-20 pl-4 pr-4"} sm:pt-6 sm:pl-60 sm:pr-6 lg:pr-8 max-w-7xl mx-auto`}
             >
                 <div className="dashboard-card-modern">
                     <Dashboard
@@ -146,7 +150,7 @@ const HomePage = ({ onLoggedOut, user }) => {
                             key={item.key}
                             onClick={() => handleMoreSelect(item.key)}
                             className={`flex items-center gap-3 px-4 py-3 rounded-none text-sm font-bold transition-all text-left ${activeView === item.key
-                                ? "bg-indigo-50 text-indigo-600"
+                                ? "bg-red-50 text-red-600"
                                 : "text-slate-600 hover:bg-slate-50"
                                 }`}
                         >

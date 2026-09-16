@@ -14,7 +14,6 @@ import SettingsPanel from "./Settings/SettingsPanel";
 import OpsDashboard from "./Ops/OpsDashboard";
 import MobileHeroHeader from "../Components/common/MobileHeroHeader";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useSchedule } from "../../context/ScheduleContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Dashboard = ({
@@ -26,7 +25,6 @@ const Dashboard = ({
     onLogout, // Added onLogout prop
     showWeekView,
 }) => {
-    const { setWeekOffset, setStartDate } = useSchedule();
     const [documentNo, setDocumentNo] = useState(null);
     const [ticketInfo, setTicketInfo] = useState();
     const [locationState, setLocationState] = useState(false);
@@ -57,45 +55,9 @@ const Dashboard = ({
         setActiveView("list");
     };
 
-    const ShowList = () => {
-        setActiveView("list");
-        showDashboard();
-    };
-
-    const HideShowList = () => {
-        setActiveView("weekly");
-        setTicketInfo(null);
-        setWeekOffset(0);
-        setStartDate(null);
-    };
-
     const NavigateWeeklyView = () => {
         setActiveView("weekly");
         setTicketInfo(null);
-    };
-
-    const ShowTeamRegion = () => {
-        setActiveView("teamandregion");
-    };
-
-    const ShowGigo = () => {
-        setActiveView("gigo");
-    };
-
-    const ShowMyBasket = () => {
-        setActiveView("mybasket");
-    };
-
-    const ShowAgeing = () => {
-        setActiveView("ageing");
-    };
-
-    const ShowSettings = () => {
-        setActiveView("settings");
-    };
-
-    const ShowOps = () => {
-        setActiveView("ops");
     };
 
     const pageVariants = {
@@ -132,18 +94,7 @@ const Dashboard = ({
                     ) : (
                         <div className="flex flex-col gap-6">
                             <div className="hidden sm:block">
-                                <DashboardList
-                                    user={user}
-                                    ShowList={ShowList}
-                                    HideShowList={HideShowList}
-                                    ShowTeamRegion={ShowTeamRegion}
-                                    ShowGigo={ShowGigo}
-                                    ShowMyBasket={ShowMyBasket}
-                                    ShowAgeing={ShowAgeing}
-                                    ShowSettings={ShowSettings}
-                                    ShowOps={ShowOps}
-                                    activeView={activeView}
-                                />
+                                <DashboardList user={user} activeView={activeView} />
                             </div>
 
                             {activeView === "list" ? (
