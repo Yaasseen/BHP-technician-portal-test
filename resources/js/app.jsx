@@ -8,7 +8,7 @@ import HomePage from "./Pages/HomePage";
 import AboutPage from "./Pages/AboutPage";
 import Login from "./Pages/Auth/Login";
 import axios from "axios";
-import { Spin } from "antd";
+import { Spin, ConfigProvider } from "antd";
 import { ScheduleProvider } from "./context/ScheduleContext";
 
 function App() {
@@ -94,7 +94,18 @@ export default App;
 
 const root = createRoot(document.getElementById("app"));
 root.render(
-    <ScheduleProvider>
-        <App />
-    </ScheduleProvider>
+    <ConfigProvider
+        theme={{
+            token: {
+                colorPrimary: "#dc2626",
+                colorLink: "#dc2626",
+                colorLinkHover: "#b91c1c",
+                colorInfo: "#dc2626",
+            },
+        }}
+    >
+        <ScheduleProvider>
+            <App />
+        </ScheduleProvider>
+    </ConfigProvider>
 );

@@ -1255,8 +1255,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             <div>
                 {!siderOpen && (
                     <FloatButton
-                        //className="bg-red-600 text-white"
-                        style={{ backgroundColor: "#3F51B5", color: "white" }}
+                        style={{ backgroundColor: "#dc2626", color: "white" }}
                         icon={<FilterOutlined className="hover:text-white" />}
                         onClick={() => setSiderOpen(true)}
                     />

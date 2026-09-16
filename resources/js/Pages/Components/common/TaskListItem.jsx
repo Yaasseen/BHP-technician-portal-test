@@ -20,7 +20,7 @@ const TaskListItem = ({
 }) => {
     const getStatusTheme = (status) => {
         switch (status?.toLowerCase()) {
-            case 'completed': return { color: '#10b981', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-500' };
+            case 'completed': return { color: '#10b981', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-500' };
             case 'pending': return { color: '#f59e0b', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-500' };
             case 'cancelled': return { color: '#ef4444', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-500' };
             default: return { color: '#475569', bg: 'bg-slate-50', text: 'text-slate-700', border: 'border-slate-500' };

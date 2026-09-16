@@ -575,7 +575,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
                         <p className="text-xs font-semibold text-slate-500 m-0">Fetching live data directly from Business Central...</p>
                     </div>
                     <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden relative">
-                        <div className="bg-gradient-to-r from-red-500 to-purple-600 h-full w-2/3 animate-pulse rounded-full"></div>
+                        <div className="bg-gradient-to-r from-red-400 to-red-600 h-full w-2/3 animate-pulse rounded-full"></div>
                     </div>
                 </div>
             </div>
@@ -588,7 +588,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
             {contextHolder}
 
             {/* Gradient Header */}
-            <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-500 px-5 pt-5 pb-8 relative overflow-hidden">
+            <div className="bg-gradient-to-r from-red-700 via-red-600 to-rose-500 px-5 pt-5 pb-8 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-12 -mt-12 blur-2xl"></div>
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-8 -mb-8 blur-xl"></div>
 

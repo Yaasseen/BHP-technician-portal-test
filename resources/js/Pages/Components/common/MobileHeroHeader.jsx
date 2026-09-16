@@ -32,7 +32,7 @@ const MobileHeroHeader = ({ user, title, subtitle, onNotificationClick, onProfil
     return (
         <div className="relative mb-16 sm:hidden">
             {/* Gradient Background */}
-            <div className="bg-gradient-to-r from-violet-600 to-red-600 pt-6 pb-16 px-4 rounded-b-[2.5rem] shadow-lg shadow-red-200/50">
+            <div className="bg-gradient-to-r from-red-700 to-red-600 pt-6 pb-16 px-4 rounded-b-[2.5rem] shadow-lg shadow-red-200/50">
                 {/* Top Row: Logo/Title & Actions */}
                 <div className="flex justify-between items-start mb-6">
                     <div className="flex gap-3 items-center">
