@@ -425,11 +425,10 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             title: "Document No",
             dataIndex: "document_no",
             key: "document_no",
-            fixed: 'left',
-            width: 140,
+            width: "10%",
             render: (text, record) => (
                 <span
-                    className="font-bold text-red-600 hover:text-red-800 cursor-pointer transition-colors"
+                    className="font-bold text-red-600 hover:text-red-800 cursor-pointer transition-colors text-xs"
                     onClick={() => handleShowService(record.document_no)}
                 >
                     {text}
@@ -440,23 +439,23 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             title: "Order Date",
             dataIndex: "order_date",
             key: "order_date",
-            width: 120,
-            render: (text) => <span className="text-gray-600 font-medium">{text}</span>
+            width: "9%",
+            render: (text) => <span className="text-gray-600 font-medium text-xs">{text}</span>
         },
         {
             title: "Customer Name",
             dataIndex: "name",
             key: "name",
-            width: 200,
-            render: (text) => <span className="font-semibold text-gray-800">{text}</span>
+            width: "14%",
+            render: (text) => <span className="font-semibold text-gray-800 text-xs">{text}</span>
         },
         {
             title: "Service Type",
             dataIndex: "service_order_type",
             key: "service_order_type",
-            width: 130,
+            width: "9%",
             render: (type) => (
-                <Tag className="rounded-none px-3 border-none bg-gray-100 text-gray-700 font-bold text-[10px] uppercase">
+                <Tag className="rounded-none px-2 border-none bg-gray-100 text-gray-700 font-bold text-[9px] uppercase">
                     {type}
                 </Tag>
             )
@@ -465,7 +464,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             title: "Status",
             dataIndex: "repair_status_code",
             key: "repair_status_code",
-            width: 150,
+            width: "10%",
             render: (status) => {
                 let color = 'default';
                 if (status?.includes('RECD')) color = 'blue';
@@ -473,7 +472,7 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                 if (status?.includes('COMP')) color = 'indigo';
 
                 return (
-                    <Tag color={color} className="rounded-none px-3 font-extrabold text-[10px] uppercase">
+                    <Tag color={color} className="rounded-none px-2 font-extrabold text-[9px] uppercase">
                         {status}
                     </Tag>
                 );
@@ -483,10 +482,10 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             title: "Order Status",
             dataIndex: "status",
             key: "status",
-            width: 130,
+            width: "9%",
             render: (status) => (
                 <Tag
-                    className={`rounded-none px-3 border-none font-bold text-[10px] uppercase ${status === 'PENDING' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
+                    className={`rounded-none px-2 border-none font-bold text-[9px] uppercase ${status === 'PENDING' ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'
                         }`}
                 >
                     {status}
@@ -497,48 +496,47 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             title: "Device",
             dataIndex: "brand_code",
             key: "brand_code",
-            width: 150,
-            render: (text) => <span className="text-gray-500 italic text-xs">{text}</span>
+            width: "8%",
+            render: (text) => <span className="text-gray-500 italic text-[11px]">{text}</span>
         },
         {
             title: "Team",
             dataIndex: "department",
             key: "department",
-            width: 150,
-            render: (text) => <span className="font-medium text-gray-600">{text}</span>
+            width: "7%",
+            render: (text) => <span className="font-medium text-gray-600 text-xs">{text}</span>
         },
         {
             title: "Technician",
             dataIndex: "technician_name",
             key: "technician_id",
-            width: 180,
+            width: "12%",
             render: (text) => (
-                <span className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-none bg-slate-100 flex items-center justify-center">
-                        <UserOutlined className="text-[10px] text-slate-400" />
+                <span className="flex items-center gap-1.5">
+                    <div className="w-4 h-4 rounded-none bg-slate-100 flex items-center justify-center shrink-0">
+                        <UserOutlined className="text-[9px] text-slate-400" />
                     </div>
-                    <span className="text-slate-700 font-medium truncate max-w-[140px]">{text || 'Unassigned'}</span>
+                    <span className="text-slate-700 font-medium text-xs truncate max-w-[95px]">{text || 'Unassigned'}</span>
                 </span>
             )
         },
         {
             title: "Scheduled",
             key: "schedule",
-            width: 120,
+            width: "8%",
             render: (_, record) => {
                 if (!record.schedule_date) return <span className="text-gray-300">-</span>;
 
                 const date = new Date(record.schedule_date);
                 const formattedDate = `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}`;
 
-                return <span className="text-red-600 font-bold text-xs">{formattedDate}</span>;
+                return <span className="text-red-600 font-bold text-[11px]">{formattedDate}</span>;
             },
         },
         {
             title: "",
             key: "actions",
-            fixed: 'right',
-            width: 50,
+            width: "4%",
             render: (_, record) => (
                 <Popover
                     placement="leftTop"
@@ -913,9 +911,9 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                     {/* Desktop View: Table */}
                     <div className="hidden md:block">
                         <Table
-                            size="middle"
-                            scroll={{ x: 400 }}
-                            className="bg-white whitespace-nowrap lg:whitespace-normal text-sm"
+                            size="small"
+                            tableLayout="fixed"
+                            className="bg-white whitespace-normal text-xs"
                             columns={columns}
                             rowKey={(record) => record.document_no}
                             dataSource={data}
