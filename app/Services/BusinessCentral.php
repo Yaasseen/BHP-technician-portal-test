@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Promise\Utils as PromiseUtils;
 use Illuminate\Support\Facades\Log;
 use App\Services\Utility;
 use Illuminate\Support\Facades\Cache;
@@ -127,6 +128,53 @@ class BusinessCentral
             Log::channel('business_central')->error("Failed to fetch OData from {$endpoint}: " . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Fetch several OData endpoints in parallel over one HTTP client instead
+     * of one request at a time, so independent calls (e.g. service lines +
+     * service header for the same document) don't pay for each other's
+     * round-trip latency. Returns the same {key => value|null} shape callers
+     * would get from calling fetchOData() once per key sequentially.
+     *
+     * @param array<string,string> $endpointsByKey
+     * @return array<string,?array>
+     */
+    private function fetchODataConcurrently(array $endpointsByKey, int $timeout = 30): array
+    {
+        $client = $this->getHttpClient($timeout);
+
+        $promises = [];
+        foreach ($endpointsByKey as $key => $endpoint) {
+            $url = "/{$this->bcInstanceName}/ODataV4/Company('TBH')/{$endpoint}";
+            Log::channel('business_central')->info("OData Request (concurrent): GET {$url}");
+            $promises[$key] = $client->getAsync($url, ['timeout' => $timeout]);
+        }
+
+        $settled = PromiseUtils::settle($promises)->wait();
+
+        $results = [];
+        foreach ($settled as $key => $outcome) {
+            if (($outcome['state'] ?? null) !== 'fulfilled') {
+                $reason = $outcome['reason'] ?? null;
+                Log::channel('business_central')->error(
+                    "Failed to fetch OData (concurrent) for key {$key}: " . ($reason instanceof \Throwable ? $reason->getMessage() : 'unknown error')
+                );
+                $results[$key] = null;
+                continue;
+            }
+
+            $responseContent = $outcome['value']->getBody()->getContents();
+            $data = json_decode($responseContent, true);
+            $value = $data['value'] ?? $data;
+
+            $count = is_array($value) ? count($value) : 1;
+            Log::channel('business_central')->info("OData Response (concurrent) for key {$key}: Fetched {$count} records.");
+
+            $results[$key] = $value;
+        }
+
+        return $results;
     }
 
     /**
@@ -288,15 +336,22 @@ class BusinessCentral
         try {
             Log::channel('business_central')->info("Pulling single Service Order from BC directly for document {$documentNo} with timeout {$timeoutSeconds}s");
 
-            $serviceLines = $this->fetchOData("ServiceLines?\$filter=Document_No eq '{$documentNo}'", [], $timeoutSeconds);
-            $serviceHeaderData = $this->fetchOData("ServiceHeaders?\$filter=No eq '{$documentNo}'", [], $timeoutSeconds);
+            $results = $this->fetchODataConcurrently([
+                'lines' => "ServiceLines?\$filter=Document_No eq '{$documentNo}'",
+                'header' => "ServiceHeaders?\$filter=No eq '{$documentNo}'",
+            ], $timeoutSeconds);
+            $serviceLines = $results['lines'];
+            $serviceHeaderData = $results['header'];
 
             if (empty($serviceLines) && empty($serviceHeaderData)) {
                 Log::channel('business_central')->warning("No service lines or header found in BC for document {$documentNo}");
                 return null;
             }
 
-            $repairStatusList = $this->fetchOData("RepairStatusList", [], $timeoutSeconds);
+            // RepairStatusList barely changes and is identical for every order,
+            // so reuse the cached copy instead of re-fetching it from BC on
+            // every single job open.
+            $repairStatusList = $this->repairStatusList();
             $repairStatusMapping = [];
             if ($repairStatusList) {
                 foreach ($repairStatusList as $status) {
