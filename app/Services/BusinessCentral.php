@@ -478,7 +478,8 @@ class BusinessCentral
     public function teamRegionConfiguration(): ?array
     {
         $today = now()->toDateString();
-        return $this->fetchOData("TeamRegionConfiguration?\$filter=Date ge {$today}");
+        $end = now()->addDays(90)->toDateString();
+        return $this->fetchOData("TeamRegionConfiguration?\$filter=Date ge {$today} and Date le {$end}");
     }
 
     public function getTeamRegionConfigurationData(Carbon $startDate, Carbon $endDate): array
