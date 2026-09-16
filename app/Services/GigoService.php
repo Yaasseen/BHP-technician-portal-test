@@ -114,9 +114,7 @@ class GigoService
     {
         $serviceOrder = ServiceOrder::where('document_no', $documentNo)->firstOrFail();
 
-        if ((string) $serviceOrder->technician_id !== (string) $technicianId) {
-            throw new GigoAcknowledgeException("This item isn't assigned to you.");
-        }
+        $this->assertInTechnicianBasket($serviceOrder, $technicianId);
 
         return DB::transaction(function () use ($serviceOrder, $technicianId, $technicianName) {
             $serviceOrder->update([
@@ -143,13 +141,33 @@ class GigoService
     {
         $serviceOrder = ServiceOrder::where('document_no', $documentNo)->firstOrFail();
 
-        if ((string) $serviceOrder->technician_id !== (string) $technicianId) {
-            throw new GigoAcknowledgeException("This item isn't assigned to you.");
-        }
+        $this->assertInTechnicianBasket($serviceOrder, $technicianId);
 
         $gigoLocation = GigoLocation::where('code', 'GIGO')->where('is_active', true)->firstOrFail();
 
         return $this->moveToLocation($documentNo, $gigoLocation->id, 'job_complete_return', $technicianId, $technicianName);
+    }
+
+    /**
+     * Ownership for acknowledge/return is based on where the order actually
+     * sits in GIGO (its current basket location) - the same source of truth
+     * "My Basket" uses - not the separate technician_id field on the order,
+     * which only gets set by the formal Assign Technician flow and can drift
+     * out of sync when an item is instead moved via a generic GIGO scan.
+     */
+    private function assertInTechnicianBasket(ServiceOrder $serviceOrder, string $technicianId): void
+    {
+        $location = $serviceOrder->gigo_location_id
+            ? GigoLocation::find($serviceOrder->gigo_location_id)
+            : null;
+
+        $isOwner = $location
+            && $location->type === 'technician_basket'
+            && (string) $location->technician_id === (string) $technicianId;
+
+        if (!$isOwner) {
+            throw new GigoAcknowledgeException("This item isn't assigned to you.");
+        }
     }
 
     public function getOrCreateTechnicianBasket(string $technicianId, string $technicianName): GigoLocation
