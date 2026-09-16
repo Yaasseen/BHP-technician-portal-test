@@ -14,8 +14,7 @@ class OpsDashboardController extends Controller
     private function baseServiceOrderQuery(Request $request)
     {
         $query = ServiceOrder::where('is_posted', false)
-            ->whereNotNull('status')
-            ->where('status', '!=', 'PENDING');
+            ->whereNotNull('status');
 
         if ($request->filled('start') && $request->filled('end')) {
             $query->whereBetween('schedule_date', [$request->input('start'), $request->input('end')]);
