@@ -22,7 +22,7 @@ class GigoMovementController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
 
-        if ($user->Technician_Type !== 'Team Leader' && $user->Technician_Type !== 'CSC') {
+        if (!in_array($user->Technician_Type, ['Team Leader', 'CSC', 'Admin'])) {
             abort(response()->json(['error' => 'Unauthorized.'], 401));
         }
 
@@ -129,10 +129,13 @@ class GigoMovementController extends Controller
         ]);
 
         try {
+            $isGigoTeam = in_array($user->Technician_Type, ['Team Leader', 'Admin']);
+
             $serviceOrder = $this->gigoService->acknowledgeReceipt(
                 $request->input('document_no'),
                 $user->ID,
-                trim($user->First_Name . ' ' . $user->Last_Name)
+                trim($user->First_Name . ' ' . $user->Last_Name),
+                $isGigoTeam
             );
 
             return response()->json([
@@ -189,6 +192,22 @@ class GigoMovementController extends Controller
         $orders = ServiceOrder::where('gigo_location_id', $basket->id)
             ->orderByDesc('gigo_location_updated_at')
             ->get();
+
+        return response()->json([
+            'pending' => $orders->where('gigo_pending_ack', true)->values(),
+            'acknowledged' => $orders->where('gigo_pending_ack', false)->values(),
+        ], 200);
+    }
+
+    public function gigoDesk(Request $request)
+    {
+        $user = Auth::guard('in-memory')->user();
+
+        if (!in_array($user->Technician_Type, ['Team Leader', 'Admin'])) {
+            return response()->json(['error' => 'Unauthorized.'], 401);
+        }
+
+        $orders = $this->gigoService->getGigoDeskContents();
 
         return response()->json([
             'pending' => $orders->where('gigo_pending_ack', true)->values(),

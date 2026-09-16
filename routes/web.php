@@ -108,6 +108,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/gigo-movements/acknowledge', [GigoMovementController::class, 'acknowledge']);
     Route::post('/gigo-movements/return-to-gigo', [GigoMovementController::class, 'returnToGigo']);
     Route::get('/gigo-my-basket', [GigoMovementController::class, 'myBasket']);
+    Route::get('/gigo-desk', [GigoMovementController::class, 'gigoDesk']);
 
     Route::get('/ageing-summary', [AgeingController::class, 'getSummary']);
     Route::get('/ageing-orders', [AgeingController::class, 'getBucketOrders']);

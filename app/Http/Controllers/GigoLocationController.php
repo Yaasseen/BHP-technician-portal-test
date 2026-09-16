@@ -23,7 +23,7 @@ class GigoLocationController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
 
-        if ($user->Technician_Type !== 'Team Leader' && $user->Technician_Type !== 'CSC') {
+        if (!in_array($user->Technician_Type, ['Team Leader', 'CSC', 'Admin'])) {
             abort(response()->json(['error' => 'Unauthorized.'], 401));
         }
 

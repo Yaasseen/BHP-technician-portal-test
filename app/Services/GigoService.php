@@ -20,14 +20,14 @@ class GigoService
         return DB::transaction(function () use ($serviceOrder, $toLocation, $moveType, $movedById, $movedByName) {
             $fromLocationId = $serviceOrder->gigo_location_id;
             $fromLocationName = $serviceOrder->gigo_location_name;
-            $isTechnicianBasket = $toLocation->type === 'technician_basket';
+            $requiresAck = $this->locationRequiresAcknowledgement($toLocation);
 
             $serviceOrder->update([
                 'gigo_location_id' => $toLocation->id,
                 'gigo_location_name' => $toLocation->name,
                 'gigo_location_updated_at' => now(),
-                'gigo_pending_ack' => $isTechnicianBasket,
-                'technician_acknowledged_at' => $isTechnicianBasket ? null : $serviceOrder->technician_acknowledged_at,
+                'gigo_pending_ack' => $requiresAck,
+                'technician_acknowledged_at' => $requiresAck ? null : $serviceOrder->technician_acknowledged_at,
             ]);
 
             GigoMovement::create([
@@ -65,7 +65,7 @@ class GigoService
         return DB::transaction(function () use ($serviceOrders, $toLocation, $moveType, $movedById, $movedByName) {
             $movementRows = [];
             $timestamp = now();
-            $isTechnicianBasket = $toLocation->type === 'technician_basket';
+            $requiresAck = $this->locationRequiresAcknowledgement($toLocation);
 
             foreach ($serviceOrders as $serviceOrder) {
                 $movementRows[] = [
@@ -86,8 +86,8 @@ class GigoService
                 'gigo_location_id' => $toLocation->id,
                 'gigo_location_name' => $toLocation->name,
                 'gigo_location_updated_at' => $timestamp,
-                'gigo_pending_ack' => $isTechnicianBasket,
-                'technician_acknowledged_at' => $isTechnicianBasket ? null : DB::raw('technician_acknowledged_at'),
+                'gigo_pending_ack' => $requiresAck,
+                'technician_acknowledged_at' => $requiresAck ? null : DB::raw('technician_acknowledged_at'),
             ]);
 
             GigoMovement::insert($movementRows);
@@ -110,13 +110,13 @@ class GigoService
         $this->bulkMoveToLocation($documentNos, $basket->id, 'auto_assign', $movedById, $movedByName);
     }
 
-    public function acknowledgeReceipt(string $documentNo, string $technicianId, ?string $technicianName): ServiceOrder
+    public function acknowledgeReceipt(string $documentNo, string $userId, ?string $userName, bool $isGigoTeam = false): ServiceOrder
     {
         $serviceOrder = ServiceOrder::where('document_no', $documentNo)->firstOrFail();
 
-        $this->assertInTechnicianBasket($serviceOrder, $technicianId);
+        $this->assertCanAcknowledge($serviceOrder, $userId, $isGigoTeam);
 
-        return DB::transaction(function () use ($serviceOrder, $technicianId, $technicianName) {
+        return DB::transaction(function () use ($serviceOrder, $userId, $userName) {
             $serviceOrder->update([
                 'gigo_pending_ack' => false,
                 'technician_acknowledged_at' => now(),
@@ -129,8 +129,8 @@ class GigoService
                 'from_location_name' => $serviceOrder->gigo_location_name,
                 'to_location_name' => $serviceOrder->gigo_location_name,
                 'move_type' => 'technician_ack',
-                'moved_by' => $technicianId,
-                'moved_by_name' => $technicianName,
+                'moved_by' => $userId,
+                'moved_by_name' => $userName,
             ]);
 
             return $serviceOrder;
@@ -170,6 +170,40 @@ class GigoService
         }
     }
 
+    private function locationRequiresAcknowledgement(GigoLocation $location): bool
+    {
+        return $location->type === 'technician_basket' || $location->code === 'GIGO';
+    }
+
+    /**
+     * A technician acknowledges items sitting in their own basket. Items
+     * returned to the shared GIGO desk instead need acknowledgement from
+     * the GIGO team (Team Leader / Admin), since that location isn't tied
+     * to a single technician_id the way a basket is.
+     */
+    private function assertCanAcknowledge(ServiceOrder $serviceOrder, string $userId, bool $isGigoTeam): void
+    {
+        $location = $serviceOrder->gigo_location_id
+            ? GigoLocation::find($serviceOrder->gigo_location_id)
+            : null;
+
+        if ($location && $location->type === 'technician_basket') {
+            if ((string) $location->technician_id === (string) $userId) {
+                return;
+            }
+            throw new GigoAcknowledgeException("This item isn't assigned to you.");
+        }
+
+        if ($location && $location->code === 'GIGO') {
+            if ($isGigoTeam) {
+                return;
+            }
+            throw new GigoAcknowledgeException("Only the GIGO team can acknowledge this return.");
+        }
+
+        throw new GigoAcknowledgeException("This item isn't assigned to you.");
+    }
+
     public function getOrCreateTechnicianBasket(string $technicianId, string $technicianName): GigoLocation
     {
         return GigoLocation::firstOrCreate(
@@ -198,6 +232,15 @@ class GigoService
         GigoLocation::findOrFail($locationId);
 
         return ServiceOrder::where('gigo_location_id', $locationId)
+            ->orderByDesc('gigo_location_updated_at')
+            ->get();
+    }
+
+    public function getGigoDeskContents(): Collection
+    {
+        $gigoLocation = GigoLocation::where('code', 'GIGO')->firstOrFail();
+
+        return ServiceOrder::where('gigo_location_id', $gigoLocation->id)
             ->orderByDesc('gigo_location_updated_at')
             ->get();
     }

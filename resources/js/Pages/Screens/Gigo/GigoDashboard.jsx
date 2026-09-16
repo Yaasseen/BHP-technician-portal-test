@@ -3,12 +3,14 @@ import { Segmented } from "antd";
 import ScanSingle from "./ScanSingle";
 import ScanBulk from "./ScanBulk";
 import TechnicianBaskets from "./TechnicianBaskets";
+import GigoDesk from "./GigoDesk";
 import MovementHistory from "./MovementHistory";
 import LocationsSetup from "./LocationsSetup";
 
 const TABS = [
     { label: "Scan (Single)", value: "single" },
     { label: "Scan (Bulk)", value: "bulk" },
+    { label: "GIGO Desk", value: "desk" },
     { label: "Technician Baskets", value: "baskets" },
     { label: "History", value: "history" },
     { label: "Locations Setup", value: "locations" },
@@ -38,6 +40,7 @@ const GigoDashboard = ({ user }) => {
             <div className="pt-2">
                 {tab === "single" && <ScanSingle />}
                 {tab === "bulk" && <ScanBulk />}
+                {tab === "desk" && <GigoDesk />}
                 {tab === "baskets" && <TechnicianBaskets />}
                 {tab === "history" && <MovementHistory />}
                 {tab === "locations" && <LocationsSetup />}
