@@ -110,6 +110,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/gigo-my-basket', [GigoMovementController::class, 'myBasket']);
 
     Route::get('/ageing-summary', [AgeingController::class, 'getSummary']);
+    Route::get('/ageing-orders', [AgeingController::class, 'getBucketOrders']);
 
     // Filter
     Route::get('/repair-status-code', [ServiceOrderFilterController::class, 'getServiceRepairStatusCode']);

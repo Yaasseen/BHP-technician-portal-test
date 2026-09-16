@@ -1,43 +1,49 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Spin, Table, Empty } from "antd";
+import { Spin, Table, Empty, Modal, Tag } from "antd";
 import {
     BarChart,
     Bar,
+    Cell,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend,
+    LabelList,
     ResponsiveContainer,
 } from "recharts";
+import moment from "moment";
 import DashboardCard from "../../Components/Data/DashboardCard";
 
-const BUCKETS = ["0-3 days", "4-7 days", "8-14 days", "15-30 days", "31+ days"];
 const BUCKET_COLORS = {
-    "0-3 days": "#52c41a",
-    "4-7 days": "#faad14",
-    "8-14 days": "#fa8c16",
-    "15-30 days": "#f5222d",
-    "31+ days": "#820014",
+    "0 - 7": "#bbf7d0",
+    "8 - 14": "#86efac",
+    "15 - 21": "#fca5a5",
+    "22 - 30": "#f87171",
+    "31 - 60": "#ef4444",
+    "> 60": "#b91c1c",
 };
 
-const pivotByBucket = (rows, groupKey) => {
-    const grouped = {};
-    rows.forEach((row) => {
-        const key = row[groupKey] || "Unknown";
-        if (!grouped[key]) {
-            grouped[key] = { [groupKey]: key };
-            BUCKETS.forEach((b) => (grouped[key][b] = 0));
-        }
-        grouped[key][row.bucket] = Number(row.count);
-    });
-    return Object.values(grouped);
-};
+const STATUS_PALETTE = [
+    "#94a3b8",
+    "#fbbf24",
+    "#f59e0b",
+    "#f97316",
+    "#dc2626",
+    "#16a34a",
+    "#0ea5e9",
+    "#8b5cf6",
+    "#ec4899",
+    "#64748b",
+];
 
-const AgeingDashboard = ({ user }) => {
+const AgeingDashboard = ({ user, screenContent }) => {
     const [loading, setLoading] = useState(true);
     const [summary, setSummary] = useState(null);
+
+    const [drilldown, setDrilldown] = useState(null);
+    const [drilldownLoading, setDrilldownLoading] = useState(false);
+    const [drilldownOrders, setDrilldownOrders] = useState([]);
 
     useEffect(() => {
         axios
@@ -45,6 +51,27 @@ const AgeingDashboard = ({ user }) => {
             .then((res) => setSummary(res.data))
             .finally(() => setLoading(false));
     }, []);
+
+    const openDrilldown = ({ title, params }) => {
+        setDrilldown({ title });
+        setDrilldownLoading(true);
+        axios
+            .get("/ageing-orders", { params })
+            .then((res) => setDrilldownOrders(res.data.orders || []))
+            .catch(() => setDrilldownOrders([]))
+            .finally(() => setDrilldownLoading(false));
+    };
+
+    const closeDrilldown = () => {
+        setDrilldown(null);
+        setDrilldownOrders([]);
+    };
+
+    const handleOrderClick = (documentNo) => {
+        if (!screenContent) return;
+        closeDrilldown();
+        screenContent(documentNo);
+    };
 
     if (loading) {
         return (
@@ -58,140 +85,201 @@ const AgeingDashboard = ({ user }) => {
         return <Empty description="Unable to load ageing data" />;
     }
 
-    const byStatusData = pivotByBucket(summary.by_status, "repair_status_code");
-    const unassignedData = pivotByBucket(
-        summary.unassigned.map((r) => ({ ...r, group: "Unassigned" })),
-        "group"
+    const statusOverviewRow = summary.status_overview.reduce(
+        (acc, row) => {
+            acc[row.status] = row.count;
+            return acc;
+        },
+        { name: "All Jobs" }
     );
 
-    const statusTableRows = Object.values(
-        summary.by_status.reduce((acc, row) => {
-            const key = row.repair_status_code || "Unknown";
-            if (!acc[key]) {
-                acc[key] = { repair_status_code: key, count: 0 };
-            }
-            acc[key].count += Number(row.count);
-            return acc;
-        }, {})
-    ).sort((a, b) => b.count - a.count);
+    const renderAgeingChart = (title, data, dateField) => (
+        <div className="app-card p-4 sm:p-6">
+            <p className="font-extrabold text-sm text-slate-800 uppercase tracking-widest mb-4">
+                {title}
+            </p>
+            {data.every((d) => d.count === 0) ? (
+                <Empty description="No open jobs" />
+            ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={data} margin={{ top: 24 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                        <XAxis
+                            dataKey="bucket"
+                            tick={{ fontSize: 12, fontWeight: 600 }}
+                            axisLine={false}
+                            tickLine={false}
+                        />
+                        <YAxis hide allowDecimals={false} />
+                        <Tooltip
+                            cursor={{ fill: "rgba(220,38,38,0.05)" }}
+                            formatter={(value) => [value, "Jobs"]}
+                        />
+                        <Bar
+                            dataKey="count"
+                            radius={[4, 4, 0, 0]}
+                            cursor="pointer"
+                            onClick={(entry) =>
+                                openDrilldown({
+                                    title: `${title} — ${entry.bucket} days`,
+                                    params: { bucket: entry.bucket, date_field: dateField },
+                                })
+                            }
+                        >
+                            <LabelList
+                                dataKey="count"
+                                position="top"
+                                style={{ fontWeight: 800, fontSize: 13, fill: "#1e293b" }}
+                            />
+                            {data.map((entry) => (
+                                <Cell key={entry.bucket} fill={BUCKET_COLORS[entry.bucket]} />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+            )}
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center mt-1">
+                Ageing Bucket (Days)
+            </p>
+        </div>
+    );
 
     return (
         <div className="flex flex-col gap-6 w-full">
             <div>
-                <p className="sm:text-2xl text-lg font-medium font-sans">
+                <p className="sm:text-2xl text-lg font-black font-sans text-slate-900 tracking-tight">
                     Ageing Dashboard
                 </p>
-                <p className="text-gray-500 sm:text-md text-xs font-light pt-1">
-                    Open jobs grouped by repair status and how long they've
-                    been open.
+                <p className="text-gray-500 sm:text-sm text-xs font-medium pt-1">
+                    Open jobs grouped by age. Click any bar to see the related order numbers.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <DashboardCard title="Total Open Jobs" count={summary.total_open} />
+                <DashboardCard title="Average Age" count={`${summary.average_age}d`} />
+                <DashboardCard title="Total Unassigned" count={summary.total_unassigned} />
                 <DashboardCard
-                    title="Total Open Jobs"
-                    count={summary.total_open}
-                    progress={100}
-                    progressColor="#4f46e5"
-                    trailColor="#e0e7ff"
-                />
-                <DashboardCard
-                    title="Total Unassigned"
-                    count={summary.total_unassigned}
-                    progress={
-                        summary.total_open
-                            ? Math.round(
-                                  (summary.total_unassigned /
-                                      summary.total_open) *
-                                      100
-                              )
-                            : 0
-                    }
-                    progressColor="#fa8c16"
-                    trailColor="#fff7e6"
+                    title="Data As At"
+                    count={moment(summary.data_as_at).format("DD MMM, HH:mm")}
                 />
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm p-4">
-                <p className="font-semibold text-base mb-4">
-                    Jobs by Repair Status &amp; Age
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {renderAgeingChart(
+                    "Order Date — Ageing of Jobs",
+                    summary.order_date_ageing,
+                    "order_date"
+                )}
+                {renderAgeingChart(
+                    "Last Modified — Ageing of Jobs",
+                    summary.last_modified_ageing,
+                    "updated_at"
+                )}
+            </div>
+
+            <div className="app-card p-4 sm:p-6">
+                <p className="font-extrabold text-sm text-slate-800 uppercase tracking-widest mb-4">
+                    Overview of Jobs by Status
                 </p>
-                {byStatusData.length === 0 ? (
+                {summary.status_overview.length === 0 ? (
                     <Empty description="No open jobs" />
                 ) : (
-                    <ResponsiveContainer width="100%" height={360}>
-                        <BarChart data={byStatusData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis
-                                dataKey="repair_status_code"
-                                interval={0}
-                                angle={-30}
-                                textAnchor="end"
-                                height={80}
-                                tick={{ fontSize: 11 }}
-                            />
-                            <YAxis allowDecimals={false} />
-                            <Tooltip />
-                            <Legend />
-                            {BUCKETS.map((bucket) => (
+                    <ResponsiveContainer width="100%" height={110}>
+                        <BarChart
+                            data={[statusOverviewRow]}
+                            layout="vertical"
+                            margin={{ top: 8, bottom: 8 }}
+                        >
+                            <XAxis type="number" hide />
+                            <YAxis type="category" dataKey="name" hide />
+                            <Tooltip cursor={{ fill: "rgba(220,38,38,0.05)" }} />
+                            {summary.status_overview.map((row, idx) => (
                                 <Bar
-                                    key={bucket}
-                                    dataKey={bucket}
-                                    stackId="age"
-                                    fill={BUCKET_COLORS[bucket]}
-                                />
+                                    key={row.status}
+                                    dataKey={row.status}
+                                    stackId="status"
+                                    fill={STATUS_PALETTE[idx % STATUS_PALETTE.length]}
+                                    cursor="pointer"
+                                    onClick={() =>
+                                        openDrilldown({
+                                            title: `Status — ${row.status}`,
+                                            params: { status: row.status },
+                                        })
+                                    }
+                                >
+                                    <LabelList
+                                        dataKey={row.status}
+                                        position="center"
+                                        formatter={(value) => (value > 0 ? value : "")}
+                                        style={{ fontWeight: 800, fontSize: 12, fill: "#fff" }}
+                                    />
+                                </Bar>
                             ))}
                         </BarChart>
                     </ResponsiveContainer>
                 )}
+                <div className="flex flex-wrap gap-3 mt-3">
+                    {summary.status_overview.map((row, idx) => (
+                        <div key={row.status} className="flex items-center gap-1.5">
+                            <span
+                                className="w-2.5 h-2.5 inline-block"
+                                style={{ backgroundColor: STATUS_PALETTE[idx % STATUS_PALETTE.length] }}
+                            ></span>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                                {row.status} ({row.count})
+                            </span>
+                        </div>
+                    ))}
+                </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm p-4">
-                <p className="font-semibold text-base mb-4">
-                    Unassigned Jobs by Age
-                </p>
-                {summary.total_unassigned === 0 ? (
-                    <Empty description="No unassigned jobs" />
+            <Modal
+                title={drilldown?.title}
+                open={!!drilldown}
+                onCancel={closeDrilldown}
+                footer={null}
+                width={800}
+            >
+                {drilldownLoading ? (
+                    <div className="flex justify-center py-10">
+                        <Spin />
+                    </div>
                 ) : (
-                    <ResponsiveContainer width="100%" height={200}>
-                        <BarChart data={unassignedData} layout="vertical">
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis type="number" allowDecimals={false} />
-                            <YAxis type="category" dataKey="group" width={90} />
-                            <Tooltip />
-                            <Legend />
-                            {BUCKETS.map((bucket) => (
-                                <Bar
-                                    key={bucket}
-                                    dataKey={bucket}
-                                    stackId="age"
-                                    fill={BUCKET_COLORS[bucket]}
-                                />
-                            ))}
-                        </BarChart>
-                    </ResponsiveContainer>
+                    <Table
+                        rowKey="document_no"
+                        dataSource={drilldownOrders}
+                        size="small"
+                        pagination={{ pageSize: 10 }}
+                        columns={[
+                            {
+                                title: "Document No",
+                                dataIndex: "document_no",
+                                render: (text) => (
+                                    <a
+                                        onClick={() => handleOrderClick(text)}
+                                        className="font-bold text-red-600 hover:text-red-700"
+                                    >
+                                        {text}
+                                    </a>
+                                ),
+                            },
+                            { title: "Customer", dataIndex: "name", ellipsis: true },
+                            {
+                                title: "Status",
+                                dataIndex: "repair_status_code",
+                                render: (text) => <Tag color="red">{text || "Unknown"}</Tag>,
+                            },
+                            {
+                                title: "Order Date",
+                                dataIndex: "order_date",
+                                render: (text) => (text ? moment(text).format("DD MMM YYYY") : "-"),
+                            },
+                            { title: "Age (days)", dataIndex: "age_days", width: 100 },
+                        ]}
+                    />
                 )}
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm p-4">
-                <p className="font-semibold text-base mb-4">
-                    Totals by Repair Status
-                </p>
-                <Table
-                    rowKey="repair_status_code"
-                    dataSource={statusTableRows}
-                    size="small"
-                    pagination={false}
-                    scroll={{ y: 300 }}
-                    columns={[
-                        {
-                            title: "Repair Status",
-                            dataIndex: "repair_status_code",
-                        },
-                        { title: "Total Jobs", dataIndex: "count", width: 120 },
-                    ]}
-                />
-            </div>
+            </Modal>
         </div>
     );
 };

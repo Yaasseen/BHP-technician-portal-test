@@ -139,7 +139,7 @@ const Dashboard = ({
                             ) : activeView === "mybasket" ? (
                                 <MyBasket user={user} />
                             ) : activeView === "ageing" ? (
-                                <AgeingDashboard user={user} />
+                                <AgeingDashboard user={user} screenContent={ScreenContent} />
                             ) : activeView === "settings" ? (
                                 <SettingsPanel user={user} />
                             ) : activeView === "ops" ? (
