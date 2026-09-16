@@ -58,6 +58,7 @@ function ServiceDetails({ user, document_no, ScreenDashboard }) {
     const [statusOptions, setStatusOptions] = useState([]);
     const [locationOptions, setLocationOptions] = useState([]);
     const [callStatus, setCallStatus] = useState(false);
+    const [form] = Form.useForm();
 
     const [data, setData] = useState([]);
 
