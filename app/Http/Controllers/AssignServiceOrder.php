@@ -117,7 +117,9 @@ class AssignServiceOrder extends Controller
     public function assignTechnician(Request $request, $document_no)
     {
         $user = Auth::guard('in-memory')->user();
-        if ($user->Technician_Type !== 'Team Leader' && $user->Technician_Type !== 'CSC') {
+        // CSC handles GIGO intake/returns but must not assign jobs directly
+        // to a technician - that stays a Team Leader decision.
+        if ($user->Technician_Type !== 'Team Leader') {
             abort(response()->json(['error' => 'Unauthorized.'], 401));
         }
 
@@ -169,7 +171,8 @@ class AssignServiceOrder extends Controller
     public function assignTechnicianBulk(Request $request)
     {
         $user = Auth::guard('in-memory')->user();
-        if (!in_array($user->Technician_Type, ['Team Leader', 'CSC'])) {
+        // Same restriction as assignTechnician() - CSC can't bulk-assign either.
+        if ($user->Technician_Type !== 'Team Leader') {
             return response()->json(['error' => 'Unauthorized.'], 401);
         }
 

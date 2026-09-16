@@ -3,18 +3,27 @@ import axios from "axios";
 import { Select, Button, message, Tag, Descriptions } from "antd";
 import ScanInput from "../../Components/common/ScanInput";
 
-const ScanSingle = () => {
+const ScanSingle = ({ user }) => {
     const [messageApi, contextHolder] = message.useMessage();
     const [locations, setLocations] = useState([]);
     const [locationId, setLocationId] = useState(null);
     const [scannedOrder, setScannedOrder] = useState(null);
     const [submitting, setSubmitting] = useState(false);
 
+    // CSC handles GIGO intake/returns but can't hand a job straight to a
+    // technician from here - that stays a Team Leader-only action.
+    const canTargetTechnicians = user?.Role !== "CSC";
+
     useEffect(() => {
         axios.get("/gigo-locations?include=technician_basket").then((res) => {
-            setLocations(res.data.data || []);
+            const data = res.data.data || [];
+            setLocations(
+                canTargetTechnicians
+                    ? data
+                    : data.filter((loc) => loc.type !== "technician_basket")
+            );
         });
-    }, []);
+    }, [canTargetTechnicians]);
 
     const handleScan = (documentNo) => {
         setScannedOrder({ document_no: documentNo });

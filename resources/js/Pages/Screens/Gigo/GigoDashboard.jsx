@@ -38,8 +38,8 @@ const GigoDashboard = ({ user }) => {
             </div>
 
             <div className="pt-2">
-                {tab === "single" && <ScanSingle />}
-                {tab === "bulk" && <ScanBulk />}
+                {tab === "single" && <ScanSingle user={user} />}
+                {tab === "bulk" && <ScanBulk user={user} />}
                 {tab === "desk" && <GigoDesk />}
                 {tab === "baskets" && <TechnicianBaskets />}
                 {tab === "history" && <MovementHistory />}

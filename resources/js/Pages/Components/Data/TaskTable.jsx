@@ -680,16 +680,10 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
             if (record.service_order_type == "OUTDOOR") {
                 elements.push(
                     <>
-                        <Button
-                            key="assign-region-department"
-                            type="link"
-                            onClick={() =>
-                                handleAssignTeamOpen(record.document_no)
-                            }
-                        >
-                            Assign Region & Team
-                        </Button>
-                        <br />
+                        {/* CSC handles GIGO intake/returns, not technician
+                            assignment - "Assign Region & Team" opens the real
+                            technician picker (AssignTeam.jsx), so it's
+                            intentionally left out for this role. */}
                         <Button
                             key="assign-team"
                             type="link"
@@ -699,16 +693,6 @@ const TaskTable = ({ user, screenContent, RefreshStatistics }) => {
                         >
                             Assign Technician
                         </Button>
-                        {/* <br />
-                        <Button
-                            key="scheduled"
-                            type="link"
-                            onClick={() =>
-                                handleScheduledModalOpen(record.document_no)
-                            }
-                        >
-                            Scheduled
-                        </Button> */}
                         <br />
                         <Button
                             key="view-details"
