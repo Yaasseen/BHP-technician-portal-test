@@ -11,11 +11,20 @@ const ScanBulk = ({ user }) => {
     const [scannedCodes, setScannedCodes] = useState([]);
     const [submitting, setSubmitting] = useState(false);
 
+    // CSC handles GIGO intake/returns but can't hand a job straight to a
+    // technician from here - that stays a Team Leader-only action.
+    const canTargetTechnicians = user?.Role !== "CSC";
+
     useEffect(() => {
         axios.get("/gigo-locations?include=technician_basket").then((res) => {
-            setLocations(res.data.data || []);
+            const data = res.data.data || [];
+            setLocations(
+                canTargetTechnicians
+                    ? data
+                    : data.filter((loc) => loc.type !== "technician_basket")
+            );
         });
-    }, []);
+    }, [canTargetTechnicians]);
 
     const handleScan = (documentNo) => {
         setScannedCodes((prev) =>

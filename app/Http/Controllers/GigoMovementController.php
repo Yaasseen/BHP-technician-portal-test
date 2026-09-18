@@ -22,7 +22,7 @@ class GigoMovementController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
 
-        if (!in_array($user->Technician_Type, ['Team Leader', 'Admin'])) {
+        if (!in_array($user->Technician_Type, ['Team Leader', 'CSC', 'Admin'])) {
             abort(response()->json(['error' => 'Unauthorized.'], 401));
         }
 
@@ -40,6 +40,20 @@ class GigoMovementController extends Controller
             ->firstOrFail();
     }
 
+    /**
+     * CSC handles intake (into GIGO) and returns (out of GIGO), but must not
+     * be able to hand a job straight to a technician via a GIGO scan - that
+     * has to go through the formal Assign Technician flow instead.
+     */
+    private function assertCscNotAssigningToTechnician($user, GigoLocation $location): void
+    {
+        if ($user->Technician_Type === 'CSC' && $location->type === 'technician_basket') {
+            throw new \App\Exceptions\GigoAcknowledgeException(
+                'CSC cannot assign jobs directly to a technician. Use the Assign Technician workflow instead.'
+            );
+        }
+    }
+
     public function scanSingle(Request $request)
     {
         $user = $this->authorizeUser();
@@ -52,6 +66,7 @@ class GigoMovementController extends Controller
 
         try {
             $location = $this->resolveLocation($request);
+            $this->assertCscNotAssigningToTechnician($user, $location);
             $documentNo = $request->input('document_no');
             $order = ServiceOrder::where('document_no', $documentNo)->first();
             $moveType = ($location->code === 'GIGO' && $order && $order->status === 'COMPLETED')
@@ -92,6 +107,7 @@ class GigoMovementController extends Controller
 
         try {
             $location = $this->resolveLocation($request);
+            $this->assertCscNotAssigningToTechnician($user, $location);
             $documentNos = $request->input('document_nos');
             $moveType = 'bulk_scan';
 
@@ -133,7 +149,7 @@ class GigoMovementController extends Controller
         ]);
 
         try {
-            $isGigoTeam = in_array($user->Technician_Type, ['Team Leader', 'Admin']);
+            $isGigoTeam = in_array($user->Technician_Type, ['Team Leader', 'Admin', 'CSC']);
 
             $serviceOrder = $this->gigoService->acknowledgeReceipt(
                 $request->input('document_no'),
@@ -207,7 +223,7 @@ class GigoMovementController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
 
-        if (!in_array($user->Technician_Type, ['Team Leader', 'Admin'])) {
+        if (!in_array($user->Technician_Type, ['Team Leader', 'Admin', 'CSC'])) {
             return response()->json(['error' => 'Unauthorized.'], 401);
         }
 
