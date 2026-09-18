@@ -4,10 +4,11 @@ import ScanSingle from "./ScanSingle";
 import ScanBulk from "./ScanBulk";
 import TechnicianBaskets from "./TechnicianBaskets";
 import GigoDesk from "./GigoDesk";
+import GigoOverview from "./GigoOverview";
 import MovementHistory from "./MovementHistory";
 import LocationsSetup from "./LocationsSetup";
 
-const GigoDashboard = ({ user }) => {
+const GigoDashboard = ({ user, screenContent }) => {
     const isGigoDesk = user.Role === "Team Leader" || user.Role === "Admin";
     const [tab, setTab] = useState("single");
 
@@ -15,6 +16,7 @@ const GigoDashboard = ({ user }) => {
         { label: "Scan (Single)", value: "single", show: true },
         { label: "Scan (Bulk)", value: "bulk", show: true },
         { label: isGigoDesk ? "GIGO Desk" : "Dispatch", value: "desk", show: true },
+        { label: "Overview", value: "overview", show: isGigoDesk },
         { label: "Technician Baskets", value: "baskets", show: true },
         { label: "History", value: "history", show: true },
         { label: "Locations Setup", value: "locations", show: isGigoDesk },
@@ -41,8 +43,9 @@ const GigoDashboard = ({ user }) => {
             <div className="pt-2">
                 {tab === "single" && <ScanSingle user={user} />}
                 {tab === "bulk" && <ScanBulk user={user} />}
-                {tab === "desk" && <GigoDesk user={user} />}
-                {tab === "baskets" && <TechnicianBaskets />}
+                {tab === "desk" && <GigoDesk user={user} screenContent={screenContent} />}
+                {tab === "overview" && isGigoDesk && <GigoOverview screenContent={screenContent} />}
+                {tab === "baskets" && <TechnicianBaskets screenContent={screenContent} />}
                 {tab === "history" && <MovementHistory />}
                 {tab === "locations" && isGigoDesk && <LocationsSetup />}
             </div>

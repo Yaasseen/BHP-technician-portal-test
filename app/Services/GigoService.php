@@ -246,6 +246,34 @@ class GigoService
             ->get();
     }
 
+    /**
+     * Every job currently tracked in GIGO, wherever it is - a static desk
+     * (GIGO/Dispatch/Workshop/...) or a specific technician's basket - so
+     * "who has what right now" can be answered in one query instead of
+     * checking each basket/desk individually.
+     */
+    public function getAllActiveCustody(): Collection
+    {
+        return ServiceOrder::query()
+            ->whereNotNull('service_orders.gigo_location_id')
+            ->join('gigo_locations', 'service_orders.gigo_location_id', '=', 'gigo_locations.id')
+            ->orderByRaw("gigo_locations.type = 'technician_basket'")
+            ->orderByDesc('service_orders.gigo_location_updated_at')
+            ->get([
+                'service_orders.document_no',
+                'service_orders.name',
+                'service_orders.repair_status_code',
+                'service_orders.status',
+                'service_orders.gigo_location_id',
+                'service_orders.gigo_location_name',
+                'service_orders.gigo_location_updated_at',
+                'service_orders.gigo_pending_ack',
+                'gigo_locations.type as location_type',
+                'gigo_locations.code as location_code',
+                'gigo_locations.technician_id as location_technician_id',
+            ]);
+    }
+
     public function getGigoDeskContents(string $locationCode = 'GIGO'): Collection
     {
         $location = GigoLocation::where('code', $locationCode)->firstOrFail();

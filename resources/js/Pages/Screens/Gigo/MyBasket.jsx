@@ -4,7 +4,7 @@ import { List, Tag, Button, Spin, Empty, message } from "antd";
 import { CheckCircleOutlined, RollbackOutlined } from "@ant-design/icons";
 import ScanInput from "../../Components/common/ScanInput";
 
-const MyBasket = () => {
+const MyBasket = ({ screenContent }) => {
     const [messageApi, contextHolder] = message.useMessage();
     const [pending, setPending] = useState([]);
     const [acknowledged, setAcknowledged] = useState([]);
@@ -117,7 +117,13 @@ const MyBasket = () => {
                                 ]}
                             >
                                 <div>
-                                    <Tag color="orange">{order.document_no}</Tag>
+                                    <Tag
+                                        color="orange"
+                                        className={screenContent ? "cursor-pointer" : undefined}
+                                        onClick={() => screenContent?.(order.document_no)}
+                                    >
+                                        {order.document_no}
+                                    </Tag>
                                     <span>{order.name}</span>
                                 </div>
                             </List.Item>
@@ -151,7 +157,13 @@ const MyBasket = () => {
                                 ]}
                             >
                                 <div>
-                                    <Tag color="green">{order.document_no}</Tag>
+                                    <Tag
+                                        color="green"
+                                        className={screenContent ? "cursor-pointer" : undefined}
+                                        onClick={() => screenContent?.(order.document_no)}
+                                    >
+                                        {order.document_no}
+                                    </Tag>
                                     <span>{order.name}</span>
                                 </div>
                             </List.Item>

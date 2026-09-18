@@ -244,6 +244,19 @@ class GigoMovementController extends Controller
         ], 200);
     }
 
+    public function overview(Request $request)
+    {
+        $user = Auth::guard('in-memory')->user();
+
+        if (!in_array($user->Technician_Type, ['Team Leader', 'Admin'])) {
+            return response()->json(['error' => 'Unauthorized.'], 401);
+        }
+
+        $orders = $this->gigoService->getAllActiveCustody();
+
+        return response()->json(['data' => $orders], 200);
+    }
+
     public function history($document_no)
     {
         try {

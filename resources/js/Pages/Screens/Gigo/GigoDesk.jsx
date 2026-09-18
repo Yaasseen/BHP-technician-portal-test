@@ -3,7 +3,7 @@ import axios from "axios";
 import { List, Tag, Button, Spin, Empty, message } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 
-const GigoDesk = ({ user }) => {
+const GigoDesk = ({ user, screenContent }) => {
     const isGigoDesk = user?.Role === "Team Leader" || user?.Role === "Admin";
     const [messageApi, contextHolder] = message.useMessage();
     const [pending, setPending] = useState([]);
@@ -86,7 +86,13 @@ const GigoDesk = ({ user }) => {
                                 ]}
                             >
                                 <div>
-                                    <Tag color="orange">{order.document_no}</Tag>
+                                    <Tag
+                                        color="orange"
+                                        className={screenContent ? "cursor-pointer" : undefined}
+                                        onClick={() => screenContent?.(order.document_no)}
+                                    >
+                                        {order.document_no}
+                                    </Tag>
                                     <span>{order.name}</span>
                                 </div>
                             </List.Item>
@@ -108,7 +114,13 @@ const GigoDesk = ({ user }) => {
                         renderItem={(order) => (
                             <List.Item>
                                 <div>
-                                    <Tag color="green">{order.document_no}</Tag>
+                                    <Tag
+                                        color="green"
+                                        className={screenContent ? "cursor-pointer" : undefined}
+                                        onClick={() => screenContent?.(order.document_no)}
+                                    >
+                                        {order.document_no}
+                                    </Tag>
                                     <span>{order.name}</span>
                                 </div>
                             </List.Item>

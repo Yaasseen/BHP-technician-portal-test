@@ -135,9 +135,9 @@ const Dashboard = ({
                                     onBack={() => setActiveView("list")}
                                 />
                             ) : activeView === "gigo" ? (
-                                <GigoDashboard user={user} />
+                                <GigoDashboard user={user} screenContent={ScreenContent} />
                             ) : activeView === "mybasket" ? (
-                                <MyBasket user={user} />
+                                <MyBasket user={user} screenContent={ScreenContent} />
                             ) : activeView === "ageing" ? (
                                 <AgeingDashboard user={user} screenContent={ScreenContent} />
                             ) : activeView === "settings" ? (

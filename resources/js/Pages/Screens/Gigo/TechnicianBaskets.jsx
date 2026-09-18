@@ -4,7 +4,7 @@ import { List, Card, Empty, Spin } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import LocationContents from "./LocationContents";
 
-const TechnicianBaskets = () => {
+const TechnicianBaskets = ({ screenContent }) => {
     const [baskets, setBaskets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState(null);
@@ -52,7 +52,7 @@ const TechnicianBaskets = () => {
             </div>
             <div className="flex-1">
                 {selected ? (
-                    <LocationContents locationId={selected} />
+                    <LocationContents locationId={selected} screenContent={screenContent} />
                 ) : (
                     <Card>
                         <Empty description="Select a technician basket to view its jobs" />

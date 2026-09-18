@@ -11,7 +11,7 @@ const exportColumns = [
     { header: "Technician", key: "technician_name" },
 ];
 
-const LocationContents = ({ locationId }) => {
+const LocationContents = ({ locationId, screenContent }) => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -55,7 +55,21 @@ const LocationContents = ({ locationId }) => {
                 scroll={{ x: true }}
                 size="small"
                 columns={[
-                    { title: "Document No", dataIndex: "document_no" },
+                    {
+                        title: "Document No",
+                        dataIndex: "document_no",
+                        render: (text) =>
+                            screenContent ? (
+                                <a
+                                    onClick={() => screenContent(text)}
+                                    className="font-bold text-red-600 hover:text-red-700"
+                                >
+                                    {text}
+                                </a>
+                            ) : (
+                                text
+                            ),
+                    },
                     { title: "Customer", dataIndex: "name" },
                     { title: "Repair Status", dataIndex: "repair_status_code" },
                     { title: "Technician", dataIndex: "technician_name" },
