@@ -149,13 +149,11 @@ class GigoMovementController extends Controller
         ]);
 
         try {
-            $isGigoTeam = in_array($user->Technician_Type, ['Team Leader', 'Admin', 'CSC']);
-
             $serviceOrder = $this->gigoService->acknowledgeReceipt(
                 $request->input('document_no'),
                 $user->ID,
                 trim($user->First_Name . ' ' . $user->Last_Name),
-                $isGigoTeam
+                $user->Technician_Type
             );
 
             return response()->json([
@@ -223,11 +221,22 @@ class GigoMovementController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
 
-        if (!in_array($user->Technician_Type, ['Team Leader', 'Admin', 'CSC'])) {
+        // Team Leader/Admin man the GIGO desk itself (intake + technician
+        // returns); CSC's equivalent desk is Dispatch, where a finished job
+        // waits for them to collect and hand to the customer.
+        if (in_array($user->Technician_Type, ['Team Leader', 'Admin'])) {
+            $locationCode = 'GIGO';
+        } elseif ($user->Technician_Type === 'CSC') {
+            $locationCode = 'DISPATCH';
+        } else {
             return response()->json(['error' => 'Unauthorized.'], 401);
         }
 
-        $orders = $this->gigoService->getGigoDeskContents();
+        try {
+            $orders = $this->gigoService->getGigoDeskContents($locationCode);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => "The {$locationCode} location hasn't been set up yet."], 404);
+        }
 
         return response()->json([
             'pending' => $orders->where('gigo_pending_ack', true)->values(),

@@ -3,7 +3,8 @@ import axios from "axios";
 import { List, Tag, Button, Spin, Empty, message } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 
-const GigoDesk = () => {
+const GigoDesk = ({ user }) => {
+    const isGigoDesk = user?.Role === "Team Leader" || user?.Role === "Admin";
     const [messageApi, contextHolder] = message.useMessage();
     const [pending, setPending] = useState([]);
     const [acknowledged, setAcknowledged] = useState([]);
@@ -56,11 +57,12 @@ const GigoDesk = () => {
 
             <div>
                 <h3 className="font-semibold mb-2">
-                    Pending Returns ({pending.length})
+                    {isGigoDesk ? "Pending Returns" : "Ready for Collection"} ({pending.length})
                 </h3>
                 <p className="text-xs text-gray-500 mb-2">
-                    Jobs a technician has returned to GIGO but the GIGO team
-                    hasn't confirmed receipt of yet.
+                    {isGigoDesk
+                        ? "Jobs a technician has returned to GIGO but the GIGO team hasn't confirmed receipt of yet."
+                        : "Jobs GIGO has finished and sent to Dispatch, waiting for you to collect and hand to the customer."}
                 </p>
                 {pending.length === 0 ? (
                     <Empty description="Nothing pending" />

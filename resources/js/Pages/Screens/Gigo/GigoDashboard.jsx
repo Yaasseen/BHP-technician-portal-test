@@ -7,17 +7,18 @@ import GigoDesk from "./GigoDesk";
 import MovementHistory from "./MovementHistory";
 import LocationsSetup from "./LocationsSetup";
 
-const TABS = [
-    { label: "Scan (Single)", value: "single" },
-    { label: "Scan (Bulk)", value: "bulk" },
-    { label: "GIGO Desk", value: "desk" },
-    { label: "Technician Baskets", value: "baskets" },
-    { label: "History", value: "history" },
-    { label: "Locations Setup", value: "locations" },
-];
-
 const GigoDashboard = ({ user }) => {
+    const isGigoDesk = user.Role === "Team Leader" || user.Role === "Admin";
     const [tab, setTab] = useState("single");
+
+    const tabs = [
+        { label: "Scan (Single)", value: "single", show: true },
+        { label: "Scan (Bulk)", value: "bulk", show: true },
+        { label: isGigoDesk ? "GIGO Desk" : "Dispatch", value: "desk", show: true },
+        { label: "Technician Baskets", value: "baskets", show: true },
+        { label: "History", value: "history", show: true },
+        { label: "Locations Setup", value: "locations", show: isGigoDesk },
+    ].filter((item) => item.show);
 
     return (
         <div className="flex flex-col gap-4 w-full">
@@ -30,7 +31,7 @@ const GigoDashboard = ({ user }) => {
 
             <div className="overflow-x-auto">
                 <Segmented
-                    options={TABS}
+                    options={tabs}
                     value={tab}
                     onChange={setTab}
                     size="large"
@@ -40,10 +41,10 @@ const GigoDashboard = ({ user }) => {
             <div className="pt-2">
                 {tab === "single" && <ScanSingle user={user} />}
                 {tab === "bulk" && <ScanBulk user={user} />}
-                {tab === "desk" && <GigoDesk />}
+                {tab === "desk" && <GigoDesk user={user} />}
                 {tab === "baskets" && <TechnicianBaskets />}
                 {tab === "history" && <MovementHistory />}
-                {tab === "locations" && <LocationsSetup />}
+                {tab === "locations" && isGigoDesk && <LocationsSetup />}
             </div>
         </div>
     );

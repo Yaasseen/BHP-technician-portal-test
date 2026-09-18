@@ -23,7 +23,11 @@ class GigoLocationController extends Controller
     {
         $user = Auth::guard('in-memory')->user();
 
-        if (!in_array($user->Technician_Type, ['Team Leader', 'CSC', 'Admin'])) {
+        // Locations Setup (create/edit locations, assign technician baskets)
+        // is Team Leader/Admin only - CSC can still list locations via
+        // index() below (needed for their own scan target picker), just not
+        // manage them.
+        if (!in_array($user->Technician_Type, ['Team Leader', 'Admin'])) {
             abort(response()->json(['error' => 'Unauthorized.'], 401));
         }
 

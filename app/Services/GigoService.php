@@ -110,11 +110,11 @@ class GigoService
         $this->bulkMoveToLocation($documentNos, $basket->id, 'auto_assign', $movedById, $movedByName);
     }
 
-    public function acknowledgeReceipt(string $documentNo, string $userId, ?string $userName, bool $isGigoTeam = false): ServiceOrder
+    public function acknowledgeReceipt(string $documentNo, string $userId, ?string $userName, ?string $userRole = null): ServiceOrder
     {
         $serviceOrder = ServiceOrder::where('document_no', $documentNo)->firstOrFail();
 
-        $this->assertCanAcknowledge($serviceOrder, $userId, $isGigoTeam);
+        $this->assertCanAcknowledge($serviceOrder, $userId, $userRole);
 
         return DB::transaction(function () use ($serviceOrder, $userId, $userName) {
             $serviceOrder->update([
@@ -172,16 +172,19 @@ class GigoService
 
     private function locationRequiresAcknowledgement(GigoLocation $location): bool
     {
-        return $location->type === 'technician_basket' || $location->code === 'GIGO';
+        return $location->type === 'technician_basket' || in_array($location->code, ['GIGO', 'DISPATCH']);
     }
 
     /**
-     * A technician acknowledges items sitting in their own basket. Items
-     * returned to the shared GIGO desk instead need acknowledgement from
-     * the GIGO team (Team Leader / Admin), since that location isn't tied
-     * to a single technician_id the way a basket is.
+     * Each acknowledgeable location has exactly one kind of person who's
+     * allowed to confirm receipt there - a technician's own basket, the
+     * GIGO desk itself (Team Leader / Admin, the ones physically manning
+     * it), or Dispatch (CSC, collecting a finished job to hand to the
+     * customer). CSC is deliberately not on the GIGO-desk list: intake
+     * from CSC and returns from a technician are GIGO's own acknowledgement
+     * to make, not CSC's, even though CSC does the intake scan itself.
      */
-    private function assertCanAcknowledge(ServiceOrder $serviceOrder, string $userId, bool $isGigoTeam): void
+    private function assertCanAcknowledge(ServiceOrder $serviceOrder, string $userId, ?string $userRole): void
     {
         $location = $serviceOrder->gigo_location_id
             ? GigoLocation::find($serviceOrder->gigo_location_id)
@@ -195,10 +198,17 @@ class GigoService
         }
 
         if ($location && $location->code === 'GIGO') {
-            if ($isGigoTeam) {
+            if (in_array($userRole, ['Team Leader', 'Admin'])) {
                 return;
             }
             throw new GigoAcknowledgeException("Only the GIGO team can acknowledge this return.");
+        }
+
+        if ($location && $location->code === 'DISPATCH') {
+            if (in_array($userRole, ['CSC', 'Team Leader', 'Admin'])) {
+                return;
+            }
+            throw new GigoAcknowledgeException("Only Dispatch can acknowledge this handover.");
         }
 
         throw new GigoAcknowledgeException("This item isn't assigned to you.");
@@ -236,11 +246,11 @@ class GigoService
             ->get();
     }
 
-    public function getGigoDeskContents(): Collection
+    public function getGigoDeskContents(string $locationCode = 'GIGO'): Collection
     {
-        $gigoLocation = GigoLocation::where('code', 'GIGO')->firstOrFail();
+        $location = GigoLocation::where('code', $locationCode)->firstOrFail();
 
-        return ServiceOrder::where('gigo_location_id', $gigoLocation->id)
+        return ServiceOrder::where('gigo_location_id', $location->id)
             ->orderByDesc('gigo_location_updated_at')
             ->get();
     }
