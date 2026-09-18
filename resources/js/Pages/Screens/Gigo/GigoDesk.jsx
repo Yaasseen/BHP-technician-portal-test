@@ -57,11 +57,11 @@ const GigoDesk = ({ user }) => {
 
             <div>
                 <h3 className="font-semibold mb-2">
-                    {isGigoDesk ? "Pending Returns" : "Ready for Collection"} ({pending.length})
+                    {isGigoDesk ? "Pending Acknowledgment" : "Ready for Collection"} ({pending.length})
                 </h3>
                 <p className="text-xs text-gray-500 mb-2">
                     {isGigoDesk
-                        ? "Jobs a technician has returned to GIGO but the GIGO team hasn't confirmed receipt of yet."
+                        ? "Jobs sitting at GIGO that haven't been confirmed yet - either newly assigned intake or a technician's return."
                         : "Jobs GIGO has finished and sent to Dispatch, waiting for you to collect and hand to the customer."}
                 </p>
                 {pending.length === 0 ? (
