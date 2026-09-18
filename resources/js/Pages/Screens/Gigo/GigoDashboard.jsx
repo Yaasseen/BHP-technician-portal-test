@@ -8,9 +8,14 @@ import GigoOverview from "./GigoOverview";
 import MovementHistory from "./MovementHistory";
 import LocationsSetup from "./LocationsSetup";
 
-const GigoDashboard = ({ user, screenContent }) => {
+const GigoDashboard = ({ user, screenContent, tab: controlledTab, setTab: setControlledTab }) => {
     const isGigoDesk = user.Role === "Team Leader" || user.Role === "Admin";
-    const [tab, setTab] = useState("single");
+    // Tab selection is normally controlled by the parent (Dashboard.jsx) so
+    // it survives navigating away to a job's details and back - fall back to
+    // local state if this is ever rendered without that wiring.
+    const [localTab, setLocalTab] = useState("single");
+    const tab = controlledTab ?? localTab;
+    const setTab = setControlledTab ?? setLocalTab;
 
     const tabs = [
         { label: "Scan (Single)", value: "single", show: true },

@@ -18,6 +18,7 @@ const Header = ({
     handleListView,
     activeView,
     setActiveView,
+    previousView,
 }) => {
     const [openNotification, setOpenNotification] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -30,7 +31,7 @@ const Header = ({
         userLogout();
     };
     const handleViewScreen = () => {
-        setActiveView("list");
+        setActiveView(previousView || "list");
         setHomeClicked((prev) => !prev);
     };
 

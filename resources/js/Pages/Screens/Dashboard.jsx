@@ -22,6 +22,8 @@ const Dashboard = ({
     showHome,
     activeView,
     setActiveView,
+    previousView,
+    setPreviousView,
     onLogout, // Added onLogout prop
     showWeekView,
 }) => {
@@ -29,6 +31,7 @@ const Dashboard = ({
     const [ticketInfo, setTicketInfo] = useState();
     const [locationState, setLocationState] = useState(false);
     const [refreshStatistics, setRefreshStatistics] = useState(false);
+    const [gigoTab, setGigoTab] = useState("single");
 
     useEffect(() => {
         if (showHome) {
@@ -47,12 +50,13 @@ const Dashboard = ({
     }, [activeView]);
 
     const ScreenContent = (document_no) => {
+        setPreviousView(activeView);
         setDocumentNo(document_no);
         setActiveView("viewDetails");
     };
 
     const ScreenDashboard = () => {
-        setActiveView("list");
+        setActiveView(previousView);
     };
 
     const NavigateWeeklyView = () => {
@@ -135,7 +139,12 @@ const Dashboard = ({
                                     onBack={() => setActiveView("list")}
                                 />
                             ) : activeView === "gigo" ? (
-                                <GigoDashboard user={user} screenContent={ScreenContent} />
+                                <GigoDashboard
+                                    user={user}
+                                    screenContent={ScreenContent}
+                                    tab={gigoTab}
+                                    setTab={setGigoTab}
+                                />
                             ) : activeView === "mybasket" ? (
                                 <MyBasket user={user} screenContent={ScreenContent} />
                             ) : activeView === "ageing" ? (

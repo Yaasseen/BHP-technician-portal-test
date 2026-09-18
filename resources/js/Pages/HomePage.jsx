@@ -19,6 +19,7 @@ const HomePage = ({ onLoggedOut, user }) => {
     const [showWeekView, setShowWeekView] = useState(false);
     const [handleHome, setHandleHome] = useState(false);
     const [activeView, setActiveView] = useState("list");
+    const [previousView, setPreviousView] = useState("list");
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(false);
     const [moreOpen, setMoreOpen] = useState(false);
@@ -96,6 +97,7 @@ const HomePage = ({ onLoggedOut, user }) => {
                     handleHome={() => handleHomeScreen()}
                     activeView={activeView}
                     setActiveView={setActiveView}
+                    previousView={previousView}
                 />
             </div>
 
@@ -123,6 +125,8 @@ const HomePage = ({ onLoggedOut, user }) => {
                         showHome={handleHome}
                         activeView={activeView}
                         setActiveView={setActiveView}
+                        previousView={previousView}
+                        setPreviousView={setPreviousView}
                         onLogout={() => handleUserLoggedOut()}
                     />
                 </div>
