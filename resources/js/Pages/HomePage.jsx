@@ -58,7 +58,7 @@ const HomePage = ({ onLoggedOut, user }) => {
 
     const moreMenuItems = [
         { key: "teamandregion", label: "Team and Region", icon: <TeamOutlined />, show: user.Role !== "Technician" },
-        { key: "gigo", label: "GIGO", icon: <ScanOutlined />, show: user.Role === "Team Leader" || user.Role === "Admin" || user.Role === "CSC" },
+        { key: "gigo", label: "GIGO", icon: <ScanOutlined />, show: user.Role === "Team Leader" || user.Role === "Admin" },
         { key: "ageing", label: "Ageing", icon: <BarChartOutlined />, show: user.Role === "Team Leader" },
         { key: "ops", label: "OPS Dashboard", icon: <BarChartOutlined />, show: user.Role === "Team Leader" },
         { key: "settings", label: "Settings", icon: <SettingOutlined />, show: user.Role === "Admin" },
